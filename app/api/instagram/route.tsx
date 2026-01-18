@@ -1,18 +1,6 @@
 import { ImageResponse } from "next/og";
-
-export const runtime = "edge";
-
-const regularFont = fetch(
-  new URL("../../../public/fonts/Pretendard-Regular.woff2", import.meta.url),
-).then((res) => res.arrayBuffer());
-
-const semiboldFont = fetch(
-  new URL("../../../public/fonts/Pretendard-SemiBold.woff2", import.meta.url),
-).then((res) => res.arrayBuffer());
-
-const boldFont = fetch(
-  new URL("../../../public/fonts/Pretendard-Bold.woff2", import.meta.url),
-).then((res) => res.arrayBuffer());
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 const clamp = (value: string, max: number) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -39,9 +27,9 @@ export async function GET(request: Request) {
   const name = pickText(searchParams.get("name"), "사용자", 40);
 
   const [regular, semibold, bold] = await Promise.all([
-    regularFont,
-    semiboldFont,
-    boldFont,
+    readFile(join(process.cwd(), "public/fonts/Pretendard-Regular.woff2")),
+    readFile(join(process.cwd(), "public/fonts/Pretendard-SemiBold.woff2")),
+    readFile(join(process.cwd(), "public/fonts/Pretendard-Bold.woff2")),
   ]);
 
   return new ImageResponse(

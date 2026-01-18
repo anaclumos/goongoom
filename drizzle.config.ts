@@ -10,7 +10,7 @@ export default defineConfig({
   },
   schemaFilter: ['goongoom'],
   migrations: {
-    schema: 'goongoom',
+    schema: 'public',
     table: '__drizzle_migrations',
   },
 })

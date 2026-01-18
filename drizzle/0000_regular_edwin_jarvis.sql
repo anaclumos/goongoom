@@ -20,6 +20,7 @@ CREATE TABLE "goongoom"."users" (
 	"clerk_id" text PRIMARY KEY NOT NULL,
 	"bio" text,
 	"social_links" jsonb,
+	"question_security_level" text DEFAULT 'anyone' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

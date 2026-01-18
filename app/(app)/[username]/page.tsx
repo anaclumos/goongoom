@@ -78,15 +78,15 @@ async function QAFeedSection({ params }: UserProfilePageProps) {
 
 async function QuestionFormSection({ params, searchParams }: UserProfilePageProps) {
   const { username } = await params;
-  const [data, authResult] = await Promise.all([
+  const [data, authResult, query] = await Promise.all([
     getProfileInfo(username),
     auth(),
+    searchParams,
   ]);
   if (!data) notFound();
   const { clerkUser, dbUser } = data;
   const { userId } = authResult;
 
-  const query = await searchParams;
   const error =
     typeof query?.error === "string" ? decodeURIComponent(query.error) : null;
   const sent = query?.sent === "1";
@@ -106,6 +106,10 @@ async function QuestionFormSection({ params, searchParams }: UserProfilePageProp
       status={status}
     />
   );
+}
+
+export async function generateStaticParams() {
+  return [{ username: "_placeholder" }];
 }
 
 export default function UserProfilePage({

@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { ShareInstagramButton } from "@/components/questions/share-instagram-button";
 
 interface AnswerBubbleProps {
   avatar?: string | null;
@@ -26,16 +27,7 @@ export function AnswerBubble({
           <p className="text-xs text-gray-500">
             {username} · {timestamp} 답변
           </p>
-          {shareUrl ? (
-            <a
-              href={shareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-medium text-orange-600 transition-colors"
-            >
-              인스타그램 이미지 만들기
-            </a>
-          ) : null}
+          {shareUrl ? <ShareInstagramButton shareUrl={shareUrl} /> : null}
         </div>
       </div>
       <Avatar className="w-10 h-10 flex-shrink-0">

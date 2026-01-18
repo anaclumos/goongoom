@@ -1,1 +1,0 @@
-ALTER TABLE "goongoom"."users" ADD COLUMN "question_security_level" text DEFAULT 'anyone' NOT NULL;

@@ -69,10 +69,14 @@ export async function updateProfile(data: {
       return { success: false, error: '잘못된 질문 보안 설정입니다' }
     }
     
+    const validatedSecurityLevel = data.questionSecurityLevel && isQuestionSecurityLevel(data.questionSecurityLevel)
+      ? data.questionSecurityLevel
+      : undefined;
+    
     const updated = await updateUserProfile(clerkId, {
       bio: data.bio,
       socialLinks: data.socialLinks,
-      questionSecurityLevel: data.questionSecurityLevel || undefined,
+      questionSecurityLevel: validatedSecurityLevel,
     })
     
     const clerkUser = await getClerkUserById(clerkId)

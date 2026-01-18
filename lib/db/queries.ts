@@ -23,9 +23,22 @@ export async function updateUserProfile(
     questionSecurityLevel?: QuestionSecurityLevel | null
   }
 ) {
+  const updateData: {
+    bio?: string | null
+    socialLinks?: SocialLinks | null
+    questionSecurityLevel?: QuestionSecurityLevel
+    updatedAt: Date
+  } = {
+    updatedAt: new Date(),
+  };
+  
+  if ('bio' in data) updateData.bio = data.bio;
+  if ('socialLinks' in data) updateData.socialLinks = data.socialLinks;
+  if (data.questionSecurityLevel) updateData.questionSecurityLevel = data.questionSecurityLevel;
+  
   return await db
     .update(users)
-    .set({ ...data, updatedAt: new Date() })
+    .set(updateData)
     .where(eq(users.clerkId, clerkId))
     .returning()
 }

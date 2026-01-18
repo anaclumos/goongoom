@@ -1,5 +1,5 @@
 {
-  "id": "0b495d8d-1c6c-4573-b999-8c815b19b336",
+  "id": "02e1b6ca-7fe6-4268-aaa8-f9577cbee8af",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -168,6 +168,13 @@
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
+        },
+        "question_security_level": {
+          "name": "question_security_level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'anyone'"
         },
         "created_at": {
           "name": "created_at",

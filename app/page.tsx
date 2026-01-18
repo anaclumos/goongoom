@@ -1,11 +1,11 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Message01Icon, Share01Icon, ShieldKeyIcon, ArrowRight01Icon, SparklesIcon, SentIcon } from "@hugeicons/core-free-icons";
+import { Message01Icon, Share01Icon, ShieldKeyIcon, SparklesIcon, SentIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTotalUserCount } from "@/lib/db/queries";
+import { NavAuthButtons, HeroAuthButtons, BottomCTAButton } from "@/components/ui/auth-buttons";
 
 async function UserCount() {
   const userCount = await getTotalUserCount();
@@ -24,19 +24,7 @@ export default function Home() {
             <span className="text-lg font-bold tracking-tight text-slate-900">궁금닷컴</span>
           </Link>
           <div className="flex items-center gap-3">
-            <Button
-              render={<Link href="/sign-in" />}
-              variant="ghost"
-              size="sm"
-            >
-              로그인
-            </Button>
-            <Button
-              render={<Link href="/sign-up" />}
-              size="sm"
-            >
-              시작하기
-            </Button>
+            <NavAuthButtons />
           </div>
         </div>
       </nav>
@@ -62,22 +50,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button
-              render={<Link href="/sign-up" />}
-              size="xl"
-              className="w-full sm:w-auto"
-            >
-              내 프로필 만들기
-              <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="transition-transform" />
-            </Button>
-            <Button
-              render={<Link href="/sign-in" />}
-              variant="outline"
-              size="xl"
-              className="w-full sm:w-auto"
-            >
-              로그인하기
-            </Button>
+            <HeroAuthButtons />
           </div>
         </div>
 
@@ -90,7 +63,7 @@ export default function Home() {
                 </div>
                 <CardTitle className="mb-3 text-xl font-bold text-slate-900">안전한 익명성</CardTitle>
                 <CardDescription className="text-slate-500 leading-relaxed text-base">
-                  질문하는 사람의 정보는 100% 비공개로 유지됩니다. 부담 없이 솔직한 대화를 시작해보세요.
+                  질문하는 사람의 정보는 비공개로 유지됩니다. 부담 없이 솔직한 대화를 시작해보세요.
                 </CardDescription>
               </Card>
 
@@ -125,17 +98,12 @@ export default function Home() {
                 <h2 className="mb-6 text-3xl font-bold text-slate-900 sm:text-4xl">지금 바로 시작해보세요</h2>
                 <p className="mb-10 text-slate-600 text-lg">
                     이미{" "}
-                    <Suspense fallback={<Skeleton className="inline-block h-5 w-16 align-middle rounded" />}>
+                    <Suspense fallback={<Skeleton as="span" className="inline-block h-5 w-16 align-middle rounded" />}>
                       <UserCount />
                     </Suspense>
                     명의 유저가 궁금닷컴을 사용하고 있어요.
                 </p>
-                <Button
-                  render={<Link href="/sign-up" />}
-                  size="xl"
-                >
-                  시작
-                </Button>
+                <BottomCTAButton />
             </div>
         </div>
       </main>
