@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { MainContent } from "@/components/layout/MainContent";
-import { RightPanel } from "@/components/layout/RightPanel";
-import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { QuestionForm } from "@/components/profile/QuestionForm";
-import { QAFeed } from "@/components/home/QAFeed";
+import { MainContent } from "@/components/layout/main-content";
+import { RightPanel } from "@/components/layout/right-panel";
+import { ProfileHeader } from "@/components/profile/profile-header";
+import { QuestionForm } from "@/components/profile/question-form";
+import { QAFeed } from "@/components/home/qa-feed";
 import { getClerkUserByUsername } from "@/lib/clerk";
 import { getUserByClerkId, getAnsweredQuestionsForUser, getOrCreateUser } from "@/lib/db/queries";
 import type { QuestionWithAnswers } from "@/lib/types";
@@ -32,9 +31,7 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
   const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
   
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      
+    <>
       <MainContent>
         <ProfileHeader
           avatar={clerkUser.avatarUrl || defaultAvatar}
@@ -54,6 +51,6 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
       <RightPanel>
         <QuestionForm recipientClerkId={clerkUser.clerkId} recipientUsername={clerkUser.username || username} />
       </RightPanel>
-    </div>
+    </>
   );
 }

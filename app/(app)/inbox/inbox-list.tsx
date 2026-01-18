@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { QuestionCard } from "@/components/inbox/QuestionCard";
+import { QuestionCard } from "@/components/inbox/question-card";
 import { useInboxStore } from "@/lib/stores/inbox-store";
 import type { Question } from "@/lib/types";
 

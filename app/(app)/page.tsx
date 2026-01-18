@@ -1,9 +1,8 @@
-import { Sidebar } from "@/components/layout/Sidebar";
-import { MainContent } from "@/components/layout/MainContent";
-import { RightPanel } from "@/components/layout/RightPanel";
-import { HeroCard } from "@/components/home/HeroCard";
-import { QAFeed } from "@/components/home/QAFeed";
-import { PeopleList } from "@/components/home/PeopleList";
+import { MainContent } from "@/components/layout/main-content";
+import { RightPanel } from "@/components/layout/right-panel";
+import { HeroCard } from "@/components/home/hero-card";
+import { QAFeed } from "@/components/home/qa-feed";
+import { PeopleList } from "@/components/home/people-list";
 import { getRecentAnsweredQuestions } from "@/lib/db/queries";
 import { getClerkUsersByIds } from "@/lib/clerk";
 
@@ -19,9 +18,7 @@ export default async function HomePage() {
   }));
   
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      
+    <>
       <MainContent>
         <HeroCard />
         <QAFeed recentItems={enrichedQA} />
@@ -30,6 +27,6 @@ export default async function HomePage() {
       <RightPanel>
         <PeopleList />
       </RightPanel>
-    </div>
+    </>
   );
 }

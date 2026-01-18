@@ -1,5 +1,5 @@
-import { QuestionBubble } from "@/components/questions/QuestionBubble";
-import { AnswerBubble } from "@/components/questions/AnswerBubble";
+import { QuestionBubble } from "@/components/questions/question-bubble";
+import { AnswerBubble } from "@/components/questions/answer-bubble";
 import type { QuestionWithAnswers } from "@/lib/types";
 
 function formatRelativeTime(date: Date): string {
