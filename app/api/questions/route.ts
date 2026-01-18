@@ -1,0 +1,43 @@
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
+import { createQuestion, getUser } from '@/lib/db/queries'
+
+export async function POST(request: NextRequest) {
+  try {
+    const { userId } = await auth()
+    const body = await request.json()
+    
+    const { recipientUsername, content, isAnonymous } = body
+    
+    if (!recipientUsername || !content) {
+      return NextResponse.json(
+        { error: '수신자와 질문 내용은 필수입니다' },
+        { status: 400 }
+      )
+    }
+    
+    const recipient = await getUser(recipientUsername)
+    if (!recipient) {
+      return NextResponse.json(
+        { error: '사용자를 찾을 수 없습니다' },
+        { status: 404 }
+      )
+    }
+    
+    const question = await createQuestion({
+      recipientId: recipient.id,
+      senderId: isAnonymous ? null : userId,
+      content,
+      isAnonymous: isAnonymous ? 1 : 0,
+    })
+    
+    return NextResponse.json(question[0], { status: 201 })
+  } catch (error) {
+    console.error('Question creation error:', error)
+    return NextResponse.json(
+      { error: '질문 생성 중 오류가 발생했습니다' },
+      { status: 500 }
+    )
+  }
+}
