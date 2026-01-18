@@ -1,7 +1,7 @@
 import { db } from '@/src/db'
 import { users, questions, answers } from '@/src/db/schema'
 import type { SocialLinks } from '@/src/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, count } from 'drizzle-orm'
 
 export async function getOrCreateUser(clerkId: string) {
   const existing = await db.query.users.findFirst({
@@ -111,4 +111,9 @@ export async function getQuestionsWithAnswers(
     limit: options?.limit,
     offset: options?.offset,
   })
+}
+
+export async function getTotalUserCount(): Promise<number> {
+  const result = await db.select({ count: count() }).from(users)
+  return result[0]?.count ?? 0
 }

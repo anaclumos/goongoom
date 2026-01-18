@@ -4,8 +4,10 @@ import { Message01Icon, Share01Icon, ShieldKeyIcon, ArrowRight01Icon, SparklesIc
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
+import { getTotalUserCount } from "@/lib/db/queries";
 
-export default function Home() {
+export default async function Home() {
+  const userCount = await getTotalUserCount();
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-orange-200 selection:text-orange-900">
       <nav className="fixed top-0 z-50 w-full border-b border-orange-100 bg-white/80 backdrop-blur-md">
@@ -109,7 +111,7 @@ export default function Home() {
                 </div>
                 <h2 className="mb-6 text-3xl font-bold text-slate-900 sm:text-4xl">지금 바로 시작해보세요</h2>
                 <p className="mb-10 text-slate-600 text-lg">
-                    이미 10,000명 이상의 유저가 궁금닷컴을 사용하고 있어요.
+                    이미 {userCount.toLocaleString()}명의 유저가 궁금닷컴을 사용하고 있어요.
                 </p>
                 <SignUpButton mode="modal">
                     <Button className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-slate-900 px-10 text-lg font-bold text-white shadow-xl shadow-slate-900/20 transition-all hover:scale-105 hover:bg-slate-800">
