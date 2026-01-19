@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Home01Icon, UserIcon, InboxIcon, Settings01Icon, LoginSquare01Icon } from "@hugeicons/core-free-icons";
+import { UserIcon, InboxIcon, Settings01Icon, LoginSquare01Icon } from "@hugeicons/core-free-icons";
 import { auth } from "@clerk/nextjs/server";
 import { getClerkUserById } from "@/lib/clerk";
 
@@ -9,7 +9,6 @@ export async function Sidebar() {
   const user = userId ? await getClerkUserById(userId) : null;
 
   const navItems = [
-    { href: "/", label: "홈", icon: Home01Icon },
     ...(user?.username
       ? [{ href: `/${user.username}`, label: "내 프로필", icon: UserIcon }]
       : []),
