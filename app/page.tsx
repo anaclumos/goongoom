@@ -1,10 +1,8 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Message01Icon, Share01Icon, ShieldKeyIcon, SparklesIcon, SentIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
-import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardPanel, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getTotalUserCount } from "@/lib/db/queries";
 import {
   NavAuthButtons,
@@ -117,11 +115,7 @@ export default function Home() {
                 </div>
                 <h2 className="mb-6 text-3xl font-bold text-foreground sm:text-4xl">지금 바로 시작해보세요</h2>
                 <p className="mb-10 text-lg text-muted-foreground">
-                    이미{" "}
-                    <Suspense fallback={<Skeleton as="span" className="inline-block h-5 w-16 align-middle rounded" />}>
-                      <UserCount />
-                    </Suspense>
-                    명의 유저가 궁금닷컴을 사용하고 있어요.
+                    이미 <UserCount />명의 유저가 궁금닷컴을 사용하고 있어요.
                 </p>
                 <BottomCTAButton />
             </div>

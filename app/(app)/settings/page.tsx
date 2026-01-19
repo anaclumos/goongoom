@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { MainContent } from "@/components/layout/main-content";
@@ -12,7 +11,6 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { ProfileSettingsSkeleton } from "@/components/settings/profile-settings-skeleton";
 import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security";
 
 interface SettingsPageProps {
@@ -70,19 +68,13 @@ async function SettingsForm() {
   );
 }
 
-export default function SettingsPage({ searchParams }: SettingsPageProps) {
+export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   return (
     <MainContent>
       <h1 className="mb-2 text-3xl font-bold text-foreground">설정</h1>
       <p className="mb-8 text-muted-foreground">프로필 정보를 수정하세요</p>
-
-      <Suspense fallback={null}>
-        <SettingsStatus searchParams={searchParams} />
-      </Suspense>
-
-      <Suspense fallback={<ProfileSettingsSkeleton />}>
-        <SettingsForm />
-      </Suspense>
+      <SettingsStatus searchParams={searchParams} />
+      <SettingsForm />
     </MainContent>
   );
 }
