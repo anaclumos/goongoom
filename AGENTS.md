@@ -141,6 +141,12 @@ import { AnimatedCard } from "@/components/ui/animated-card";
 
 ## Development Principles
 
+**Layout & Sizing**:
+- Use `h-full` and `flex-1` for full-height layouts
+- NEVER use `h-screen`, `100vh`, `100dvh`, or `min-h-screen`
+- Root layout stays minimal, children use `flex-1` as needed
+- This ensures proper behavior with iOS safe areas and dynamic viewports
+
 **Tailwind Primitives Only**:
 - Use Tailwind utility classes exclusively
 - NO arbitrary values: Avoid `[#ff0000]`, `[32px]`, `[1.5rem]`

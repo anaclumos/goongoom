@@ -20,13 +20,13 @@ export default function MorePage() {
     <MainContent>
       <h1 className="mb-8 text-3xl font-bold text-foreground">더보기</h1>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {moreOptions.map((option) => {
           const Icon = option.icon;
           return (
             <Button
               key={option.label}
-              className="w-full justify-start gap-4"
+              className="w-full justify-start gap-4 min-h-12"
               size="lg"
               variant="outline"
             >
@@ -34,7 +34,7 @@ export default function MorePage() {
                 icon={Icon}
                 className="size-5 text-muted-foreground"
               />
-              <span className="text-base text-muted-foreground">
+              <span className="text-base text-foreground">
                 {option.label}
               </span>
             </Button>

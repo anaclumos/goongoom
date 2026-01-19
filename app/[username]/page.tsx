@@ -1,28 +1,29 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+
+// Required for Cache Components with dynamic routes
+export function generateStaticParams() {
+  return [{ username: "__placeholder__" }];
+}
 import { HugeiconsIcon } from "@hugeicons/react";
-import { InstagramIcon, FacebookIcon, GithubIcon, LockIcon } from "@hugeicons/core-free-icons";
+import { InstagramIcon, FacebookIcon, GithubIcon } from "@hugeicons/core-free-icons";
 import { MainContent } from "@/components/layout/main-content";
 import { Card, CardPanel } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Field, FieldControl } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, Radio } from "@/components/ui/radio-group";
 import { Alert, AlertAction, AlertDescription } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ShareInstagramButton } from "@/components/questions/share-instagram-button";
+import { QuestionDrawer } from "@/components/questions/question-drawer";
 import { getClerkUserByUsername } from "@/lib/clerk";
 import { getOrCreateUser, getUserWithAnsweredQuestions } from "@/lib/db/queries";
 import { createQuestion } from "@/lib/actions/questions";
-import {
-  DEFAULT_QUESTION_SECURITY_LEVEL,
-  type QuestionSecurityLevel,
-} from "@/lib/question-security";
+import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security";
 import type { QuestionWithAnswers } from "@/lib/types";
 
 interface UserProfilePageProps {
@@ -65,12 +66,45 @@ function buildShareUrl({ question, answer, name }: { question: string; answer: s
   return `/api/instagram?${params.toString()}`;
 }
 
-export default async function UserProfilePage({ params, searchParams }: UserProfilePageProps) {
-  const { username } = await params;
-  const [clerkUser, authResult, query] = await Promise.all([
+function ProfileSkeleton() {
+  return (
+    <MainContent>
+      <Card className="mb-6">
+        <CardPanel className="flex items-start gap-6">
+          <Skeleton className="size-24 rounded-full" />
+          <div className="flex-1 space-y-3">
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-16 w-full max-w-md" />
+          </div>
+        </CardPanel>
+      </Card>
+      <Card className="mb-6">
+        <CardPanel className="space-y-4">
+          <Skeleton className="h-6 w-64" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </CardPanel>
+      </Card>
+    </MainContent>
+  );
+}
+
+async function UserProfileContent({ 
+  paramsPromise, 
+  searchParamsPromise 
+}: { 
+  paramsPromise: Promise<{ username: string }>; 
+  searchParamsPromise?: Promise<Record<string, string | string[] | undefined>>; 
+}) {
+  const [{ username }, searchParams = {}] = await Promise.all([
+    paramsPromise,
+    searchParamsPromise,
+  ]) as [{ username: string }, Record<string, string | string[] | undefined> | undefined];
+  
+  const [clerkUser, authResult] = await Promise.all([
     getClerkUserByUsername(username),
     auth(),
-    searchParams,
   ]);
 
   if (!clerkUser) notFound();
@@ -83,8 +117,8 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
   const displayName = clerkUser.displayName || clerkUser.username || username;
   const { userId } = authResult;
 
-  const error = typeof query?.error === "string" ? decodeURIComponent(query.error) : null;
-  const sent = query?.sent === "1";
+  const error = typeof searchParams?.error === "string" ? decodeURIComponent(searchParams.error) : null;
+  const sent = searchParams?.sent === "1";
   const status = error
     ? { type: "error" as const, message: error }
     : sent
@@ -101,7 +135,6 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
   const viewerIsVerified = Boolean(userId);
   const canAskAnonymously = securityLevel !== "public_only" && (securityLevel === "anyone" || viewerIsVerified);
   const canAskPublic = viewerIsVerified;
-  const defaultQuestionType = canAskAnonymously ? "anonymous" : "public";
   const showSecurityNotice =
     securityLevel === "verified_anonymous" ||
     securityLevel === "public_only" ||
@@ -186,15 +219,16 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
         )}
       </Card>
 
-      {showLoginWarning ? (
+      {status && (
+        <Alert variant={status.type === "error" ? "error" : "success"} className="mb-6">
+          <AlertDescription className="text-center">{status.message}</AlertDescription>
+        </Alert>
+      )}
+
+      {showLoginWarning && (
         <Card className="mb-6">
           <CardPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">{recipientUsername} 님에게 새 질문을 남겨보세요</h2>
-            {status?.type === "error" && (
-              <Alert variant="error">
-                <AlertDescription className="text-center">{status.message}</AlertDescription>
-              </Alert>
-            )}
             <Alert variant="warning">
               <AlertDescription>{warningMessage}</AlertDescription>
               <AlertAction>
@@ -203,64 +237,10 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
             </Alert>
           </CardPanel>
         </Card>
-      ) : (
-        <Card className="mb-6">
-          <CardPanel>
-            <form action={submitQuestion} className="space-y-4">
-              <h2 className="text-lg font-semibold text-foreground">{recipientUsername} 님에게 새 질문을 남겨보세요</h2>
-              <Field>
-                <FieldControl render={<Textarea name="question" placeholder="질문을 입력하세요…" rows={4} size="lg" required />} />
-              </Field>
-              {showSecurityNotice && (
-                <Alert variant="info">
-                  <AlertDescription>{securityNotice}</AlertDescription>
-                </Alert>
-              )}
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">누구로 질문할까요?</p>
-                <RadioGroup name="questionType" defaultValue={defaultQuestionType}>
-                  {canAskAnonymously && (
-                    <Label className="flex items-start gap-2 rounded-lg border border-border p-3 transition-colors hover:bg-accent/50 has-[data-checked]:border-primary/48 has-[data-checked]:bg-accent/50">
-                      <Radio id="r-anonymous" value="anonymous" />
-                      <div className="flex flex-col gap-1">
-                        <p className="font-medium text-foreground">익명</p>
-                        <p className="text-xs text-muted-foreground">익명으로 질문합니다</p>
-                      </div>
-                    </Label>
-                  )}
-                  {canAskPublic && (
-                    <Label className="flex items-start gap-2 rounded-lg border border-border p-3 transition-colors hover:bg-accent/50 has-[data-checked]:border-primary/48 has-[data-checked]:bg-accent/50">
-                      <Radio id="r-public" value="public" />
-                      <div className="flex flex-col gap-1">
-                        <p className="font-medium text-foreground">공개</p>
-                        <p className="text-xs text-muted-foreground">내 이름으로 질문합니다</p>
-                      </div>
-                    </Label>
-                  )}
-                </RadioGroup>
-              </div>
-              {status?.type === "success" && (
-                <Alert variant="success">
-                  <AlertDescription className="text-center">{status.message}</AlertDescription>
-                </Alert>
-              )}
-              {status?.type === "error" && (
-                <Alert variant="error">
-                  <AlertDescription className="text-center">{status.message}</AlertDescription>
-                </Alert>
-              )}
-              <Button type="submit" className="w-full" size="lg">
-                <HugeiconsIcon icon={LockIcon} className="size-4" aria-hidden="true" />
-                질문 보내기
-              </Button>
-              <p className="text-center text-xs text-muted-foreground">질문 시 사용 약관에 동의하게 됩니다</p>
-            </form>
-          </CardPanel>
-        </Card>
       )}
 
       {answeredQuestions.length > 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-6 pb-24">
           {answeredQuestions.map((qa) => {
             const answer = (qa as QuestionWithAnswers).answers[0];
             if (!answer) return null;
@@ -269,15 +249,15 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
               <Card key={qa.id}>
                 <CardPanel className="flex flex-col gap-4">
                   <div className="flex w-full items-start gap-3">
-                    <Avatar className="w-10 h-10 flex-shrink-0">
+                    <Avatar className="size-10 flex-shrink-0">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa.id}`} alt="Avatar" />
                       <AvatarFallback>?</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                       <Card className="max-w-prose bg-muted/40 px-4 py-3">
-                        <p className="text-foreground leading-relaxed">{qa.content}</p>
+                        <p className="leading-relaxed text-foreground">{qa.content}</p>
                       </Card>
-                      <p className="mt-1 ml-1 text-xs text-muted-foreground">
+                      <p className="ml-1 mt-1 text-xs text-muted-foreground">
                         {qa.isAnonymous === 1 ? "익명" : "공개"} · {formatRelativeTime(qa.createdAt)} 질문
                       </p>
                     </div>
@@ -287,14 +267,14 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
                       <Card className="max-w-prose border-primary/20 bg-primary px-4 py-3 text-primary-foreground">
                         <p className="leading-relaxed">{answer.content}</p>
                       </Card>
-                      <div className="mt-1 mr-1 flex flex-col items-end gap-1">
+                      <div className="mr-1 mt-1 flex flex-col items-end gap-1">
                         <p className="text-xs text-muted-foreground">
                           {displayName} · {formatRelativeTime(answer.createdAt)} 답변
                         </p>
                         <ShareInstagramButton shareUrl={shareUrl} />
                       </div>
                     </div>
-                    <Avatar className="w-10 h-10 flex-shrink-0">
+                    <Avatar className="size-10 flex-shrink-0">
                       {clerkUser.avatarUrl ? <AvatarImage src={clerkUser.avatarUrl} alt={displayName} /> : null}
                       <AvatarFallback>{displayName[0] || "?"}</AvatarFallback>
                     </Avatar>
@@ -305,12 +285,32 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
           })}
         </div>
       ) : (
-        <Empty>
+        <Empty className="pb-24">
           <EmptyHeader>
             <EmptyTitle>아직 답변된 질문이 없습니다.</EmptyTitle>
           </EmptyHeader>
         </Empty>
       )}
+
+      {!showLoginWarning && (canAskAnonymously || canAskPublic) && (
+        <QuestionDrawer
+          recipientUsername={recipientUsername}
+          recipientClerkId={recipientClerkId}
+          canAskAnonymously={canAskAnonymously}
+          canAskPublic={canAskPublic}
+          showSecurityNotice={showSecurityNotice}
+          securityNotice={securityNotice}
+          submitAction={submitQuestion}
+        />
+      )}
     </MainContent>
+  );
+}
+
+export default function UserProfilePage({ params, searchParams }: UserProfilePageProps) {
+  return (
+    <Suspense fallback={<ProfileSkeleton />}>
+      <UserProfileContent paramsPromise={params} searchParamsPromise={searchParams} />
+    </Suspense>
   );
 }

@@ -1,15 +1,12 @@
+import { Suspense } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Message01Icon, Share01Icon, ShieldKeyIcon, SparklesIcon, SentIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardPanel, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getTotalUserCount } from "@/lib/db/queries";
-import {
-  NavAuthButtons,
-  HeroAuthButtons,
-  BottomCTAButton,
-} from "@/components/auth/auth-buttons";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { HeroAuthButtons, BottomCTAButton } from "@/components/auth/auth-buttons";
 
 async function UserCount() {
   const userCount = await getTotalUserCount();
@@ -18,23 +15,8 @@ async function UserCount() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground">
-      <nav className="fixed top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg text-white shadow-lg shadow-orange-500/30" style={{ background: "var(--gradient-sunset)" }}>
-              <HugeiconsIcon icon={Message01Icon} size={18} strokeWidth={3} />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">궁금닷컴</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <NavAuthButtons />
-          </div>
-        </div>
-      </nav>
-
-      <main className="relative overflow-hidden pt-32">
+    <div className="h-full">
+      <div className="relative overflow-hidden pt-16">
         <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-neon-pink/10 blur-3xl filter" />
         <div className="absolute top-48 -left-24 h-72 w-72 rounded-full bg-electric-blue/10 blur-3xl filter" />
 
@@ -115,12 +97,12 @@ export default function Home() {
                 </div>
                 <h2 className="mb-6 text-3xl font-bold text-foreground sm:text-4xl">지금 바로 시작해보세요</h2>
                 <p className="mb-10 text-lg text-muted-foreground">
-                    이미 <UserCount />명의 유저가 궁금닷컴을 사용하고 있어요.
+                    이미 <Suspense fallback={<Skeleton className="inline-block h-5 w-12" />}><UserCount /></Suspense>명의 유저가 궁금닷컴을 사용하고 있어요.
                 </p>
                 <BottomCTAButton />
             </div>
         </div>
-      </main>
+      </div>
 
       <footer className="border-t border-border bg-background py-12">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">

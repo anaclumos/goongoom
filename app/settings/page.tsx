@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
@@ -12,9 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { RadioGroup, Radio } from "@/components/ui/radio-group";
-import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DEFAULT_QUESTION_SECURITY_LEVEL,
   QUESTION_SECURITY_LEVELS,
@@ -46,7 +47,25 @@ function normalizeHandle(value: string) {
   }
 }
 
-export default async function SettingsPage({ searchParams }: SettingsPageProps) {
+function SettingsSkeleton() {
+  return (
+    <MainContent>
+      <Skeleton className="mb-2 h-9 w-16" />
+      <Skeleton className="mb-8 h-5 w-40" />
+      <Card className="space-y-6 p-6">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        ))}
+        <Skeleton className="h-11 w-full" />
+      </Card>
+    </MainContent>
+  );
+}
+
+async function SettingsContent({ searchParamsPromise }: { searchParamsPromise?: Promise<Record<string, string | string[] | undefined>> }) {
   const { userId: clerkId } = await auth();
 
   if (!clerkId) {
@@ -56,7 +75,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const [clerkUser, dbUser, query] = await Promise.all([
     getClerkUserById(clerkId),
     getOrCreateUser(clerkId),
-    searchParams,
+    searchParamsPromise,
   ]);
 
   const error = typeof query?.error === "string" ? decodeURIComponent(query.error) : null;
@@ -190,8 +209,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             />
           </Field>
 
-          <div className="space-y-4">
-            <Separator />
+          <div className="space-y-4 border-t border-border pt-6">
             <div className="space-y-1">
               <h3 className="text-base font-medium text-foreground">소셜 링크</h3>
               <p className="text-xs text-muted-foreground">사용자 이름(핸들)만 입력하세요.</p>
@@ -225,5 +243,13 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         </form>
       </Card>
     </MainContent>
+  );
+}
+
+export default function SettingsPage({ searchParams }: SettingsPageProps) {
+  return (
+    <Suspense fallback={<SettingsSkeleton />}>
+      <SettingsContent searchParamsPromise={searchParams} />
+    </Suspense>
   );
 }

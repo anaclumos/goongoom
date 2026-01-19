@@ -4,6 +4,7 @@ import { koKR } from "@clerk/localizations";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "next-themes";
+import { GlobalNav } from "@/components/layout/global-nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,13 +27,14 @@ export default function RootLayout({
   return (
     <ClerkProvider localization={koKR}>
       <html lang="ko" suppressHydrationWarning>
-        <body className="font-sans antialiased">
+        <body className="bg-background font-sans antialiased">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
+            <GlobalNav />
             {children}
           </ThemeProvider>
           <Analytics />

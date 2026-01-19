@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/menu";
+import { MoreVerticalIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface ShareInstagramButtonProps {
   shareUrl: string;
 }
 
 export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
-  const [status, setStatus] = useState<"loading" | "ready" | "sharing">(
-    "loading",
-  );
   const sharingRef = useRef(false);
   const fileRef = useRef<File | null>(null);
 
@@ -21,7 +26,7 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
       try {
         const response = await fetch(shareUrl);
         if (cancelled) return;
-        if (!response.ok) throw new Error("Failed to fetch");
+        if (!response.ok) return;
 
         const blob = await response.blob();
         if (cancelled) return;
@@ -29,10 +34,7 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
         fileRef.current = new File([blob], "goongoom-share.png", {
           type: "image/png",
         });
-        setStatus("ready");
-      } catch {
-        if (!cancelled) setStatus("ready");
-      }
+      } catch {}
     }
 
     prefetch();
@@ -43,13 +45,13 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
 
   const handleShare = async () => {
     if (sharingRef.current) return;
+
     if (!fileRef.current) {
       window.open(shareUrl, "_blank");
       return;
     }
 
     sharingRef.current = true;
-    setStatus("sharing");
 
     try {
       const canShare = navigator.canShare?.({ files: [fileRef.current] });
@@ -71,7 +73,7 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
     } catch (error) {
       const isUserCancelled =
         error instanceof Error && error.name === "AbortError";
-      if (!isUserCancelled) {
+      if (!isUserCancelled && fileRef.current) {
         const url = URL.createObjectURL(fileRef.current);
         const a = document.createElement("a");
         a.href = url;
@@ -81,22 +83,23 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
       }
     } finally {
       sharingRef.current = false;
-      setStatus("ready");
     }
   };
 
   return (
-    <Button
-      variant="link"
-      size="xs"
-      onClick={handleShare}
-      disabled={status === "loading" || status === "sharing"}
-    >
-      {status === "loading"
-        ? "이미지 준비 중..."
-        : status === "sharing"
-          ? "공유 중..."
-          : "인스타그램 이미지 공유하기"}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" size="icon-xs">
+            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+          </Button>
+        }
+      />
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={handleShare}>
+          인스타그램 이미지 공유
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
