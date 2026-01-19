@@ -1,19 +1,13 @@
-import { Suspense } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Message01Icon, Share01Icon, ShieldKeyIcon, SparklesIcon, SentIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardPanel, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getTotalUserCount } from "@/lib/db/queries";
 import { HeroAuthButtons, BottomCTAButton } from "@/components/auth/auth-buttons";
 
-async function UserCountMessage() {
+export default async function Home() {
   const userCount = await getTotalUserCount();
-  return <>이미 {userCount.toLocaleString()}명의 유저가 궁금닷컴을 사용하고 있어요.</>;
-}
-
-export default function Home() {
   return (
     <div className="h-full">
       <div className="relative overflow-hidden pt-32">
@@ -97,9 +91,7 @@ export default function Home() {
                 </div>
                 <h2 className="mb-6 text-3xl font-bold text-foreground sm:text-4xl">지금 바로 시작해보세요</h2>
                 <p className="mb-10 text-lg text-muted-foreground">
-                    <Suspense fallback="이미 로딩중...명의 유저가 궁금닷컴을 사용하고 있어요.">
-                      <UserCountMessage />
-                    </Suspense>
+                    이미 {userCount.toLocaleString()}명의 유저가 궁금닷컴을 사용하고 있어요.
                 </p>
                 <BottomCTAButton />
             </div>

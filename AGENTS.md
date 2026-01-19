@@ -11,11 +11,9 @@ Goongoom embraces a vibrant, playful, Gen-Z aesthetic inspired by Zenly's poppin
 
 ## Direct Server Render Strategy (RSC + PPR)
 - Default to Server Components. `use client` is allowed in `components/ui` and other leaf components that require client interactivity.
-- Keep server components granular: one async server component per data slice, each wrapped in `<Suspense>` with a matching `*Skeleton`.
-- Avoid a single giant `loading.tsx` fallback. Compose `loading.tsx` from section skeletons only.
+- Keep it simple: no `loading.tsx`, no `<Suspense>`. Let pages render directly.
 - Use server actions + `<form action={...}>` for all mutations; avoid client form libraries.
 - Deduplicate shared reads with `cache()` and parallelize independent fetches with `Promise.all`.
-- PPR is enabled via `cacheComponents: true` (Next 16+). Avoid `experimental.ppr`. Keep the static shell outside Suspense so dynamic sections can stream.
 
 ## Color System
 

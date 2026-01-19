@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
@@ -15,7 +14,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { RadioGroup, Radio } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   DEFAULT_QUESTION_SECURITY_LEVEL,
   QUESTION_SECURITY_LEVELS,
@@ -45,24 +43,6 @@ function normalizeHandle(value: string) {
   } catch {
     return cleaned.split("/").filter(Boolean)[0] || "";
   }
-}
-
-function SettingsSkeleton() {
-  return (
-    <MainContent>
-      <Skeleton className="mb-2 h-9 w-16" />
-      <Skeleton className="mb-8 h-5 w-40" />
-      <Card className="space-y-6 p-6">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="space-y-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-        ))}
-        <Skeleton className="h-11 w-full" />
-      </Card>
-    </MainContent>
-  );
 }
 
 async function SettingsContent({ searchParamsPromise }: { searchParamsPromise?: Promise<Record<string, string | string[] | undefined>> }) {
@@ -247,9 +227,5 @@ async function SettingsContent({ searchParamsPromise }: { searchParamsPromise?: 
 }
 
 export default function SettingsPage({ searchParams }: SettingsPageProps) {
-  return (
-    <Suspense fallback={<SettingsSkeleton />}>
-      <SettingsContent searchParamsPromise={searchParams} />
-    </Suspense>
-  );
+  return <SettingsContent searchParamsPromise={searchParams} />;
 }

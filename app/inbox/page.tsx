@@ -1,10 +1,8 @@
-import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { MainContent } from "@/components/layout/main-content";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getClerkUsersByIds } from "@/lib/clerk";
 import { getOrCreateUser, getUnansweredQuestions } from "@/lib/db/queries";
 import { InboxList } from "./inbox-list";
@@ -12,20 +10,6 @@ import type { Question } from "@/lib/types";
 
 interface InboxPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}
-
-function InboxSkeleton() {
-  return (
-    <MainContent>
-      <Skeleton className="mb-2 h-9 w-32" />
-      <Skeleton className="mb-8 h-5 w-48" />
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-24 w-full rounded-lg" />
-        ))}
-      </div>
-    </MainContent>
-  );
 }
 
 async function InboxContent({ searchParamsPromise }: { searchParamsPromise?: Promise<Record<string, string | string[] | undefined>> }) {
@@ -97,9 +81,5 @@ async function InboxContent({ searchParamsPromise }: { searchParamsPromise?: Pro
 }
 
 export default function InboxPage({ searchParams }: InboxPageProps) {
-  return (
-    <Suspense fallback={<InboxSkeleton />}>
-      <InboxContent searchParamsPromise={searchParams} />
-    </Suspense>
-  );
+  return <InboxContent searchParamsPromise={searchParams} />;
 }

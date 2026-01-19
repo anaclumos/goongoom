@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -17,7 +16,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertAction, AlertDescription } from "@/components/ui/alert";
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ShareInstagramButton } from "@/components/questions/share-instagram-button";
 import { QuestionDrawer } from "@/components/questions/question-drawer";
 import { getClerkUserByUsername } from "@/lib/clerk";
@@ -64,30 +62,6 @@ function buildShareUrl({ question, answer, name }: { question: string; answer: s
     name: normalize(name, 40),
   });
   return `/api/instagram?${params.toString()}`;
-}
-
-function ProfileSkeleton() {
-  return (
-    <MainContent>
-      <Card className="mb-6">
-        <CardPanel className="flex items-start gap-6">
-          <Skeleton className="size-24 rounded-full" />
-          <div className="flex-1 space-y-3">
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-16 w-full max-w-md" />
-          </div>
-        </CardPanel>
-      </Card>
-      <Card className="mb-6">
-        <CardPanel className="space-y-4">
-          <Skeleton className="h-6 w-64" />
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-12 w-full" />
-        </CardPanel>
-      </Card>
-    </MainContent>
-  );
 }
 
 async function UserProfileContent({ 
@@ -308,9 +282,5 @@ async function UserProfileContent({
 }
 
 export default function UserProfilePage({ params, searchParams }: UserProfilePageProps) {
-  return (
-    <Suspense fallback={<ProfileSkeleton />}>
-      <UserProfileContent paramsPromise={params} searchParamsPromise={searchParams} />
-    </Suspense>
-  );
+  return <UserProfileContent paramsPromise={params} searchParamsPromise={searchParams} />;
 }
