@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { MainContent } from "@/components/layout/main-content";
@@ -10,86 +9,34 @@ import { getOrCreateUser, getUserWithAnsweredQuestions } from "@/lib/db/queries"
 import type { QuestionWithAnswers } from "@/lib/types";
 
 interface UserProfilePageProps {
-  params: Promise<{
-    username: string;
-  }>;
+  params: Promise<{ username: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-const PLACEHOLDER_USERNAME = "_build_placeholder_";
-
-const getClerkUser = cache(async (username: string) => {
-  if (username === PLACEHOLDER_USERNAME) return null;
-  return getClerkUserByUsername(username);
-});
-
-const getProfileInfo = cache(async (username: string) => {
-  const clerkUser = await getClerkUser(username);
-  if (!clerkUser) return null;
-  const dbUser = await getOrCreateUser(clerkUser.clerkId);
-  return { clerkUser, dbUser };
-});
-
-const getAnsweredQuestions = cache(async (username: string) => {
-  const clerkUser = await getClerkUser(username);
-  if (!clerkUser) return null;
-  const { answeredQuestions } = await getUserWithAnsweredQuestions(clerkUser.clerkId);
-  return answeredQuestions;
-});
-
-async function ProfileHeaderSection({ params }: UserProfilePageProps) {
+export default async function UserProfilePage({
+  params,
+  searchParams,
+}: UserProfilePageProps) {
   const { username } = await params;
-  const data = await getProfileInfo(username);
-  if (!data) notFound();
-
-  const { clerkUser, dbUser } = data;
-  const displayName = clerkUser.displayName || clerkUser.username || username;
-
-  return (
-    <ProfileHeader
-      avatar={clerkUser.avatarUrl}
-      name={displayName}
-      username={clerkUser.username || username}
-      bio={dbUser?.bio || undefined}
-      socialLinks={dbUser?.socialLinks || undefined}
-    />
-  );
-}
-
-async function QAFeedSection({ params }: UserProfilePageProps) {
-  const { username } = await params;
-  const clerkUser = await getClerkUser(username);
-  if (!clerkUser) notFound();
-
-  const answeredQuestions = await getAnsweredQuestions(username);
-  if (!answeredQuestions) notFound();
-
-  const displayName = clerkUser.displayName || clerkUser.username || username;
-
-  return (
-    <QAFeed
-      items={answeredQuestions as QuestionWithAnswers[]}
-      recipientName={displayName}
-      recipientAvatar={clerkUser.avatarUrl}
-    />
-  );
-}
-
-async function QuestionFormSection({ params, searchParams }: UserProfilePageProps) {
-  const { username } = await params;
-  const [data, authResult, query] = await Promise.all([
-    getProfileInfo(username),
+  const [clerkUser, authResult, query] = await Promise.all([
+    getClerkUserByUsername(username),
     auth(),
     searchParams,
   ]);
-  if (!data) notFound();
-  const { clerkUser, dbUser } = data;
+
+  if (!clerkUser) notFound();
+
+  const [dbUser, { answeredQuestions }] = await Promise.all([
+    getOrCreateUser(clerkUser.clerkId),
+    getUserWithAnsweredQuestions(clerkUser.clerkId),
+  ]);
+
+  const displayName = clerkUser.displayName || clerkUser.username || username;
   const { userId } = authResult;
 
   const error =
     typeof query?.error === "string" ? decodeURIComponent(query.error) : null;
   const sent = query?.sent === "1";
-
   const status = error
     ? { type: "error" as const, message: error }
     : sent
@@ -97,29 +44,26 @@ async function QuestionFormSection({ params, searchParams }: UserProfilePageProp
       : null;
 
   return (
-    <QuestionForm
-      recipientClerkId={clerkUser.clerkId}
-      recipientUsername={clerkUser.username || username}
-      questionSecurityLevel={dbUser?.questionSecurityLevel || null}
-      viewerIsVerified={Boolean(userId)}
-      status={status}
-    />
-  );
-}
-
-export function generateStaticParams() {
-  return [{ username: PLACEHOLDER_USERNAME }];
-}
-
-export default async function UserProfilePage({
-  params,
-  searchParams,
-}: UserProfilePageProps) {
-  return (
     <MainContent>
-      <ProfileHeaderSection params={params} />
-      <QuestionFormSection params={params} searchParams={searchParams} />
-      <QAFeedSection params={params} />
+      <ProfileHeader
+        avatar={clerkUser.avatarUrl}
+        name={displayName}
+        username={clerkUser.username || username}
+        bio={dbUser?.bio || undefined}
+        socialLinks={dbUser?.socialLinks || undefined}
+      />
+      <QuestionForm
+        recipientClerkId={clerkUser.clerkId}
+        recipientUsername={clerkUser.username || username}
+        questionSecurityLevel={dbUser?.questionSecurityLevel || null}
+        viewerIsVerified={Boolean(userId)}
+        status={status}
+      />
+      <QAFeed
+        items={answeredQuestions as QuestionWithAnswers[]}
+        recipientName={displayName}
+        recipientAvatar={clerkUser.avatarUrl}
+      />
     </MainContent>
   );
 }
