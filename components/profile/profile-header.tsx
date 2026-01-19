@@ -3,6 +3,7 @@ import { InstagramIcon, FacebookIcon, GithubIcon } from "@hugeicons/core-free-ic
 import { Card, CardPanel } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface ProfileHeaderProps {
   avatar?: string | null;
@@ -87,7 +88,7 @@ export function ProfileHeader({
                     aria-label={link.label}
                     className="rounded-full"
                     render={
-                      <a
+                      <Link
                         href={link.href as string}
                         rel="noopener noreferrer"
                         target="_blank"
