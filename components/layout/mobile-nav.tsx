@@ -9,6 +9,7 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import { getClerkUserById } from "@/lib/clerk";
 import { Button } from "@/components/ui/button";
+import { ThemeToggleMobile } from "@/components/theme-toggle-mobile";
 
 export async function MobileNav() {
   const { userId } = await auth();
@@ -47,6 +48,7 @@ export async function MobileNav() {
             </Button>
           );
         })}
+        <ThemeToggleMobile />
       </div>
     </nav>
   );

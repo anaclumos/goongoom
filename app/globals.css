@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Pretendard Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Pretendard Variable", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,6 +52,26 @@
   --color-info-foreground: var(--info-foreground);
   --color-info: var(--info);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-electric-blue: var(--electric-blue);
+  --color-electric-blue-foreground: var(--electric-blue-foreground);
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-pink-foreground: var(--neon-pink-foreground);
+  --color-lime: var(--lime);
+  --color-lime-foreground: var(--lime-foreground);
+  --color-sunset-orange: var(--sunset-orange);
+  --color-sunset-orange-foreground: var(--sunset-orange-foreground);
+  --color-purple: var(--purple);
+  --color-purple-foreground: var(--purple-foreground);
+  --gradient-sunset: var(--gradient-sunset);
+  --gradient-ocean: var(--gradient-ocean);
+  --gradient-forest: var(--gradient-forest);
+  --gradient-candy: var(--gradient-candy);
+  --gradient-electric: var(--gradient-electric);
+  --gradient-neon: var(--gradient-neon);
+  --gradient-cosmic: var(--gradient-cosmic);
+  --gradient-tropical: var(--gradient-tropical);
+  --gradient-fire: var(--gradient-fire);
+  --gradient-aurora: var(--gradient-aurora);
   @keyframes skeleton {
   to {
     background-position: -200% 0;
@@ -63,6 +83,7 @@
   --radius: 0.625rem;
   --background: var(--color-white);
   --foreground: var(--color-neutral-800);
+  --pattern-grid: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+');
   --card: var(--color-white);
   --card-foreground: var(--color-neutral-800);
   --popover: var(--color-white);
@@ -99,6 +120,26 @@
   --success-foreground: var(--color-emerald-700);
   --warning: var(--color-amber-500);
   --warning-foreground: var(--color-amber-700);
+  --electric-blue: oklch(0.6 0.2 240);
+  --electric-blue-foreground: oklch(0.98 0 0);
+  --neon-pink: oklch(0.65 0.25 350);
+  --neon-pink-foreground: oklch(0.98 0 0);
+  --lime: oklch(0.75 0.2 130);
+  --lime-foreground: oklch(0.2 0 0);
+  --sunset-orange: oklch(0.7 0.18 50);
+  --sunset-orange-foreground: oklch(0.98 0 0);
+  --purple: oklch(0.65 0.25 300);
+  --purple-foreground: oklch(0.98 0 0);
+  --gradient-sunset: linear-gradient(135deg, oklch(0.7 0.18 50) 0%, oklch(0.65 0.25 350) 50%, oklch(0.65 0.25 300) 100%);
+  --gradient-ocean: linear-gradient(135deg, oklch(0.6 0.2 240) 0%, oklch(0.7 0.15 200) 50%, oklch(0.65 0.18 180) 100%);
+  --gradient-forest: linear-gradient(135deg, oklch(0.75 0.2 130) 0%, oklch(0.65 0.18 160) 50%, oklch(0.55 0.15 150) 100%);
+  --gradient-candy: linear-gradient(135deg, oklch(0.65 0.25 350) 0%, oklch(0.65 0.25 300) 50%, oklch(0.6 0.2 240) 100%);
+  --gradient-electric: linear-gradient(135deg, oklch(0.6 0.2 240) 0%, oklch(0.65 0.25 300) 100%);
+  --gradient-neon: linear-gradient(135deg, oklch(0.65 0.25 350) 0%, oklch(0.7 0.18 50) 100%);
+  --gradient-cosmic: linear-gradient(135deg, oklch(0.65 0.25 300) 0%, oklch(0.6 0.2 240) 50%, oklch(0.65 0.25 350) 100%);
+  --gradient-tropical: linear-gradient(135deg, oklch(0.75 0.2 130) 0%, oklch(0.7 0.18 50) 50%, oklch(0.65 0.25 350) 100%);
+  --gradient-fire: linear-gradient(135deg, oklch(0.7 0.18 50) 0%, oklch(0.65 0.25 350) 50%, oklch(0.65 0.25 300) 100%);
+  --gradient-aurora: linear-gradient(135deg, oklch(0.6 0.2 240) 0%, oklch(0.75 0.2 130) 50%, oklch(0.65 0.25 350) 100%);
 }
 
 .dark {
@@ -140,6 +181,26 @@
   --success-foreground: var(--color-emerald-400);
   --warning: var(--color-amber-500);
   --warning-foreground: var(--color-amber-400);
+  --electric-blue: oklch(0.68 0.18 240);
+  --electric-blue-foreground: oklch(0.98 0 0);
+  --neon-pink: oklch(0.72 0.22 350);
+  --neon-pink-foreground: oklch(0.98 0 0);
+  --lime: oklch(0.8 0.18 130);
+  --lime-foreground: oklch(0.2 0 0);
+  --sunset-orange: oklch(0.75 0.16 50);
+  --sunset-orange-foreground: oklch(0.98 0 0);
+  --purple: oklch(0.72 0.22 300);
+  --purple-foreground: oklch(0.98 0 0);
+  --gradient-sunset: linear-gradient(135deg, oklch(0.75 0.16 50) 0%, oklch(0.72 0.22 350) 50%, oklch(0.72 0.22 300) 100%);
+  --gradient-ocean: linear-gradient(135deg, oklch(0.68 0.18 240) 0%, oklch(0.75 0.13 200) 50%, oklch(0.7 0.16 180) 100%);
+  --gradient-forest: linear-gradient(135deg, oklch(0.8 0.18 130) 0%, oklch(0.7 0.16 160) 50%, oklch(0.6 0.13 150) 100%);
+  --gradient-candy: linear-gradient(135deg, oklch(0.72 0.22 350) 0%, oklch(0.72 0.22 300) 50%, oklch(0.68 0.18 240) 100%);
+  --gradient-electric: linear-gradient(135deg, oklch(0.68 0.18 240) 0%, oklch(0.72 0.22 300) 100%);
+  --gradient-neon: linear-gradient(135deg, oklch(0.72 0.22 350) 0%, oklch(0.75 0.16 50) 100%);
+  --gradient-cosmic: linear-gradient(135deg, oklch(0.72 0.22 300) 0%, oklch(0.68 0.18 240) 50%, oklch(0.72 0.22 350) 100%);
+  --gradient-tropical: linear-gradient(135deg, oklch(0.8 0.18 130) 0%, oklch(0.75 0.16 50) 50%, oklch(0.72 0.22 350) 100%);
+  --gradient-fire: linear-gradient(135deg, oklch(0.75 0.16 50) 0%, oklch(0.72 0.22 350) 50%, oklch(0.72 0.22 300) 100%);
+  --gradient-aurora: linear-gradient(135deg, oklch(0.68 0.18 240) 0%, oklch(0.8 0.18 130) 50%, oklch(0.72 0.22 350) 100%);
 }
 
 @layer base {
@@ -148,5 +209,233 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(1rem); }
+    to { transform: translateY(0); }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-1rem); }
+    to { transform: translateY(0); }
+  }
+
+  @keyframes slideLeft {
+    from { transform: translateX(1rem); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes slideRight {
+    from { transform: translateX(-1rem); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes slideUpFade {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDownFade {
+    from {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes scaleOut {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-0.5rem); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+  }
+
+  @keyframes pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-fade-out {
+    animation: fadeOut 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-slide-left {
+    animation: slideLeft 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-slide-right {
+    animation: slideRight 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-slide-up-fade {
+    animation: slideUpFade 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-slide-down-fade {
+    animation: slideDownFade 0.25s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .animate-scale-out {
+    animation: scaleOut 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-bounce {
+    animation: bounce 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .animate-pulse {
+    animation: pulse 0.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .animate-wiggle {
+    animation: wiggle 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-pop {
+    animation: pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-0.25rem);
+  }
+
+  .tap-scale {
+    transition: transform 0.15s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .tap-scale:active {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-out,
+    .animate-slide-up,
+    .animate-slide-down,
+    .animate-slide-left,
+    .animate-slide-right,
+    .animate-slide-up-fade,
+    .animate-slide-down-fade,
+    .animate-scale-in,
+    .animate-scale-out,
+    .animate-bounce,
+    .animate-pulse,
+    .animate-shimmer,
+    .animate-wiggle,
+    .animate-pop {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .hover-lift:hover {
+      transform: none;
+    }
+
+    .tap-scale:active {
+      transform: none;
+    }
   }
 }

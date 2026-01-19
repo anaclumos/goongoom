@@ -11,6 +11,7 @@ import {
   HeroAuthButtons,
   BottomCTAButton,
 } from "@/components/auth/auth-buttons";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 async function UserCount() {
   const userCount = await getTotalUserCount();
@@ -29,6 +30,7 @@ export default function Home() {
             <span className="text-lg font-bold tracking-tight text-foreground">궁금닷컴</span>
           </Link>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <NavAuthButtons />
           </div>
         </div>
@@ -46,9 +48,8 @@ export default function Home() {
             </span>
           </Badge>
           
-          <h1 className="mb-8 text-5xl font-extrabold leading-tight tracking-tight text-foreground sm:text-7xl">
-            궁금한 건 뭐든 <br className="hidden sm:block" />
-            <span className="text-primary">물어보세요</span>
+          <h1 className="mb-8 text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-7xl text-balance">
+            궁금한 건 뭐든 물어보세요
           </h1>
           
           <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">

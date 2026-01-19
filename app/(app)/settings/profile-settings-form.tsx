@@ -71,6 +71,30 @@ export function ProfileSettingsForm({
   async function submitProfile(formData: FormData) {
     "use server";
 
+    const normalizeHandle = (value: string) => {
+      const trimmed = value.trim();
+      if (!trimmed) return "";
+      const cleaned = trimmed.replace(/^@/, "");
+      const looksLikeUrl =
+        /:\/\/|\/|instagram\.com|github\.com|twitter\.com|x\.com|www\./i.test(
+          cleaned,
+        );
+
+      if (!looksLikeUrl) {
+        return cleaned;
+      }
+
+      try {
+        const url = new URL(
+          cleaned.includes("://") ? cleaned : `https://${cleaned}`,
+        );
+        const parts = url.pathname.split("/").filter(Boolean);
+        return parts[0] || "";
+      } catch {
+        return cleaned.split("/").filter(Boolean)[0] || "";
+      }
+    };
+
     const bio = String(formData.get("bio") || "").trim();
     const instagram = normalizeHandle(String(formData.get("instagram") || ""));
     const github = normalizeHandle(String(formData.get("github") || ""));

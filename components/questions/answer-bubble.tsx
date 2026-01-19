@@ -20,7 +20,7 @@ export function AnswerBubble({
   return (
     <div className="flex w-full items-start justify-end gap-3">
       <div className="flex flex-1 flex-col items-end">
-        <Card className="max-w-[85%] border-primary/20 bg-primary px-4 py-3 text-primary-foreground">
+        <Card className="max-w-prose border-primary/20 bg-primary px-4 py-3 text-primary-foreground">
           <p className="leading-relaxed">{content}</p>
         </Card>
         <div className="mt-1 mr-1 flex flex-col items-end gap-1">

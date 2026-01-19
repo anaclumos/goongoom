@@ -93,15 +93,14 @@ function ChatPair({
 
   return (
     <Card>
-      <CardPanel className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-start">
+      <CardPanel className="flex flex-col gap-4">
         <QuestionBubble
           avatar={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${question.id}`}
           content={question.content}
           isAnonymous={question.isAnonymous === 1}
           timestamp={formatRelativeTime(question.createdAt)}
         />
-        <Separator className="md:hidden" />
-        <Separator className="hidden md:block" orientation="vertical" />
+        <Separator />
         <AnswerBubble
           avatar={recipientAvatar || null}
           username={recipientName}

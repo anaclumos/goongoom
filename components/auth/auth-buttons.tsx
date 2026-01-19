@@ -20,10 +20,7 @@ export function NavAuthButtons() {
   return (
     <>
       <ClerkLoading>
-        <>
-          <Skeleton className="h-8 w-16 rounded-lg" />
-          <Skeleton className="h-8 w-20 rounded-lg" />
-        </>
+          <Skeleton className="h-8 w-36 rounded-lg" />
       </ClerkLoading>
       <ClerkLoaded>
         <SignedOut>
@@ -39,7 +36,7 @@ export function NavAuthButtons() {
           </SignUpButton>
         </SignedOut>
         <SignedIn>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton/>
         </SignedIn>
       </ClerkLoaded>
     </>
@@ -53,10 +50,9 @@ export function HeroAuthButtons() {
   return (
     <>
       <ClerkLoading>
-        <>
-          <Skeleton className="h-11 w-full rounded-lg sm:w-44" />
-          <Skeleton className="h-11 w-full rounded-lg sm:w-32" />
-        </>
+
+          <Skeleton className="h-10 w-full rounded-lg sm:w-64" />
+
       </ClerkLoading>
       <ClerkLoaded>
         <SignedOut>

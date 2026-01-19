@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { koKR } from "@clerk/localizations";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,9 +26,16 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={koKR}>
-      <html lang="ko" className="[color-scheme:light_dark]">
+      <html lang="ko" suppressHydrationWarning>
         <body className="font-sans antialiased">
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
           <Analytics />
           <SpeedInsights />
         </body>

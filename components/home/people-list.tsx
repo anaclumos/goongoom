@@ -37,7 +37,7 @@ export function PeopleList({ people }: PeopleListProps) {
 
           return (
             <div key={person.clerkId} className="flex items-center gap-3">
-              <Avatar className="h-[62px] w-[62px]">
+              <Avatar className="size-16">
                 {person.avatarUrl ? (
                   <AvatarImage src={person.avatarUrl} alt={displayName} />
                 ) : null}

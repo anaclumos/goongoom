@@ -21,7 +21,7 @@ export function QuestionBubble({
         <AvatarFallback>?</AvatarFallback>
       </Avatar>
       <div className="flex-1">
-        <Card className="max-w-[85%] bg-muted/40 px-4 py-3">
+        <Card className="max-w-prose bg-muted/40 px-4 py-3">
           <p className="text-foreground leading-relaxed">{content}</p>
         </Card>
         <p className="mt-1 ml-1 text-xs text-muted-foreground">
