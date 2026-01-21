@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { toast } from "sonner"
 
 interface ToastOnMountProps {
@@ -9,7 +9,13 @@ interface ToastOnMountProps {
 }
 
 export function ToastOnMount({ message, type = "info" }: ToastOnMountProps) {
+  const shownRef = useRef(false)
+
   useEffect(() => {
+    if (shownRef.current) {
+      return
+    }
+    shownRef.current = true
     toast[type](message)
   }, [message, type])
 

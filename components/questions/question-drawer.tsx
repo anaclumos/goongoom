@@ -4,9 +4,8 @@ import { SignInButton, SignUpButton } from "@clerk/nextjs"
 import { AnonymousIcon, LockIcon, UserIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { useFormStatus } from "react-dom"
-import { toast } from "sonner"
 import { QuestionInputTrigger } from "@/components/questions/question-input-trigger"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,8 +24,6 @@ interface QuestionDrawerProps {
   recipientClerkId: string
   canAskAnonymously: boolean
   canAskPublic: boolean
-  showSecurityNotice: boolean
-  securityNotice: string | null
   submitAction: (formData: FormData) => Promise<void>
   requiresSignIn?: boolean
 }
@@ -60,31 +57,14 @@ export function QuestionDrawer({
   recipientName,
   canAskAnonymously,
   canAskPublic,
-  showSecurityNotice,
-  securityNotice,
   submitAction,
   requiresSignIn = false,
 }: QuestionDrawerProps) {
   const t = useTranslations("questions")
   const tAuth = useTranslations("auth")
   const tCommon = useTranslations("common")
+  const tRestrictions = useTranslations("restrictions")
   const [open, setOpen] = useState(false)
-  const toastShownRef = useRef(false)
-
-  useEffect(() => {
-    if (
-      open &&
-      showSecurityNotice &&
-      securityNotice &&
-      !toastShownRef.current
-    ) {
-      toast.info(securityNotice)
-      toastShownRef.current = true
-    }
-    if (!open) {
-      toastShownRef.current = false
-    }
-  }, [open, showSecurityNotice, securityNotice])
 
   return (
     <Drawer onOpenChange={setOpen} open={open}>
@@ -189,6 +169,8 @@ export function QuestionDrawer({
                 <SubmitButton />
                 <p className="text-center text-muted-foreground/60 text-xs">
                   {t("termsAgreement")}
+                  <br />
+                  {tRestrictions("anonymousLoginRequired")}
                 </p>
               </div>
             </form>

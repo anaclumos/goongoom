@@ -7,9 +7,7 @@ import { notFound, redirect } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { MainContent } from "@/components/layout/main-content"
 import { ClampedAnswer } from "@/components/questions/clamped-answer"
-import { CopyLinkButton } from "@/components/questions/copy-link-button"
 import { QuestionDrawer } from "@/components/questions/question-drawer"
-import { ShareInstagramButton } from "@/components/questions/share-instagram-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -48,25 +46,6 @@ function toProfileUrl(value: string | undefined, domain: string) {
   return handle ? `https://${domain}/${handle}` : null
 }
 
-function buildShareUrl({
-  question,
-  answer,
-  name,
-}: {
-  question: string
-  answer: string
-  name: string
-}) {
-  const normalize = (value: string, max: number) =>
-    value.length > max ? `${value.slice(0, max - 1)}…` : value
-  const params = new URLSearchParams({
-    question: normalize(question, 160),
-    answer: normalize(answer, 260),
-    name: normalize(name, 40),
-  })
-  return `/api/instagram?${params.toString()}`
-}
-
 export default async function UserProfilePage({
   params,
   searchParams,
@@ -87,25 +66,16 @@ export default async function UserProfilePage({
     notFound()
   }
 
-  const [
-    dbUser,
-    { answeredQuestions },
-    t,
-    tCommon,
-    tRestrictions,
-    ,
-    tAnswers,
-    locale,
-  ] = await Promise.all([
-    getOrCreateUser(clerkUser.clerkId),
-    getUserWithAnsweredQuestions(clerkUser.clerkId),
-    getTranslations("questions"),
-    getTranslations("common"),
-    getTranslations("restrictions"),
-    getTranslations("errors"),
-    getTranslations("answers"),
-    getLocale(),
-  ])
+  const [dbUser, { answeredQuestions }, t, tCommon, , tAnswers, locale] =
+    await Promise.all([
+      getOrCreateUser(clerkUser.clerkId),
+      getUserWithAnsweredQuestions(clerkUser.clerkId),
+      getTranslations("questions"),
+      getTranslations("common"),
+      getTranslations("errors"),
+      getTranslations("answers"),
+      getLocale(),
+    ])
 
   const fullName = clerkUser.displayName || clerkUser.username || username
   const displayName = fullName.split(" ")[0] || fullName
@@ -147,20 +117,6 @@ export default async function UserProfilePage({
     securityLevel !== "public_only" &&
     (securityLevel === "anyone" || viewerIsVerified)
   const canAskPublic = viewerIsVerified
-  const showSecurityNotice =
-    securityLevel === "verified_anonymous" ||
-    securityLevel === "public_only" ||
-    (!viewerIsVerified && securityLevel === "anyone")
-  const getSecurityNotice = () => {
-    if (securityLevel === "verified_anonymous") {
-      return tRestrictions("anonymousLoginRequired")
-    }
-    if (securityLevel === "public_only") {
-      return tRestrictions("identifiedOnly")
-    }
-    return tRestrictions("loginForIdentified")
-  }
-  const securityNotice = getSecurityNotice()
 
   const recipientClerkId = clerkUser.clerkId
   const recipientUsername = clerkUser.username || username
@@ -271,11 +227,6 @@ export default async function UserProfilePage({
             if (!answer) {
               return null
             }
-            const shareUrl = buildShareUrl({
-              question: qa.content,
-              answer: answer.content,
-              name: displayName,
-            })
             return (
               <Link
                 className="block"
@@ -284,10 +235,6 @@ export default async function UserProfilePage({
                 prefetch={false}
               >
                 <Card className="group relative transition-colors hover:bg-muted/50">
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    <CopyLinkButton url={`/${username}/q/${qa.id}`} />
-                    <ShareInstagramButton shareUrl={shareUrl} />
-                  </div>
                   <CardContent className="flex flex-col gap-4">
                     <div className="flex w-full items-start gap-3">
                       <Avatar className="size-10 flex-shrink-0">
@@ -355,8 +302,6 @@ export default async function UserProfilePage({
         recipientClerkId={recipientClerkId}
         recipientName={displayName}
         requiresSignIn={requiresSignIn}
-        securityNotice={securityNotice}
-        showSecurityNotice={showSecurityNotice}
         submitAction={submitQuestion}
       />
     </MainContent>

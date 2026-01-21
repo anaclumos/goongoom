@@ -158,7 +158,7 @@ export default async function Home() {
             </Link>
           </div>
           <div className="text-muted-foreground text-sm">
-            © 2026 Goongoom. All rights reserved.
+            © 2026 궁금닷컴. 모든 권리 보유.
           </div>
         </div>
       </footer>

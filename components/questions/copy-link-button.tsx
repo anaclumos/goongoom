@@ -8,9 +8,23 @@ import { Button } from "@/components/ui/button"
 
 interface CopyLinkButtonProps {
   url: string
+  fullWidth?: boolean
+  className?: string
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link"
 }
 
-export function CopyLinkButton({ url }: CopyLinkButtonProps) {
+export function CopyLinkButton({
+  url,
+  fullWidth = false,
+  className,
+  variant = "ghost",
+}: CopyLinkButtonProps) {
   const t = useTranslations("share")
   const [copied, setCopied] = useState(false)
 
@@ -42,14 +56,16 @@ export function CopyLinkButton({ url }: CopyLinkButtonProps) {
   return (
     <Button
       aria-label={copied ? t("linkCopied") : t("copyLink")}
+      className={className}
       onClick={handleCopy}
-      size="icon-xs"
-      variant="ghost"
+      size={fullWidth ? "lg" : "icon-xs"}
+      variant={variant}
     >
       <HugeiconsIcon
-        className="size-4"
+        className={fullWidth ? "mr-2 size-5" : "size-4"}
         icon={copied ? CheckmarkCircle02Icon : Link01Icon}
       />
+      {fullWidth && (copied ? t("linkCopied") : t("copyLink"))}
     </Button>
   )
 }

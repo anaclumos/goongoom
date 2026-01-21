@@ -1,6 +1,6 @@
 "use client"
 
-import { MoreVerticalIcon } from "@hugeicons/core-free-icons"
+import { InstagramIcon, MoreVerticalIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
 import { useEffect, useRef, useState } from "react"
@@ -16,9 +16,15 @@ import {
 
 interface ShareInstagramButtonProps {
   shareUrl: string
+  mode?: "icon" | "button"
+  className?: string
 }
 
-export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
+export function ShareInstagramButton({
+  shareUrl,
+  mode = "icon",
+  className,
+}: ShareInstagramButtonProps) {
   const t = useTranslations("share")
   const tCommon = useTranslations("common")
   const sharingRef = useRef(false)
@@ -100,6 +106,20 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
     } finally {
       sharingRef.current = false
     }
+  }
+
+  if (mode === "button") {
+    return (
+      <Button
+        className={className}
+        onClick={handleShare}
+        size="lg"
+        variant="default"
+      >
+        <HugeiconsIcon className="mr-2 size-5" icon={InstagramIcon} />
+        {t("instagramImageShare")}
+      </Button>
+    )
   }
 
   return (
