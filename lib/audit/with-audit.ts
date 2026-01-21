@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
+import { geolocation, ipAddress } from "@vercel/functions"
 import { headers } from "next/headers"
 import { logAuditEntry } from "./logger"
 import type { AuditRequestData, EntityType, JsonValue } from "./types"
@@ -63,25 +64,33 @@ function getActionSuccess(result: unknown): boolean {
   return true
 }
 
+async function buildRequestData(): Promise<AuditRequestData> {
+  const headersList = await headers()
+  const request = { headers: headersList }
+  const geo = geolocation(request)
+
+  return {
+    ipAddress: ipAddress(request) || null,
+    userAgent: headersList.get("user-agent") || null,
+    referer: headersList.get("referer") || null,
+    acceptLanguage: headersList.get("accept-language") || null,
+    geoCity: geo.city || null,
+    geoCountry: geo.country || null,
+    geoCountryFlag: geo.flag || null,
+    geoRegion: geo.countryRegion || null,
+    geoEdgeRegion: geo.region || null,
+    geoLatitude: geo.latitude || null,
+    geoLongitude: geo.longitude || null,
+    geoPostalCode: geo.postalCode || null,
+  }
+}
+
 export async function withAudit<T>(
   options: WithAuditOptions,
   action: () => Promise<T>
 ): Promise<T> {
   const { action: actionName, payload, entityType } = options
-
-  const headersList = await headers()
-  const requestData: AuditRequestData = {
-    ipAddress: headersList.get("x-forwarded-for")?.split(",")[0] || null,
-    userAgent: headersList.get("user-agent") || null,
-    referer: headersList.get("referer") || null,
-    acceptLanguage: headersList.get("accept-language") || null,
-    geoCity: headersList.get("x-vercel-ip-city") || null,
-    geoCountry: headersList.get("x-vercel-ip-country") || null,
-    geoRegion: headersList.get("x-vercel-ip-country-region") || null,
-    geoLatitude: headersList.get("x-vercel-ip-latitude") || null,
-    geoLongitude: headersList.get("x-vercel-ip-longitude") || null,
-  }
-
+  const requestData = await buildRequestData()
   const { userId } = await auth()
 
   const serializedPayload = serializePayload(payload)

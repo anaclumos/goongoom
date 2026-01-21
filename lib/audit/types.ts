@@ -10,14 +10,16 @@ export type JsonValue =
 // Entity types that can be tracked
 export type EntityType = "question" | "answer"
 
-// Request metadata extracted from headers
 export interface AuditRequestData {
   ipAddress: string | null
   geoCity: string | null
   geoCountry: string | null
+  geoCountryFlag: string | null
   geoRegion: string | null
+  geoEdgeRegion: string | null
   geoLatitude: string | null
   geoLongitude: string | null
+  geoPostalCode: string | null
   userAgent: string | null
   referer: string | null
   acceptLanguage: string | null

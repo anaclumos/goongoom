@@ -31,7 +31,7 @@ describe("Logs integration (full chain)", () => {
     mockReturning.mockClear()
   })
 
-  test("withAudit captures all 9 data points through full chain", async () => {
+  test("withAudit captures all geo data points through full chain", async () => {
     const originalEnv = process.env.NODE_ENV
     process.env.NODE_ENV = "production"
 
@@ -52,14 +52,20 @@ describe("Logs integration (full chain)", () => {
         userAgent: "test-agent",
         referer: "http://test.com",
         acceptLanguage: "en-US",
-        geoCity: null,
-        geoCountry: null,
+        geoCity: "Seoul",
+        geoCountry: "KR",
+        geoCountryFlag: "🇰🇷",
+        geoRegion: "11",
+        geoEdgeRegion: "icn1",
+        geoLatitude: "37.5665",
+        geoLongitude: "126.9780",
+        geoPostalCode: "04524",
         userId: "test_user_123",
         action: "testAction",
         payload: { inputData: "test", nested: { value: 123 } },
         success: 1,
         errorMessage: null,
-        entityType: null, // No entityType provided
+        entityType: null,
         entityId: null,
       })
     } finally {

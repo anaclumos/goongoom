@@ -1,8 +1,6 @@
 /// <reference types="bun" />
-// This file is preloaded before all tests via bunfig.toml
 import { mock } from "bun:test"
 
-// Mock @/env to prevent required env var errors
 mock.module("@/env", () => ({
   env: {
     DATABASE_URL: "mock://localhost/test",
@@ -12,20 +10,31 @@ mock.module("@/env", () => ({
   },
 }))
 
-// Mock next/headers (used by withAudit)
 mock.module("next/headers", () => ({
   headers: () =>
     Promise.resolve(
       new Headers({
         "user-agent": "test-agent",
-        "x-forwarded-for": "127.0.0.1",
         referer: "http://test.com",
         "accept-language": "en-US",
       })
     ),
 }))
 
-// Mock @clerk/nextjs/server (used by withAudit)
+mock.module("@vercel/functions", () => ({
+  ipAddress: () => "127.0.0.1",
+  geolocation: () => ({
+    city: "Seoul",
+    country: "KR",
+    flag: "🇰🇷",
+    countryRegion: "11",
+    region: "icn1",
+    latitude: "37.5665",
+    longitude: "126.9780",
+    postalCode: "04524",
+  }),
+}))
+
 mock.module("@clerk/nextjs/server", () => ({
   auth: () => Promise.resolve({ userId: "test_user_123" }),
 }))
