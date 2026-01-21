@@ -3,9 +3,9 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { PasskeyNudge } from "@/components/auth/passkey-nudge"
 import { MainContent } from "@/components/layout/main-content"
-import { ClerkAccountCard } from "@/components/settings/clerk-account-card"
+import { AccountSettingsButton } from "@/components/settings/account-settings-button"
 import { LocaleSelector } from "@/components/settings/locale-selector"
-import { SettingsForm } from "@/components/settings/settings-form"
+import { LogoutButton } from "@/components/settings/logout-button"
 import {
   Empty,
   EmptyDescription,
@@ -14,35 +14,6 @@ import {
 } from "@/components/ui/empty"
 import { ToastOnMount } from "@/components/ui/toast-on-mount"
 import { getClerkUserById } from "@/lib/clerk"
-import { getOrCreateUser } from "@/lib/db/queries"
-import {
-  DEFAULT_QUESTION_SECURITY_LEVEL,
-  getQuestionSecurityOptions,
-} from "@/lib/question-security"
-
-const URL_PATTERN_REGEX = /:\/\/|\/|instagram\.com|twitter\.com|x\.com|www\./i
-
-function normalizeHandle(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) {
-    return ""
-  }
-  const looksLikeUrl = URL_PATTERN_REGEX.test(trimmed)
-
-  if (!looksLikeUrl) {
-    return trimmed
-  }
-
-  try {
-    const url = new URL(
-      trimmed.startsWith("http") ? trimmed : `https://${trimmed}`
-    )
-    const parts = url.pathname.split("/").filter(Boolean)
-    return parts[0] || ""
-  } catch {
-    return trimmed.split("/").filter(Boolean)[0] || ""
-  }
-}
 
 interface SettingsPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -56,14 +27,11 @@ export default async function SettingsPage({
     redirect("/")
   }
 
-  const [clerkUser, dbUser, query, t] = await Promise.all([
+  const [clerkUser, query, t] = await Promise.all([
     getClerkUserById(clerkId),
-    getOrCreateUser(clerkId),
     searchParams,
     getTranslations("settings"),
   ])
-
-  const securityOptions = await getQuestionSecurityOptions()
 
   const error =
     typeof query?.error === "string" ? decodeURIComponent(query.error) : null
@@ -87,18 +55,6 @@ export default async function SettingsPage({
     )
   }
 
-  const initialBio = dbUser?.bio || null
-  const initialSocialLinks = dbUser?.socialLinks || null
-  const initialQuestionSecurityLevel =
-    dbUser?.questionSecurityLevel || DEFAULT_QUESTION_SECURITY_LEVEL
-
-  const instagramHandle = initialSocialLinks?.instagram
-    ? normalizeHandle(initialSocialLinks.instagram)
-    : ""
-  const twitterHandle = initialSocialLinks?.twitter
-    ? normalizeHandle(initialSocialLinks.twitter)
-    : ""
-
   return (
     <MainContent>
       <div className="mb-8 space-y-2">
@@ -109,23 +65,15 @@ export default async function SettingsPage({
       {error && <ToastOnMount message={error} type="error" />}
 
       <div className="space-y-6">
-        <PasskeyNudge />
+        <AccountSettingsButton />
 
-        <ClerkAccountCard />
+        <PasskeyNudge />
 
         <div className="rounded-2xl border border-border bg-card p-6">
           <LocaleSelector />
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <SettingsForm
-            initialBio={initialBio}
-            initialInstagramHandle={instagramHandle}
-            initialQuestionSecurityLevel={initialQuestionSecurityLevel}
-            initialTwitterHandle={twitterHandle}
-            securityOptions={securityOptions}
-          />
-        </div>
+        <LogoutButton />
       </div>
     </MainContent>
   )

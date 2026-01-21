@@ -23,7 +23,14 @@
     "description": "궁금한 것을 물어보고 답변을 받아보세요"
   },
   "nav": {
-    "appName": "궁금닷컴"
+    "appName": "궁금닷컴",
+    "userAppName": "{firstName}의 궁금닷컴"
+  },
+  "sidebar": {
+    "home": "홈",
+    "inbox": "받은 질문",
+    "settings": "설정",
+    "recentQuestions": "최근 질문"
   },
   "auth": {
     "login": "로그인하기",
@@ -101,7 +108,9 @@
     "inboxMenu": "받은 질문함",
     "settingsMenu": "설정",
     "noBio": "한줄소개를 설정하지 않았어요",
-    "backToProfile": "{displayName}의 프로필"
+    "backToProfile": "{displayName}의 프로필",
+    "edit": "편집",
+    "shareLink": "링크 공유"
   },
   "settings": {
     "title": "설정",
@@ -113,23 +122,16 @@
     "languageSettingsDescription": "앱에서 사용할 언어를 선택하세요.",
     "anonymousRestriction": "익명 제한 설정",
     "anonymousRestrictionDescription": "익명 질문을 제한해 악성 질문을 줄일 수 있어요.",
-    "whoCanAsk": "누가 질문을 보낼 수 있나요?",
     "profileSettings": "프로필 설정",
     "profileSettingsDescription": "프로필 정보와 소셜 링크를 설정하세요.",
     "bioLabel": "소개",
     "bioPlaceholder": "자기소개를 입력하세요…",
-    "socialLinks": "소셜 링크 (사용자 이름만 입력)",
+    "socialLinks": "소셜 아이디",
     "accountSettings": "계정 설정",
-    "accountSettingsDescription": "이메일, 비밀번호, 보안 설정을 관리하세요.",
+    "accountSettingsDescription": "아이디, 전화번호, 보안 설정을 관리하세요.",
     "saving": "저장 중…"
   },
-  "more": {
-    "title": "더보기",
-    "announcements": "공지사항",
-    "events": "이벤트",
-    "contact": "문의하기",
-    "settings": "환경설정"
-  },
+
   "home": {
     "hotTitle": "지금 가장 핫한 익명 Q&A",
     "heroTitle": "궁금한 건 뭐든 물어보세요",

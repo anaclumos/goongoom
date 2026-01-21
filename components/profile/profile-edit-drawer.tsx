@@ -1,13 +1,10 @@
 "use client"
 
-import { useClerk } from "@clerk/nextjs"
-import {
-  PencilEdit01Icon,
-  UserSettings01Icon,
-} from "@hugeicons/core-free-icons"
+import { PencilEdit01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { isEmpty } from "es-toolkit/compat"
 import { useTranslations } from "next-intl"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useState } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,34 +19,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback"
 import { updateProfile } from "@/lib/actions/profile"
 import { QUESTION_SECURITY_LEVELS } from "@/lib/question-security"
 import type { SocialLinks } from "@/lib/types"
+import { normalizeHandle } from "@/lib/utils/social-links"
 
-const URL_PATTERN_REGEX = /:\/\/|\/|instagram\.com|twitter\.com|x\.com|www\./i
 const DEBOUNCE_MS = 500
-
-function normalizeHandle(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) {
-    return ""
-  }
-  const looksLikeUrl = URL_PATTERN_REGEX.test(trimmed)
-
-  if (!looksLikeUrl) {
-    return trimmed
-  }
-
-  try {
-    const url = new URL(
-      trimmed.startsWith("http") ? trimmed : `https://${trimmed}`
-    )
-    const parts = url.pathname.split("/").filter(Boolean)
-    return parts[0] || ""
-  } catch {
-    return trimmed.split("/").filter(Boolean)[0] || ""
-  }
-}
 
 interface ProfileEditDrawerProps {
   initialBio: string | null
@@ -68,7 +44,6 @@ export function ProfileEditDrawer({
 }: ProfileEditDrawerProps) {
   const t = useTranslations("settings")
   const tProfile = useTranslations("profile")
-  const { openUserProfile } = useClerk()
 
   const [bio, setBio] = useState(initialBio || "")
   const [instagram, setInstagram] = useState(initialInstagramHandle)
@@ -76,10 +51,6 @@ export function ProfileEditDrawer({
   const [securityLevel, setSecurityLevel] = useState(
     initialQuestionSecurityLevel
   )
-
-  const bioTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const instagramTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const twitterTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const saveProfile = useCallback(
     (data: {
@@ -96,65 +67,50 @@ export function ProfileEditDrawer({
     [t]
   )
 
+  const debouncedSaveBio = useDebouncedCallback((value: string) => {
+    saveProfile({ bio: value.trim() || null })
+  }, DEBOUNCE_MS)
+
+  const debouncedSaveSocialLinks = useDebouncedCallback(
+    (instagramValue: string, twitterValue: string) => {
+      const normalizedInstagram = normalizeHandle(instagramValue)
+      const normalizedTwitter = normalizeHandle(twitterValue)
+      const links: SocialLinks = {}
+      if (normalizedInstagram) {
+        links.instagram = normalizedInstagram
+      }
+      if (normalizedTwitter) {
+        links.twitter = normalizedTwitter
+      }
+      saveProfile({
+        socialLinks: isEmpty(links) ? null : links,
+      })
+    },
+    DEBOUNCE_MS
+  )
+
   const handleBioChange = useCallback(
     (value: string) => {
       setBio(value)
-      if (bioTimeoutRef.current) {
-        clearTimeout(bioTimeoutRef.current)
-      }
-      bioTimeoutRef.current = setTimeout(() => {
-        saveProfile({ bio: value.trim() || null })
-      }, DEBOUNCE_MS)
+      debouncedSaveBio(value)
     },
-    [saveProfile]
+    [debouncedSaveBio]
   )
 
   const handleInstagramChange = useCallback(
     (value: string) => {
       setInstagram(value)
-      if (instagramTimeoutRef.current) {
-        clearTimeout(instagramTimeoutRef.current)
-      }
-      instagramTimeoutRef.current = setTimeout(() => {
-        const normalizedInstagram = normalizeHandle(value)
-        const normalizedTwitter = normalizeHandle(twitter)
-        const links: SocialLinks = {}
-        if (normalizedInstagram) {
-          links.instagram = normalizedInstagram
-        }
-        if (normalizedTwitter) {
-          links.twitter = normalizedTwitter
-        }
-        saveProfile({
-          socialLinks: Object.keys(links).length ? links : null,
-        })
-      }, DEBOUNCE_MS)
+      debouncedSaveSocialLinks(value, twitter)
     },
-    [saveProfile, twitter]
+    [debouncedSaveSocialLinks, twitter]
   )
 
   const handleTwitterChange = useCallback(
     (value: string) => {
       setTwitter(value)
-      if (twitterTimeoutRef.current) {
-        clearTimeout(twitterTimeoutRef.current)
-      }
-      twitterTimeoutRef.current = setTimeout(() => {
-        const normalizedInstagram = normalizeHandle(instagram)
-        const normalizedTwitter = normalizeHandle(value)
-        const links: SocialLinks = {}
-        if (normalizedInstagram) {
-          links.instagram = normalizedInstagram
-        }
-        if (normalizedTwitter) {
-          links.twitter = normalizedTwitter
-        }
-        saveProfile({
-          socialLinks: Object.keys(links).length ? links : null,
-        })
-      }, DEBOUNCE_MS)
+      debouncedSaveSocialLinks(instagram, value)
     },
-    [saveProfile, instagram]
+    [debouncedSaveSocialLinks, instagram]
   )
 
   const handleSecurityLevelChange = useCallback(
@@ -164,20 +120,6 @@ export function ProfileEditDrawer({
     },
     [saveProfile]
   )
-
-  useEffect(() => {
-    return () => {
-      if (bioTimeoutRef.current) {
-        clearTimeout(bioTimeoutRef.current)
-      }
-      if (instagramTimeoutRef.current) {
-        clearTimeout(instagramTimeoutRef.current)
-      }
-      if (twitterTimeoutRef.current) {
-        clearTimeout(twitterTimeoutRef.current)
-      }
-    }
-  }, [])
 
   return (
     <Drawer>
@@ -198,9 +140,6 @@ export function ProfileEditDrawer({
                 <h3 className="font-semibold text-base text-foreground">
                   {t("profileSettings")}
                 </h3>
-                <p className="text-muted-foreground text-sm">
-                  {t("profileSettingsDescription")}
-                </p>
               </div>
 
               <Field>
@@ -264,44 +203,14 @@ export function ProfileEditDrawer({
               </div>
             </div>
 
-            <div className="space-y-6 border-border border-t pt-8">
-              <button
-                className="group flex w-full items-center justify-between gap-4 rounded-xl border border-border bg-gradient-to-br from-electric-blue/5 to-purple/5 p-4 text-left transition-all hover:border-electric-blue/30 hover:shadow-md active:scale-[0.99]"
-                onClick={() => openUserProfile()}
-                type="button"
-              >
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-base text-foreground">
-                    {t("accountSettings")}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {t("accountSettingsDescription")}
-                  </p>
-                </div>
-                <HugeiconsIcon
-                  className="size-5 text-muted-foreground transition-colors group-hover:text-foreground"
-                  icon={UserSettings01Icon}
-                />
-              </button>
-            </div>
-
-            <div className="space-y-6 border-border border-t pt-8">
-              <div className="space-y-1">
-                <h3 className="font-semibold text-base text-foreground">
-                  {t("anonymousRestriction")}
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  {t("anonymousRestrictionDescription")}
-                </p>
-              </div>
-
+            <div className="space-y-6 pt-8">
               <Field>
                 <FieldLabel className="font-medium text-sm">
-                  {t("whoCanAsk")}
+                  {t("anonymousRestriction")}
                 </FieldLabel>
                 <FieldContent>
                   <RadioGroup
-                    className="w-full space-y-3"
+                    className="w-full space-y-0"
                     onValueChange={handleSecurityLevelChange}
                     value={securityLevel}
                   >

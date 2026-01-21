@@ -23,7 +23,14 @@
     "description": "Ask questions and get answers anonymously"
   },
   "nav": {
-    "appName": "Goongoom"
+    "appName": "Goongoom",
+    "userAppName": "{firstName}'s Goongoom"
+  },
+  "sidebar": {
+    "home": "Home",
+    "inbox": "Inbox",
+    "settings": "Settings",
+    "recentQuestions": "Recent Questions"
   },
   "auth": {
     "login": "Log in",
@@ -101,7 +108,9 @@
     "inboxMenu": "Inbox",
     "settingsMenu": "Settings",
     "noBio": "No bio set",
-    "backToProfile": "{displayName}'s profile"
+    "backToProfile": "{displayName}'s profile",
+    "edit": "Edit",
+    "shareLink": "Share Link"
   },
   "settings": {
     "title": "Settings",
@@ -118,18 +127,12 @@
     "profileSettingsDescription": "Set your profile info and social links.",
     "bioLabel": "Bio",
     "bioPlaceholder": "Write a short bio…",
-    "socialLinks": "Social links (username only)",
+    "socialLinks": "Social Usernames",
     "accountSettings": "Account settings",
-    "accountSettingsDescription": "Manage your email, password, and security settings.",
+    "accountSettingsDescription": "Manage your username, phone number, and security settings.",
     "saving": "Saving…"
   },
-  "more": {
-    "title": "More",
-    "announcements": "Announcements",
-    "events": "Events",
-    "contact": "Contact us",
-    "settings": "Settings"
-  },
+
   "home": {
     "hotTitle": "The hottest anonymous Q&A",
     "heroTitle": "Ask anything you're curious about",

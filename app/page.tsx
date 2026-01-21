@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server"
 import {
   Message01Icon,
   SentIcon,
@@ -6,22 +7,63 @@ import {
   SparklesIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { revalidatePath } from "next/cache"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { redirect } from "next/navigation"
+import { getLocale, getTranslations } from "next-intl/server"
 import {
   BottomCTAButton,
   HeroAuthButtons,
 } from "@/components/auth/auth-buttons"
+import { MainContent } from "@/components/layout/main-content"
+import { ProfileActions } from "@/components/profile/profile-actions"
+import { ProfileEditDrawer } from "@/components/profile/profile-edit-drawer"
+import { AnsweredQuestionCard } from "@/components/questions/answered-question-card"
+import { QuestionDrawer } from "@/components/questions/question-drawer"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from "@/components/ui/card"
-import { getTotalUserCount } from "@/lib/db/queries"
+import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
+import { ToastOnMount } from "@/components/ui/toast-on-mount"
+import { createQuestion } from "@/lib/actions/questions"
+import { getClerkUserById } from "@/lib/clerk"
+import {
+  getOrCreateUser,
+  getTotalUserCount,
+  getUserWithAnsweredQuestions,
+} from "@/lib/db/queries"
+import {
+  DEFAULT_QUESTION_SECURITY_LEVEL,
+  getQuestionSecurityOptions,
+} from "@/lib/question-security"
+import type { QuestionWithAnswers } from "@/lib/types"
+import {
+  buildSocialLinks,
+  getPageStatus,
+  normalizeHandle,
+} from "@/lib/utils/social-links"
 
-export default async function Home() {
+interface HomePageProps {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function Home({ searchParams }: HomePageProps) {
+  const { userId: clerkId } = await auth()
+
+  if (clerkId) {
+    return <MyProfile clerkId={clerkId} searchParams={searchParams} />
+  }
+
+  return <LandingPage />
+}
+
+async function LandingPage() {
   const [userCount, t, tNav, tFooter, tShare] = await Promise.all([
     getTotalUserCount(),
     getTranslations("home"),
@@ -31,8 +73,8 @@ export default async function Home() {
   ])
 
   return (
-    <div className="h-full">
-      <div className="relative overflow-hidden pt-32">
+    <div className="flex-1">
+      <div className="relative overflow-hidden pt-16 md:pt-32">
         <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-neon-pink/10 blur-3xl filter" />
         <div className="absolute top-48 -left-24 h-72 w-72 rounded-full bg-electric-blue/10 blur-3xl filter" />
 
@@ -163,5 +205,219 @@ export default async function Home() {
         </div>
       </footer>
     </div>
+  )
+}
+
+interface MyProfileProps {
+  clerkId: string
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
+  const [clerkUser, query, securityOptions] = await Promise.all([
+    getClerkUserById(clerkId),
+    searchParams,
+    getQuestionSecurityOptions(),
+  ])
+
+  if (!clerkUser?.username) {
+    redirect("/settings")
+  }
+
+  const [
+    dbUser,
+    { answeredQuestions },
+    t,
+    tCommon,
+    tAnswers,
+    tProfile,
+    locale,
+  ] = await Promise.all([
+    getOrCreateUser(clerkId),
+    getUserWithAnsweredQuestions(clerkId),
+    getTranslations("questions"),
+    getTranslations("common"),
+    getTranslations("answers"),
+    getTranslations("profile"),
+    getLocale(),
+  ])
+
+  const displayName =
+    clerkUser.displayName?.split(" ")[0] ||
+    clerkUser.displayName ||
+    clerkUser.username
+
+  const error =
+    typeof query?.error === "string" ? decodeURIComponent(query.error) : null
+  const sent = query?.sent === "1"
+
+  const status = getPageStatus(error, sent, t("questionSent"))
+  const socialLinks = buildSocialLinks(dbUser?.socialLinks)
+
+  const securityLevel =
+    dbUser?.questionSecurityLevel || DEFAULT_QUESTION_SECURITY_LEVEL
+
+  const instagramHandle = dbUser?.socialLinks?.instagram
+    ? normalizeHandle(dbUser.socialLinks.instagram)
+    : ""
+  const twitterHandle = dbUser?.socialLinks?.twitter
+    ? normalizeHandle(dbUser.socialLinks.twitter)
+    : ""
+
+  const questionsWithAnswers = answeredQuestions
+    .map((qa) => {
+      const typed = qa as QuestionWithAnswers
+      const answer = typed.answers[0]
+      return answer ? { ...typed, firstAnswer: answer } : null
+    })
+    .filter((qa) => qa !== null)
+
+  const cardLabels = {
+    anonymous: tCommon("anonymous"),
+    identified: tCommon("identified"),
+    question: t("questionLabel"),
+    answer: tAnswers("answer"),
+  }
+
+  const recipientClerkId = clerkId
+
+  async function submitQuestion(formData: FormData) {
+    "use server"
+    const tErrors = await getTranslations("errors")
+    const content = String(formData.get("question") || "").trim()
+    const questionType = String(formData.get("questionType") || "anonymous")
+
+    if (!content) {
+      redirect(`/?error=${encodeURIComponent(tErrors("pleaseEnterQuestion"))}`)
+    }
+
+    const result = await createQuestion({
+      recipientClerkId,
+      content,
+      isAnonymous: questionType !== "public",
+    })
+
+    if (!result.success) {
+      redirect(`/?error=${encodeURIComponent(result.error)}`)
+    }
+
+    revalidatePath("/")
+    redirect("/?sent=1")
+  }
+
+  return (
+    <MainContent>
+      <Card className="mb-6">
+        <CardContent className="flex items-center gap-6">
+          <Avatar className="size-24 ring-2 ring-primary/30">
+            {clerkUser.avatarUrl ? (
+              <AvatarImage alt={displayName} src={clerkUser.avatarUrl} />
+            ) : null}
+            <AvatarFallback>{displayName[0] || "?"}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-1 flex-col gap-1">
+            <h1 className="font-semibold text-foreground text-xl">
+              {displayName}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              @{clerkUser.username}
+            </p>
+            <p className="mt-1 text-sm">
+              {dbUser?.bio || (
+                <span className="text-muted-foreground">
+                  {tProfile("noBio")}
+                </span>
+              )}
+            </p>
+          </div>
+        </CardContent>
+        {socialLinks.length > 0 && (
+          <CardContent className="flex flex-wrap gap-4 pt-0">
+            {socialLinks.map((link) => {
+              const Icon = link.icon
+              return (
+                <div
+                  className="flex flex-col items-center gap-2"
+                  key={link.key}
+                >
+                  <Button
+                    aria-label={link.label}
+                    className="rounded-full"
+                    render={
+                      <Link
+                        href={link.href as string}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      />
+                    }
+                    size="icon"
+                    variant="ghost"
+                  >
+                    <HugeiconsIcon className="size-4" icon={Icon} />
+                  </Button>
+                  <span className="text-muted-foreground text-xs">
+                    {link.label}
+                  </span>
+                </div>
+              )
+            })}
+          </CardContent>
+        )}
+        <CardContent className="pt-0">
+          <ProfileActions
+            editButton={
+              <ProfileEditDrawer
+                initialBio={dbUser?.bio || null}
+                initialInstagramHandle={instagramHandle}
+                initialQuestionSecurityLevel={securityLevel}
+                initialTwitterHandle={twitterHandle}
+                securityOptions={securityOptions}
+              />
+            }
+            username={clerkUser.username}
+          />
+        </CardContent>
+      </Card>
+
+      {status && <ToastOnMount message={status.message} type={status.type} />}
+
+      {questionsWithAnswers.length > 0 ? (
+        <div className="space-y-6 pb-24">
+          {questionsWithAnswers.map((qa) => (
+            <AnsweredQuestionCard
+              answerContent={qa.firstAnswer.content}
+              answerCreatedAt={qa.firstAnswer.createdAt}
+              avatarUrl={clerkUser.avatarUrl}
+              displayName={displayName}
+              isAnonymous={qa.isAnonymous === 1}
+              key={qa.id}
+              labels={cardLabels}
+              locale={locale}
+              questionContent={qa.content}
+              questionCreatedAt={qa.createdAt}
+              questionId={qa.id}
+              username={clerkUser.username as string}
+            />
+          ))}
+        </div>
+      ) : (
+        <Empty className="pb-24">
+          <EmptyHeader>
+            <EmptyTitle className="text-muted-foreground">
+              {tAnswers("noAnswersYet")}
+            </EmptyTitle>
+          </EmptyHeader>
+        </Empty>
+      )}
+
+      <QuestionDrawer
+        canAskAnonymously={securityLevel !== "public_only"}
+        canAskPublic={true}
+        recipientClerkId={recipientClerkId}
+        recipientName={displayName}
+        requiresSignIn={false}
+        submitAction={submitQuestion}
+      />
+    </MainContent>
   )
 }

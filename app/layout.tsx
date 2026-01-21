@@ -8,7 +8,7 @@ import { NextIntlClientProvider } from "next-intl"
 import { getLocale, getMessages } from "next-intl/server"
 import { ThemeProvider } from "next-themes"
 import { PasskeySetupModal } from "@/components/auth/passkey-setup-modal"
-import { GlobalNav } from "@/components/layout/global-nav"
+import { AppShellWrapper } from "@/components/layout/app-shell-wrapper"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
@@ -51,8 +51,9 @@ export default async function RootLayout({
               enableSystem
             >
               <EscapeInAppBrowser />
-              <GlobalNav />
-              <main className="pt-16">{children}</main>
+              <AppShellWrapper>
+                <main className="flex-1">{children}</main>
+              </AppShellWrapper>
               <PasskeySetupModal />
               <Toaster />
             </ThemeProvider>

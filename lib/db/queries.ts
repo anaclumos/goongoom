@@ -173,3 +173,18 @@ export async function getAnsweredQuestionNumber(
   })
   return result.filter((q) => q.answers.length > 0).length
 }
+
+export async function getSentQuestionsWithAnswers(
+  senderClerkId: string,
+  options?: { limit?: number; offset?: number }
+) {
+  return await db.query.questions.findMany({
+    where: eq(questions.senderClerkId, senderClerkId),
+    orderBy: [desc(questions.createdAt)],
+    with: {
+      answers: true,
+    },
+    limit: options?.limit,
+    offset: options?.offset,
+  })
+}
