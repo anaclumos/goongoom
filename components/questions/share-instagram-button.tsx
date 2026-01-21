@@ -4,7 +4,14 @@ import { MoreVerticalIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 
 interface ShareInstagramButtonProps {
   shareUrl: string
@@ -96,20 +103,28 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
   return (
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerTrigger asChild>
-        <Button size="icon-xs" variant="ghost">
+        <Button aria-label="더보기" size="icon-xs" variant="ghost">
           <HugeiconsIcon className="size-4" icon={MoreVerticalIcon} />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="flex flex-col gap-4 pb-8">
-        <Button
-          className="h-12 w-full font-semibold text-base"
-          onClick={() => {
-            handleShare()
-            setOpen(false)
-          }}
-        >
-          인스타그램 이미지 공유
-        </Button>
+      <DrawerContent className="pb-safe">
+        <DrawerHeader>
+          <DrawerTitle>공유하기</DrawerTitle>
+          <DrawerDescription>
+            이 답변을 인스타그램에 공유하세요
+          </DrawerDescription>
+        </DrawerHeader>
+        <div className="flex flex-col gap-3 px-4 pb-4">
+          <Button
+            className="h-12 w-full font-semibold text-base"
+            onClick={() => {
+              handleShare()
+              setOpen(false)
+            }}
+          >
+            인스타그램 이미지 공유
+          </Button>
+        </div>
       </DrawerContent>
     </Drawer>
   )

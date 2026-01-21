@@ -134,7 +134,7 @@ export function InboxList({ questions }: InboxListProps) {
         onOpenChange={(open) => !open && setSelectedQuestion(null)}
         open={!!selectedQuestion}
       >
-        <DrawerContent>
+        <DrawerContent className="pb-safe">
           <DrawerHeader>
             <DrawerTitle>질문에 답변하기</DrawerTitle>
             {selectedQuestion && (
@@ -143,7 +143,7 @@ export function InboxList({ questions }: InboxListProps) {
               </DrawerDescription>
             )}
           </DrawerHeader>
-          <div className="px-4 py-4">
+          <div className="px-4">
             <Textarea
               className="w-full"
               onChange={(e) => setAnswer(e.target.value)}
@@ -152,9 +152,9 @@ export function InboxList({ questions }: InboxListProps) {
               value={answer}
             />
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="flex-row gap-3">
             <Button
-              className="min-h-11"
+              className="min-h-11 flex-1"
               onClick={() => setSelectedQuestion(null)}
               type="button"
               variant="ghost"
@@ -162,7 +162,7 @@ export function InboxList({ questions }: InboxListProps) {
               취소
             </Button>
             <Button
-              className="min-h-11"
+              className="min-h-11 flex-1"
               disabled={!answer.trim() || isSubmitting}
               onClick={handleSubmit}
               type="button"

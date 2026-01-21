@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { Suspense } from "react"
 import { PasskeyNudge } from "@/components/auth/passkey-nudge"
 import { MainContent } from "@/components/layout/main-content"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -57,11 +56,9 @@ function normalizeHandle(value: string) {
   }
 }
 
-async function SettingsContent({
-  searchParamsPromise,
-}: {
-  searchParamsPromise?: Promise<Record<string, string | string[] | undefined>>
-}) {
+export default async function SettingsPage({
+  searchParams,
+}: SettingsPageProps) {
   const { userId: clerkId } = await auth()
   if (!clerkId) {
     redirect("/")
@@ -70,7 +67,7 @@ async function SettingsContent({
   const [clerkUser, dbUser, query] = await Promise.all([
     getClerkUserById(clerkId),
     getOrCreateUser(clerkId),
-    searchParamsPromise,
+    searchParams,
   ])
 
   const error =
@@ -298,13 +295,5 @@ async function SettingsContent({
         </Button>
       </form>
     </MainContent>
-  )
-}
-
-export default function SettingsPage({ searchParams }: SettingsPageProps) {
-  return (
-    <Suspense fallback={null}>
-      <SettingsContent searchParamsPromise={searchParams} />
-    </Suspense>
   )
 }

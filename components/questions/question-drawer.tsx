@@ -64,10 +64,8 @@ export function QuestionDrawer({
   return (
     <Drawer onOpenChange={setOpen} open={open}>
       <QuestionInputTrigger onClick={() => setOpen(true)} />
-      <DrawerContent className="rounded-t-3xl border-none px-0 pt-3 pb-0 shadow-xl">
-        <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border/40" />
-
-        <DrawerHeader className="space-y-2 px-6 pb-2 text-left">
+      <DrawerContent className="pb-safe">
+        <DrawerHeader className="text-left">
           <DrawerTitle className="font-bold text-xl leading-tight tracking-tight">
             <span className="text-electric-blue">@{recipientUsername}</span>{" "}
             님에게
@@ -75,7 +73,7 @@ export function QuestionDrawer({
           </DrawerTitle>
         </DrawerHeader>
 
-        <div className="h-full max-h-svh overflow-y-auto px-6 pt-2 pb-6">
+        <div className="max-h-[60vh] overflow-y-auto px-4 pb-6">
           <form action={submitAction} className="space-y-6">
             <Textarea
               className="min-h-32 resize-none rounded-2xl border-border bg-muted/30 p-5 text-base shadow-sm focus:border-electric-blue focus:ring-electric-blue/20"
@@ -152,7 +150,7 @@ export function QuestionDrawer({
               </RadioGroup>
             </div>
 
-            <div className="space-y-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <div className="space-y-3">
               <SubmitButton />
               <p className="text-center text-muted-foreground/60 text-xs">
                 질문 시 사용 약관에 동의하게 됩니다

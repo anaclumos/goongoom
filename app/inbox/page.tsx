@@ -1,6 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { Suspense } from "react"
 import { MainContent } from "@/components/layout/main-content"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -18,11 +17,7 @@ interface InboxPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
-async function InboxContent({
-  searchParamsPromise,
-}: {
-  searchParamsPromise?: Promise<Record<string, string | string[] | undefined>>
-}) {
+export default async function InboxPage({ searchParams }: InboxPageProps) {
   const { userId: clerkId } = await auth()
   if (!clerkId) {
     redirect("/")
@@ -31,7 +26,7 @@ async function InboxContent({
   const [, unansweredQuestions, query] = await Promise.all([
     getOrCreateUser(clerkId),
     getUnansweredQuestions(clerkId),
-    searchParamsPromise,
+    searchParams,
   ])
 
   const error =
@@ -91,13 +86,5 @@ async function InboxContent({
         <InboxList questions={questionsWithSenders} />
       )}
     </MainContent>
-  )
-}
-
-export default function InboxPage({ searchParams }: InboxPageProps) {
-  return (
-    <Suspense fallback={null}>
-      <InboxContent searchParamsPromise={searchParams} />
-    </Suspense>
   )
 }

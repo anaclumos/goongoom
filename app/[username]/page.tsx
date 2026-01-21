@@ -8,7 +8,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { revalidatePath } from "next/cache"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-import { Suspense } from "react"
 import { MainContent } from "@/components/layout/main-content"
 import { QuestionDrawer } from "@/components/questions/question-drawer"
 import { ShareInstagramButton } from "@/components/questions/share-instagram-button"
@@ -90,19 +89,19 @@ function buildShareUrl({
   return `/api/instagram?${params.toString()}`
 }
 
-async function UserProfileContent({
-  paramsPromise,
-  searchParamsPromise,
-}: {
-  paramsPromise: Promise<{ username: string }>
-  searchParamsPromise?: Promise<Record<string, string | string[] | undefined>>
-}) {
-  const [{ username }, searchParams = {}, { userId: viewerId }] =
-    (await Promise.all([paramsPromise, searchParamsPromise, auth()])) as [
-      { username: string },
-      Record<string, string | string[] | undefined> | undefined,
-      { userId: string | null },
-    ]
+export default async function UserProfilePage({
+  params,
+  searchParams,
+}: UserProfilePageProps) {
+  const [{ username }, query = {}, { userId: viewerId }] = (await Promise.all([
+    params,
+    searchParams,
+    auth(),
+  ])) as [
+    { username: string },
+    Record<string, string | string[] | undefined> | undefined,
+    { userId: string | null },
+  ]
 
   const clerkUser = await getClerkUserByUsername(username)
 
@@ -118,10 +117,8 @@ async function UserProfileContent({
   const displayName = clerkUser.displayName || clerkUser.username || username
 
   const error =
-    typeof searchParams?.error === "string"
-      ? decodeURIComponent(searchParams.error)
-      : null
-  const sent = searchParams?.sent === "1"
+    typeof query?.error === "string" ? decodeURIComponent(query.error) : null
+  const sent = query?.sent === "1"
 
   const getStatus = () => {
     if (error) {
@@ -372,19 +369,5 @@ async function UserProfileContent({
         />
       )}
     </MainContent>
-  )
-}
-
-export default function UserProfilePage({
-  params,
-  searchParams,
-}: UserProfilePageProps) {
-  return (
-    <Suspense fallback={null}>
-      <UserProfileContent
-        paramsPromise={params}
-        searchParamsPromise={searchParams}
-      />
-    </Suspense>
   )
 }
