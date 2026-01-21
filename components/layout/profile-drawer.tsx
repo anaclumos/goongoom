@@ -36,7 +36,9 @@ function ProfileDrawerContent() {
   const { user } = useUser()
   const profileHref = user?.username ? `/${user.username}` : "/settings"
   const displayName =
-    user?.fullName || user?.username || user?.primaryEmailAddress?.emailAddress
+    `${user?.lastName}${user?.firstName}` ||
+    user?.username ||
+    user?.primaryEmailAddress?.emailAddress
 
   return (
     <>
@@ -51,9 +53,11 @@ function ProfileDrawerContent() {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-0.5">
-            <DrawerTitle className="text-lg">{displayName}</DrawerTitle>
+            <DrawerTitle className="text-left text-lg">
+              {displayName}
+            </DrawerTitle>
             {user?.username && (
-              <DrawerDescription>@{user.username}</DrawerDescription>
+              <DrawerDescription>{user.username}</DrawerDescription>
             )}
           </div>
         </div>
@@ -62,7 +66,7 @@ function ProfileDrawerContent() {
       <div className="flex flex-col gap-1 p-4 pt-2">
         <DrawerClose asChild>
           <Button
-            className="h-12 w-full justify-start gap-3 px-4"
+            className="h-12 w-full justify-start gap-2 px-4"
             render={<Link href={profileHref} />}
             variant="ghost"
           >
@@ -73,7 +77,7 @@ function ProfileDrawerContent() {
 
         <DrawerClose asChild>
           <Button
-            className="h-12 w-full justify-start gap-3 px-4"
+            className="h-12 w-full justify-start gap-2 px-4"
             render={<Link href="/inbox" />}
             variant="ghost"
           >
@@ -84,7 +88,7 @@ function ProfileDrawerContent() {
 
         <DrawerClose asChild>
           <Button
-            className="h-12 w-full justify-start gap-3 px-4"
+            className="h-12 w-full justify-start gap-2 px-4"
             render={<Link href="/settings" />}
             variant="ghost"
           >
@@ -97,7 +101,7 @@ function ProfileDrawerContent() {
 
         <SignOutButton>
           <Button
-            className="h-12 w-full justify-start gap-3 px-4 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="h-12 w-full justify-start gap-2 px-4 text-destructive hover:bg-destructive/10 hover:text-destructive"
             variant="ghost"
           >
             <HugeiconsIcon className="size-5" icon={Logout03Icon} />
@@ -112,7 +116,7 @@ function ProfileDrawerContent() {
 function SignedOutContent() {
   return (
     <>
-      <DrawerHeader className="text-center">
+      <DrawerHeader className="text-left">
         <DrawerTitle className="text-xl">
           궁금닷컴에 오신 것을 환영합니다
         </DrawerTitle>
@@ -121,7 +125,7 @@ function SignedOutContent() {
         </DrawerDescription>
       </DrawerHeader>
 
-      <div className="flex flex-col gap-3 p-4">
+      <div className="flex flex-col gap-2 p-4">
         <SignInButton mode="modal">
           <Button className="h-12 w-full" size="lg" variant="outline">
             로그인
@@ -150,7 +154,7 @@ export function ProfileDrawer() {
         <Drawer onOpenChange={setOpen} open={open}>
           <button
             aria-label="프로필 메뉴 열기"
-            className="tap-scale flex size-10 items-center justify-center rounded-full ring-2 ring-border/50 transition-all hover:ring-electric-blue/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-electric-blue focus-visible:ring-offset-2"
+            className="flex size-11 items-center justify-center rounded-full ring-2 ring-border/50 transition-all hover:ring-electric-blue/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-electric-blue focus-visible:ring-offset-2"
             onClick={() => setOpen(true)}
             type="button"
           >

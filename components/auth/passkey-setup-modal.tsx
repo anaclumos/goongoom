@@ -17,6 +17,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
+import { AnimatedCard } from "@/components/vibrant/animated-card"
 import { cn } from "@/lib/utils"
 
 export function PasskeySetupModal() {
@@ -79,7 +80,7 @@ export function PasskeySetupModal() {
 
         {!success && (
           <button
-            className="absolute top-4 right-4 z-50 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+            className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             onClick={handleDismiss}
             type="button"
           >
@@ -89,24 +90,33 @@ export function PasskeySetupModal() {
 
         <div className="relative z-10 flex flex-col items-center p-8 pt-12 text-center">
           {success ? (
-            <div className="zoom-in flex animate-in flex-col items-center duration-300">
-              <div className="mb-6 flex size-20 animate-bounce items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
+            <AnimatedCard
+              animation="scaleIn"
+              className="flex flex-col items-center border-none bg-transparent shadow-none"
+            >
+              <AnimatedCard
+                animation="bounce"
+                className="mb-6 flex size-20 items-center justify-center rounded-full border-none bg-white/20 text-white shadow-none backdrop-blur-md"
+              >
                 <CheckCircleIcon className="size-10" />
-              </div>
+              </AnimatedCard>
               <h2 className="mb-2 font-bold text-2xl text-white">설정 완료!</h2>
               <p className="text-white/90">
                 이제 더 빠르고 안전하게 로그인할 수 있습니다.
               </p>
-            </div>
+            </AnimatedCard>
           ) : (
             <>
               <div className="relative mb-6">
                 <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-white/20 text-white shadow-lg backdrop-blur-md">
                   <FingerprintIcon className="size-10" />
                 </div>
-                <div className="absolute -top-2 -right-2 flex size-8 animate-bounce items-center justify-center rounded-full bg-neon-pink text-white shadow-md">
+                <AnimatedCard
+                  animation="bounce"
+                  className="absolute -top-2 -right-2 flex size-8 items-center justify-center rounded-full border-none bg-neon-pink text-white shadow-md"
+                >
                   <ShieldCheckIcon className="size-4" />
-                </div>
+                </AnimatedCard>
               </div>
 
               <DrawerHeader className="mb-8 items-center p-0">
@@ -126,11 +136,12 @@ export function PasskeySetupModal() {
                 </div>
               )}
 
-              <div className="w-full space-y-3">
+              <div className="w-full space-y-2">
                 <Button
-                  className="hover-lift tap-scale h-12 w-full rounded-xl border-none bg-white font-bold text-base text-electric-blue shadow-lg transition-all hover:bg-white/90"
+                  className="w-full rounded-xl border-none bg-white font-bold text-base text-electric-blue shadow-lg transition-all hover:bg-white/90"
                   disabled={isLoading}
                   onClick={createPasskey}
+                  size="lg"
                 >
                   {isLoading ? (
                     <>
@@ -143,8 +154,9 @@ export function PasskeySetupModal() {
                 </Button>
 
                 <Button
-                  className="h-10 w-full rounded-xl font-medium text-white/70 hover:bg-white/10 hover:text-white"
+                  className="w-full rounded-xl font-medium text-white/70 hover:bg-white/10 hover:text-white"
                   onClick={handleDismiss}
+                  size="lg"
                   variant="ghost"
                 >
                   다음에 하기

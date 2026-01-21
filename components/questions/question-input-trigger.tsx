@@ -15,7 +15,7 @@ function QuestionInputTrigger({
       <button
         aria-label="질문 작성하기"
         className={cn(
-          "hover-lift tap-scale pointer-events-auto flex min-h-11 w-full items-center justify-between gap-4 rounded-full border border-border/50 bg-background/80 px-5 py-3.5 shadow-lg backdrop-blur-md transition-all hover:bg-muted/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-electric-blue focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:min-h-12",
+          "pointer-events-auto flex min-h-11 w-full items-center justify-between gap-4 rounded-full border border-border/50 bg-background/80 px-5 py-3.5 shadow-lg backdrop-blur-md transition-all hover:bg-muted/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-electric-blue focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:min-h-12",
           className
         )}
         ref={ref}

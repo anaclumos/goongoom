@@ -6,13 +6,13 @@ import { useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { AnimatedCard } from "@/components/vibrant/animated-card"
 import { cn } from "@/lib/utils"
 
 export function PasskeyNudge() {
@@ -45,10 +45,13 @@ export function PasskeyNudge() {
 
   if (success) {
     return (
-      <Card className="relative animate-pop overflow-hidden border-lime/20 bg-lime/10">
+      <AnimatedCard
+        animation="pop"
+        className="relative overflow-hidden border-lime/20 bg-lime/10"
+      >
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-lime/5 to-transparent" />
         <CardContent className="flex flex-col items-center justify-center gap-4 p-8 text-center">
-          <div className="flex size-12 animate-bounce items-center justify-center rounded-full bg-lime/20 text-lime">
+          <div className="flex size-12 items-center justify-center rounded-full bg-lime/20 text-lime">
             <CheckCircleIcon className="size-6" />
           </div>
           <div className="space-y-1">
@@ -60,14 +63,15 @@ export function PasskeyNudge() {
             </p>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
     )
   }
 
   return (
-    <Card
+    <AnimatedCard
+      animation="slideUpFade"
       className={cn(
-        "group hover-lift relative animate-slide-up-fade overflow-hidden border-none bg-gradient-to-br from-electric-blue via-purple to-electric-blue",
+        "group relative overflow-hidden border-none bg-gradient-to-br from-electric-blue via-purple to-electric-blue",
         "text-electric-blue-foreground shadow-electric-blue/20 shadow-lg"
       )}
     >
@@ -104,9 +108,10 @@ export function PasskeyNudge() {
         )}
 
         <Button
-          className="group/btn h-12 w-full border-none bg-white font-bold text-base text-electric-blue shadow-md hover:bg-white/90"
+          className="group/btn w-full border-none bg-white font-bold text-base text-electric-blue shadow-md hover:bg-white/90"
           disabled={isLoading}
           onClick={createPasskey}
+          size="lg"
         >
           {isLoading ? (
             <>
@@ -121,6 +126,6 @@ export function PasskeyNudge() {
           )}
         </Button>
       </CardContent>
-    </Card>
+    </AnimatedCard>
   )
 }

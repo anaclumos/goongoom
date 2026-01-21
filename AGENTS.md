@@ -57,8 +57,8 @@ All colors support dark mode with optimized contrast (AA/AAA compliant).
 
 **Usage Examples**:
 ```tsx
-import { GradientCard } from "@/components/ui/gradient-card";
-import { GradientButton } from "@/components/ui/gradient-button";
+import { GradientCard } from "@/components/vibrant/gradient-card";
+import { GradientButton } from "@/components/vibrant/gradient-button";
 
 <GradientCard variant="sunset">
   <h2>Featured Content</h2>
@@ -94,8 +94,8 @@ import { GradientButton } from "@/components/ui/gradient-button";
 
 **Usage Examples**:
 ```tsx
-import { AnimatedButton } from "@/components/ui/animated-button";
-import { AnimatedCard } from "@/components/ui/animated-card";
+import { AnimatedButton } from "@/components/vibrant/animated-button";
+import { AnimatedCard } from "@/components/vibrant/animated-card";
 
 <AnimatedButton animation="pop" duration="normal" easing="spring">
   Click Me

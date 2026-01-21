@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
@@ -178,6 +179,36 @@ export default async function SettingsPage({
           </AlertDescription>
         </Alert>
       )}
+
+      <div className="mb-6 rounded-xl border border-border bg-card p-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <h3 className="font-medium text-base text-foreground">
+              Clerk 계정
+            </h3>
+            <p className="text-muted-foreground text-xs">
+              이메일, 비밀번호, 보안 설정을 관리하세요.
+            </p>
+          </div>
+          <UserButton
+            appearance={{
+              variables: {
+                colorPrimary: "var(--electric-blue)",
+                borderRadius: "0.75rem",
+              },
+              elements: {
+                userButtonAvatarBox:
+                  "w-12 h-12 rounded-xl border-2 border-electric-blue",
+                userButtonPopover:
+                  "bg-background border border-border shadow-lg rounded-xl",
+                card: "rounded-xl",
+                formButtonPrimary:
+                  "bg-electric-blue hover:bg-electric-blue/90 text-white rounded-lg",
+              },
+            }}
+          />
+        </div>
+      </div>
 
       <PasskeyNudge />
 

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/drawer"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 
 interface QuestionDrawerProps {
@@ -31,14 +32,14 @@ function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button
-      className="hover-lift tap-scale h-12 w-full rounded-xl border-electric-blue bg-electric-blue text-white shadow-electric-blue/20 shadow-lg transition-all hover:bg-electric-blue/90 hover:shadow-electric-blue/30 focus-visible:ring-electric-blue sm:h-13"
+      className="w-full rounded-xl border-electric-blue bg-electric-blue text-white shadow-electric-blue/20 shadow-lg transition-all hover:bg-electric-blue/90 hover:shadow-electric-blue/30 sm:h-13"
       disabled={pending}
       size="lg"
       type="submit"
     >
       {pending ? (
         <span className="flex items-center gap-2">
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          <Spinner className="h-4 w-4 text-white" />
           보내는 중...
         </span>
       ) : (
@@ -95,7 +96,7 @@ export function QuestionDrawer({
                 누구로 질문할까요?
               </Label>
               <RadioGroup
-                className="grid grid-cols-2 gap-3"
+                className="grid grid-cols-2 gap-2"
                 defaultValue={canAskAnonymously ? "anonymous" : "public"}
                 name="questionType"
               >
@@ -150,7 +151,7 @@ export function QuestionDrawer({
               </RadioGroup>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <SubmitButton />
               <p className="text-center text-muted-foreground/60 text-xs">
                 질문 시 사용 약관에 동의하게 됩니다

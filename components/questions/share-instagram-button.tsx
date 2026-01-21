@@ -114,13 +114,14 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
             이 답변을 인스타그램에 공유하세요
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-col gap-3 px-4 pb-4">
+        <div className="flex flex-col gap-2 px-4 pb-4">
           <Button
-            className="h-12 w-full font-semibold text-base"
+            className="w-full font-semibold text-base"
             onClick={() => {
               handleShare()
               setOpen(false)
             }}
+            size="lg"
           >
             인스타그램 이미지 공유
           </Button>
