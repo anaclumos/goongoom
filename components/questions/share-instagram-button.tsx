@@ -1,13 +1,12 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/menu";
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+} from "@/components/ui/drawer";
 import { MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -16,8 +15,9 @@ interface ShareInstagramButtonProps {
 }
 
 export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
-  const sharingRef = useRef(false);
-  const fileRef = useRef<File | null>(null);
+   const sharingRef = useRef(false);
+   const fileRef = useRef<File | null>(null);
+   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,20 +86,24 @@ export function ShareInstagramButton({ shareUrl }: ShareInstagramButtonProps) {
     }
   };
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant="ghost" size="icon-xs">
-            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-          </Button>
-        }
-      />
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleShare}>
-          인스타그램 이미지 공유
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+   return (
+     <Drawer open={open} onOpenChange={setOpen}>
+       <DrawerTrigger asChild>
+         <Button variant="ghost" size="icon-xs">
+           <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+         </Button>
+       </DrawerTrigger>
+       <DrawerContent className="flex flex-col gap-4 pb-8">
+         <Button
+           onClick={() => {
+             handleShare();
+             setOpen(false);
+           }}
+           className="w-full h-12 text-base font-semibold"
+         >
+           인스타그램 이미지 공유
+         </Button>
+       </DrawerContent>
+     </Drawer>
+   );
 }

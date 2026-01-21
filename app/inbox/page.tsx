@@ -62,11 +62,11 @@ async function InboxContent({
       <h1 className="mb-2 text-3xl font-bold text-foreground">받은 질문</h1>
       <p className="mb-8 text-muted-foreground">아직 답변하지 않은 질문들입니다</p>
 
-      {error && (
-        <Alert variant="error" className="mb-6">
-          <AlertDescription className="text-center">{error}</AlertDescription>
-        </Alert>
-      )}
+       {error && (
+         <Alert variant="destructive" className="mb-6">
+           <AlertDescription className="text-center">{error}</AlertDescription>
+         </Alert>
+       )}
 
       {questionsWithSenders.length === 0 ? (
         <Empty>

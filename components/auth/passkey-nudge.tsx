@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { FingerprintIcon, CheckCircleIcon, AlertCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardPanel } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
@@ -37,18 +37,18 @@ export function PasskeyNudge() {
 
   if (success) {
     return (
-      <Card className="animate-pop bg-lime/10 border-lime/20 overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-lime/5 to-transparent pointer-events-none" />
-        <CardPanel className="flex flex-col items-center justify-center p-8 gap-4 text-center">
+       <Card className="animate-pop bg-lime/10 border-lime/20 overflow-hidden relative">
+         <div className="absolute inset-0 bg-gradient-to-br from-lime/5 to-transparent pointer-events-none" />
+         <CardContent className="flex flex-col items-center justify-center p-8 gap-4 text-center">
           <div className="size-12 rounded-full bg-lime/20 flex items-center justify-center text-lime animate-bounce">
             <CheckCircleIcon className="size-6" />
           </div>
           <div className="space-y-1">
             <h3 className="font-semibold text-lg text-lime-700 dark:text-lime-400">설정 완료!</h3>
-            <p className="text-sm text-lime-600/80 dark:text-lime-300/80">이제 더 빠르고 안전하게 로그인할 수 있습니다.</p>
-          </div>
-        </CardPanel>
-      </Card>
+             <p className="text-sm text-lime-600/80 dark:text-lime-300/80">이제 더 빠르고 안전하게 로그인할 수 있습니다.</p>
+           </div>
+         </CardContent>
+       </Card>
     );
   }
 
@@ -76,34 +76,34 @@ export function PasskeyNudge() {
         </div>
       </CardHeader>
 
-      <CardPanel className="relative z-10 pt-4 pb-6">
-        {error && (
-          <Alert variant="error" className="mb-4 bg-red-500/20 text-white border-red-200/20 backdrop-blur-sm">
-            <AlertCircleIcon className="size-4 text-white" />
-            <AlertDescription className="text-white/90">
-              {error}
-            </AlertDescription>
-          </Alert>
-        )}
+       <CardContent className="relative z-10 pt-4 pb-6">
+         {error && (
+           <Alert variant="destructive" className="mb-4 bg-red-500/20 text-white border-red-200/20 backdrop-blur-sm">
+             <AlertCircleIcon className="size-4 text-white" />
+             <AlertDescription className="text-white/90">
+               {error}
+             </AlertDescription>
+           </Alert>
+         )}
 
-        <Button 
-          onClick={createPasskey} 
-          disabled={isLoading}
-          className="w-full bg-white text-electric-blue hover:bg-white/90 font-bold border-none shadow-md h-12 text-base group/btn"
-        >
-          {isLoading ? (
-            <>
-              <Spinner className="mr-2 size-5 text-electric-blue" />
-              설정 중...
-            </>
-          ) : (
-            <>
-              지금 설정하기
-              <FingerprintIcon className="ml-2 size-4 group-hover/btn:scale-110 transition-transform" />
-            </>
-          )}
-        </Button>
-      </CardPanel>
-    </Card>
-  );
-}
+         <Button 
+           onClick={createPasskey} 
+           disabled={isLoading}
+           className="w-full bg-white text-electric-blue hover:bg-white/90 font-bold border-none shadow-md h-12 text-base group/btn"
+         >
+           {isLoading ? (
+             <>
+               <Spinner className="mr-2 size-5 text-electric-blue" />
+               설정 중...
+             </>
+           ) : (
+             <>
+               지금 설정하기
+               <FingerprintIcon className="ml-2 size-4 group-hover/btn:scale-110 transition-transform" />
+             </>
+            )}
+         </Button>
+        </CardContent>
+       </Card>
+   );
+ }

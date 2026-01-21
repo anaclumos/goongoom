@@ -54,24 +54,24 @@ export function HeroAuthButtons() {
       </ClerkLoading>
       <ClerkLoaded>
         <SignedOut>
-          <SignUpButton mode="modal">
-            <Button size="xl" className="w-full sm:w-auto">
-              내 프로필 만들기
-              <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="transition-transform" />
-            </Button>
-          </SignUpButton>
-          <SignInButton mode="modal">
-            <Button variant="outline" size="xl" className="w-full sm:w-auto">
+           <SignUpButton mode="modal">
+             <Button size="lg" className="w-full sm:w-auto">
+               내 프로필 만들기
+               <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="transition-transform" />
+             </Button>
+           </SignUpButton>
+           <SignInButton mode="modal">
+             <Button variant="outline" size="lg" className="w-full sm:w-auto">
               로그인하기
             </Button>
           </SignInButton>
         </SignedOut>
-        <SignedIn>
-          <Button size="xl" className="w-full sm:w-auto" render={<Link href={profileHref} />}>
-            내 프로필 보기
-            <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="transition-transform" />
-          </Button>
-        </SignedIn>
+         <SignedIn>
+           <Button size="lg" className="w-full sm:w-auto" render={<Link href={profileHref} />}>
+             내 프로필 보기
+             <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="transition-transform" />
+           </Button>
+         </SignedIn>
       </ClerkLoaded>
     </>
   );
@@ -87,15 +87,15 @@ export function BottomCTAButton() {
         <Skeleton className="mx-auto h-11 w-32 rounded-lg sm:h-12" />
       </ClerkLoading>
       <ClerkLoaded>
-        <SignedOut>
-          <SignUpButton mode="modal">
-            <Button size="xl">
-              시작
-            </Button>
-          </SignUpButton>
-        </SignedOut>
-        <SignedIn>
-          <Button size="xl" render={<Link href={profileHref} />}>
+         <SignedOut>
+           <SignUpButton mode="modal">
+             <Button size="lg">
+               시작
+             </Button>
+           </SignUpButton>
+         </SignedOut>
+         <SignedIn>
+           <Button size="lg" render={<Link href={profileHref} />}>
             내 프로필 보기
           </Button>
         </SignedIn>

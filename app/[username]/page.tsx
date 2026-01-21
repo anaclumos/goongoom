@@ -7,7 +7,7 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { InstagramIcon, FacebookIcon, GithubIcon } from "@hugeicons/core-free-icons";
 import { MainContent } from "@/components/layout/main-content";
-import { Card, CardPanel } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertAction, AlertDescription } from "@/components/ui/alert";
@@ -147,24 +147,15 @@ async function UserProfileContent({
 
   return (
     <MainContent>
-      <Card className="mb-6">
-        <CardPanel className="flex items-start gap-6">
+       <Card className="mb-6">
+         <CardContent className="flex items-start gap-6">
           <Avatar className="size-24 ring-2 ring-electric-blue/50">
             {clerkUser.avatarUrl ? <AvatarImage src={clerkUser.avatarUrl} alt={displayName} /> : null}
             <AvatarFallback>{displayName[0] || "?"}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 space-y-3 text-left">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-foreground">{displayName}</h1>
-              <p className="text-sm text-muted-foreground">@{recipientUsername}</p>
-            </div>
-            {dbUser?.bio && (
-              <p className="max-w-md text-sm leading-relaxed text-muted-foreground">{dbUser.bio}</p>
-            )}
-          </div>
-        </CardPanel>
-        {socialLinks.length > 0 && (
-          <CardPanel className="flex flex-wrap gap-4 pt-0">
+           </Avatar>
+         </CardContent>
+         {socialLinks.length > 0 && (
+           <CardContent className="flex flex-wrap gap-4 pt-0">
             {socialLinks.map((link) => {
               const Icon = link.icon;
               return (
@@ -181,30 +172,30 @@ async function UserProfileContent({
                   <span className="text-xs text-muted-foreground">{link.label}</span>
                 </div>
               );
-            })}
-          </CardPanel>
-        )}
-      </Card>
+             })}
+           </CardContent>
+         )}
+       </Card>
 
-      {status && (
-        <Alert variant={status.type === "error" ? "error" : "success"} className="mb-6">
-          <AlertDescription className="text-center">{status.message}</AlertDescription>
-        </Alert>
-      )}
+       {status && (
+         <Alert variant={status.type === "error" ? "destructive" : "default"} className="mb-6">
+           <AlertDescription className="text-center">{status.message}</AlertDescription>
+         </Alert>
+       )}
 
-      {showLoginWarning && (
-        <Card className="mb-6">
-          <CardPanel className="space-y-4">
+       {showLoginWarning && (
+         <Card className="mb-6">
+           <CardContent className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">{recipientUsername} 님에게 새 질문을 남겨보세요</h2>
             <Alert className="border-electric-blue/30 bg-electric-blue/10 text-electric-blue">
               <AlertDescription className="text-electric-blue/80">{warningMessage}</AlertDescription>
               <AlertAction>
                 <Button render={<Link href="/sign-in" />} size="sm">로그인</Button>
-              </AlertAction>
-            </Alert>
-          </CardPanel>
-        </Card>
-      )}
+               </AlertAction>
+             </Alert>
+           </CardContent>
+         </Card>
+       )}
 
       {answeredQuestions.length > 0 ? (
         <div className="space-y-6 pb-24">
@@ -217,7 +208,7 @@ async function UserProfileContent({
                 <div className="absolute right-4 top-4">
                   <ShareInstagramButton shareUrl={shareUrl} />
                 </div>
-                <CardPanel className="flex flex-col gap-4">
+                <CardContent className="flex flex-col gap-4">
                   <div className="flex w-full items-start gap-3">
                     <Avatar className="size-10 flex-shrink-0">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa.id}`} alt="Avatar" />
@@ -244,10 +235,10 @@ async function UserProfileContent({
                     <Avatar className="size-10 flex-shrink-0">
                       {clerkUser.avatarUrl ? <AvatarImage src={clerkUser.avatarUrl} alt={displayName} /> : null}
                       <AvatarFallback>{displayName[0] || "?"}</AvatarFallback>
-                    </Avatar>
-                  </div>
-                </CardPanel>
-              </Card>
+                     </Avatar>
+                   </div>
+                 </CardContent>
+               </Card>
             );
           })}
         </div>

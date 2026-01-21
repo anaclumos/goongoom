@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { FingerprintIcon, CheckCircleIcon, XIcon, ShieldCheckIcon } from "lucide-react";
-import { Dialog, DialogPopup, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
@@ -54,13 +54,12 @@ export function PasskeySetupModal() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={(val) => !val && handleDismiss()}>
-      <DialogPopup 
+    <Drawer open={open} onOpenChange={(val) => !val && handleDismiss()}>
+      <DrawerContent 
         className={cn(
           "bg-gradient-to-br from-electric-blue via-purple to-electric-blue text-electric-blue-foreground border-none shadow-2xl overflow-hidden",
           "p-0 gap-0 max-w-md w-full"
         )}
-        showCloseButton={false}
       >
         <div className="absolute top-0 right-0 p-20 bg-white/10 blur-3xl rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 p-16 bg-purple/30 blur-2xl rounded-full -translate-x-1/3 translate-y-1/3 pointer-events-none" />
@@ -86,24 +85,24 @@ export function PasskeySetupModal() {
               <p className="text-white/90">이제 더 빠르고 안전하게 로그인할 수 있습니다.</p>
             </div>
           ) : (
-            <>
-              <div className="relative mb-6">
-                <div className="size-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg rotate-3">
-                  <FingerprintIcon className="size-10" />
-                </div>
-                <div className="absolute -top-2 -right-2 size-8 rounded-full bg-neon-pink flex items-center justify-center text-white shadow-md animate-bounce">
-                  <ShieldCheckIcon className="size-4" />
-                </div>
-              </div>
+           <>
+               <div className="relative mb-6">
+                 <div className="size-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg rotate-3">
+                   <FingerprintIcon className="size-10" />
+                 </div>
+                 <div className="absolute -top-2 -right-2 size-8 rounded-full bg-neon-pink flex items-center justify-center text-white shadow-md animate-bounce">
+                   <ShieldCheckIcon className="size-4" />
+                 </div>
+               </div>
 
-              <DialogHeader className="p-0 mb-8 items-center">
-                <DialogTitle className="text-2xl font-bold text-white mb-2">
-                  🔐 패스키로 더 빠르게!
-                </DialogTitle>
-                <DialogDescription className="text-electric-blue-foreground/90 text-base max-w-xs">
-                  Face ID, 지문, 또는 기기 잠금으로<br/>한 번의 터치로 로그인하세요.
-                </DialogDescription>
-              </DialogHeader>
+               <DrawerHeader className="p-0 mb-8 items-center">
+                 <DrawerTitle className="text-2xl font-bold text-white mb-2">
+                   🔐 패스키로 더 빠르게!
+                 </DrawerTitle>
+                 <DrawerDescription className="text-electric-blue-foreground/90 text-base max-w-xs">
+                   Face ID, 지문, 또는 기기 잠금으로<br/>한 번의 터치로 로그인하세요.
+                 </DrawerDescription>
+               </DrawerHeader>
 
               {error && (
                 <div className="w-full bg-red-500/20 backdrop-blur-sm border border-red-200/20 rounded-lg p-3 mb-6 text-sm text-white flex items-center gap-2">
@@ -140,8 +139,8 @@ export function PasskeySetupModal() {
               </div>
             </>
           )}
-        </div>
-      </DialogPopup>
-    </Dialog>
-  );
-}
+         </div>
+       </DrawerContent>
+     </Drawer>
+   );
+ }

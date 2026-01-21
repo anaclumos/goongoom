@@ -10,14 +10,14 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, Radio } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { QuestionInputTrigger } from "@/components/questions/question-input-trigger";
@@ -67,17 +67,17 @@ export function QuestionDrawer({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen}>
       <QuestionInputTrigger onClick={() => setOpen(true)} />
-      <SheetContent side="bottom" className="rounded-t-3xl border-none px-0 pb-0 pt-3 shadow-xl">
+      <DrawerContent className="rounded-t-3xl border-none px-0 pb-0 pt-3 shadow-xl">
         <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border/40" />
         
-        <SheetHeader className="px-6 pb-2 text-left space-y-2">
-           <SheetTitle className="text-xl font-bold leading-tight tracking-tight">
+        <DrawerHeader className="px-6 pb-2 text-left space-y-2">
+           <DrawerTitle className="text-xl font-bold leading-tight tracking-tight">
              <span className="text-electric-blue">@{recipientUsername}</span> 님에게<br/>
-             새 질문을 남겨보세요
-           </SheetTitle>
-        </SheetHeader>
+              새 질문을 남겨보세요
+            </DrawerTitle>
+         </DrawerHeader>
         
         <div className="px-6 pb-6 pt-2 h-full overflow-y-auto max-h-svh">
            <form action={submitAction} className="space-y-6">
@@ -97,9 +97,9 @@ export function QuestionDrawer({
              <div className="space-y-4">
                <Label className="ml-1 text-sm font-semibold text-foreground/90">누구로 질문할까요?</Label>
                <RadioGroup name="questionType" defaultValue={canAskAnonymously ? "anonymous" : "public"} className="grid grid-cols-2 gap-3">
-                 {canAskAnonymously && (
-                   <Label className="cursor-pointer group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5">
-                      <Radio id="r-anonymous" value="anonymous" className="absolute opacity-0 pointer-events-none" />
+                  {canAskAnonymously && (
+                    <Label className="cursor-pointer group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5">
+                       <RadioGroupItem id="r-anonymous" value="anonymous" className="absolute opacity-0 pointer-events-none" />
                       <div className="rounded-full bg-gradient-to-br from-muted to-muted/50 p-3 text-muted-foreground transition-colors group-has-data-checked:from-electric-blue group-has-data-checked:to-electric-blue/90 group-has-data-checked:text-white">
                          <HugeiconsIcon icon={AnonymousIcon} className="size-6" strokeWidth={2} />
                       </div>
@@ -109,9 +109,9 @@ export function QuestionDrawer({
                       </div>
                     </Label>
                  )}
-                 {canAskPublic && (
-                   <Label className="cursor-pointer group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5">
-                      <Radio id="r-public" value="public" className="absolute opacity-0 pointer-events-none" />
+                  {canAskPublic && (
+                    <Label className="cursor-pointer group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5">
+                       <RadioGroupItem id="r-public" value="public" className="absolute opacity-0 pointer-events-none" />
                       <div className="rounded-full bg-gradient-to-br from-muted to-muted/50 p-3 text-muted-foreground transition-colors group-has-data-checked:from-electric-blue group-has-data-checked:to-electric-blue/90 group-has-data-checked:text-white">
                          <HugeiconsIcon icon={UserIcon} className="size-6" strokeWidth={2} />
                       </div>
@@ -128,9 +128,9 @@ export function QuestionDrawer({
                 <SubmitButton />
                 <p className="text-center text-xs text-muted-foreground/60">질문 시 사용 약관에 동의하게 됩니다</p>
              </div>
-           </form>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-}
+            </form>
+         </div>
+       </DrawerContent>
+     </Drawer>
+   );
+ }

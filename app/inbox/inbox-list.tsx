@@ -2,18 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardPanel } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetPanel,
-  SheetFooter,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+} from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
@@ -87,8 +86,8 @@ export function InboxList({ questions }: InboxListProps) {
             onClick={() => handleQuestionClick(question)}
             className="w-full text-left"
           >
-            <Card className="transition-colors hover:bg-accent/50 active:bg-accent">
-              <CardPanel className="flex items-center gap-3">
+             <Card className="transition-colors hover:bg-accent/50 active:bg-accent">
+               <CardContent className="flex items-center gap-3">
                 <Avatar className="size-10 flex-shrink-0">
                   {!question.isAnonymous && question.senderAvatarUrl ? (
                     <AvatarImage src={question.senderAvatarUrl} alt={question.senderName} />
@@ -101,33 +100,33 @@ export function InboxList({ questions }: InboxListProps) {
                     {question.isAnonymous ? "익명" : "공개"} · {formatRelativeTime(question.createdAt)}
                   </p>
                 </div>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-5 flex-shrink-0 text-muted-foreground" />
-              </CardPanel>
-            </Card>
+                 <HugeiconsIcon icon={ArrowRight01Icon} className="size-5 flex-shrink-0 text-muted-foreground" />
+               </CardContent>
+             </Card>
           </button>
         ))}
       </div>
 
-      <Sheet open={!!selectedQuestion} onOpenChange={(open) => !open && setSelectedQuestion(null)}>
-        <SheetContent side="bottom" showCloseButton={false}>
-          <SheetHeader>
-            <SheetTitle>질문에 답변하기</SheetTitle>
-            {selectedQuestion && (
-              <SheetDescription className="text-left">
-                {selectedQuestion.content}
-              </SheetDescription>
-            )}
-          </SheetHeader>
-          <SheetPanel>
-            <Textarea
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="답변을 입력하세요…"
-              rows={4}
-              className="w-full"
-            />
-          </SheetPanel>
-          <SheetFooter variant="bare">
+       <Drawer open={!!selectedQuestion} onOpenChange={(open) => !open && setSelectedQuestion(null)}>
+         <DrawerContent>
+           <DrawerHeader>
+             <DrawerTitle>질문에 답변하기</DrawerTitle>
+             {selectedQuestion && (
+               <DrawerDescription className="text-left">
+                 {selectedQuestion.content}
+               </DrawerDescription>
+             )}
+           </DrawerHeader>
+           <div className="px-4 py-4">
+             <Textarea
+               value={answer}
+               onChange={(e) => setAnswer(e.target.value)}
+               placeholder="답변을 입력하세요…"
+               rows={4}
+               className="w-full"
+             />
+           </div>
+           <DrawerFooter>
             <Button
               type="button"
               variant="ghost"
@@ -143,10 +142,10 @@ export function InboxList({ questions }: InboxListProps) {
               className="min-h-11"
             >
               {isSubmitting ? "전송 중…" : "답변하기"}
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+             </Button>
+           </DrawerFooter>
+         </DrawerContent>
+       </Drawer>
     </>
   );
 }

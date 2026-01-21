@@ -2,7 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Message01Icon, Share01Icon, ShieldKeyIcon, SparklesIcon, SentIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardPanel, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardContent, CardTitle } from "@/components/ui/card";
 import { getTotalUserCount } from "@/lib/db/queries";
 import { HeroAuthButtons, BottomCTAButton } from "@/components/auth/auth-buttons";
 
@@ -15,7 +15,7 @@ export default async function Home() {
         <div className="absolute top-48 -left-24 h-72 w-72 rounded-full bg-electric-blue/10 blur-3xl filter" />
 
         <div className="relative mx-auto max-w-5xl px-6 pb-24 text-center">
-          <Badge className="mb-6 gap-2" size="lg" variant="secondary">
+          <Badge className="mb-6 gap-2" variant="secondary">
             <span className="size-2 rounded-full bg-neon-pink animate-pulse" />
             <span className="text-xs font-semibold tracking-wide text-neon-pink">
               지금 가장 핫한 익명 Q&A
@@ -40,7 +40,7 @@ export default async function Home() {
           <div className="mx-auto max-w-5xl px-6">
             <div className="grid gap-8 sm:grid-cols-3">
               <Card>
-                <CardPanel className="space-y-4">
+                <CardContent className="space-y-4">
                   <div className="inline-flex size-12 items-center justify-center rounded-xl bg-electric-blue/10 text-electric-blue">
                     <HugeiconsIcon icon={ShieldKeyIcon} size={24} />
                   </div>
@@ -50,11 +50,11 @@ export default async function Home() {
                       질문하는 사람의 정보는 비공개로 유지됩니다. 부담 없이 솔직한 대화를 시작해보세요.
                     </CardDescription>
                   </div>
-                </CardPanel>
+                </CardContent>
               </Card>
 
               <Card>
-                <CardPanel className="space-y-4">
+                <CardContent className="space-y-4">
                   <div className="inline-flex size-12 items-center justify-center rounded-xl bg-neon-pink/10 text-neon-pink">
                     <HugeiconsIcon icon={Share01Icon} size={24} />
                   </div>
@@ -64,11 +64,11 @@ export default async function Home() {
                       인스타그램, 트위터 어디든 링크를 공유하세요. 클릭 한 번으로 질문을 받을 수 있습니다.
                     </CardDescription>
                   </div>
-                </CardPanel>
+                </CardContent>
               </Card>
 
               <Card>
-                <CardPanel className="space-y-4">
+                <CardContent className="space-y-4">
                   <div className="inline-flex size-12 items-center justify-center rounded-xl bg-lime/10 text-lime">
                     <HugeiconsIcon icon={SparklesIcon} size={24} />
                   </div>
@@ -78,7 +78,7 @@ export default async function Home() {
                       재치있는 답변을 이미지로 저장해 인스타그램 스토리와 피드에 바로 공유해보세요.
                     </CardDescription>
                   </div>
-                </CardPanel>
+                </CardContent>
               </Card>
             </div>
           </div>

@@ -6,13 +6,12 @@ import { MainContent } from "@/components/layout/main-content";
 import { getClerkUserById } from "@/lib/clerk";
 import { getOrCreateUser } from "@/lib/db/queries";
 import { updateProfile } from "@/lib/actions/profile";
-import { Card } from "@/components/ui/card";
-import { Field, FieldLabel, FieldControl, FieldDescription } from "@/components/ui/field";
+import { Field, FieldLabel, FieldContent, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { RadioGroup, Radio } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import {
@@ -139,27 +138,30 @@ async function SettingsContent({
       <h1 className="mb-2 text-3xl font-bold text-foreground">설정</h1>
       <p className="mb-8 text-muted-foreground">프로필 정보를 수정하세요</p>
 
-      {(error || updated) && (
-        <Alert variant={error ? "error" : "success"} className="mb-6">
-          <AlertDescription className="text-center">
-            {error || "프로필이 수정되었습니다!"}
-          </AlertDescription>
-        </Alert>
-      )}
+       {(error || updated) && (
+         <Alert variant={error ? "destructive" : "default"} className="mb-6">
+           <AlertDescription className="text-center">
+             {error || "프로필이 수정되었습니다!"}
+           </AlertDescription>
+         </Alert>
+       )}
 
       <PasskeyNudge />
 
-      <Card className="p-6">
-        <form action={submitProfile} className="space-y-6">
+      <form action={submitProfile} className="space-y-6">
           <Field>
             <FieldLabel htmlFor="username">사용자 이름</FieldLabel>
-            <FieldControl render={<Input id="username" value={clerkUser.username || ""} disabled />} />
+            <FieldContent>
+              <Input id="username" value={clerkUser.username || ""} disabled />
+            </FieldContent>
             <FieldDescription>사용자 이름은 Clerk에서 관리됩니다</FieldDescription>
           </Field>
 
           <Field>
             <FieldLabel htmlFor="displayName">표시 이름</FieldLabel>
-            <FieldControl render={<Input id="displayName" value={clerkUser.displayName || ""} disabled />} />
+            <FieldContent>
+              <Input id="displayName" value={clerkUser.displayName || ""} disabled />
+            </FieldContent>
             <FieldDescription>표시 이름은 Clerk에서 관리됩니다</FieldDescription>
           </Field>
 
@@ -171,27 +173,25 @@ async function SettingsContent({
           <Field>
             <FieldLabel>질문 보안 수준</FieldLabel>
             <FieldDescription>익명 질문을 제한해 악성 질문을 줄일 수 있습니다.</FieldDescription>
-            <FieldControl
-              render={
-                <RadioGroup name="questionSecurityLevel" defaultValue={initialQuestionSecurityLevel} className="w-full">
-                  {QUESTION_SECURITY_LEVELS.map((level) => {
-                    const option = QUESTION_SECURITY_OPTIONS[level];
-                    return (
-                      <Label
-                        key={level}
-                        className="flex items-start gap-2 rounded-lg border border-border p-3 transition-colors hover:bg-accent/50 has-[data-checked]:border-primary/48 has-[data-checked]:bg-accent/50"
-                      >
-                        <Radio id={`qsl-${level}`} value={level} />
-                        <div className="flex flex-col gap-1">
-                          <p className="font-medium text-foreground">{option.label}</p>
-                          <p className="text-xs text-muted-foreground">{option.description}</p>
-                        </div>
-                      </Label>
-                    );
-                  })}
-                </RadioGroup>
-              }
-            />
+            <FieldContent>
+              <RadioGroup name="questionSecurityLevel" defaultValue={initialQuestionSecurityLevel} className="w-full">
+                {QUESTION_SECURITY_LEVELS.map((level) => {
+                  const option = QUESTION_SECURITY_OPTIONS[level];
+                  return (
+                    <Label
+                      key={level}
+                      className="flex items-start gap-2 rounded-lg border border-border p-3 transition-colors hover:bg-accent/50 has-[data-checked]:border-primary/48 has-[data-checked]:bg-accent/50"
+                    >
+                      <RadioGroupItem id={`qsl-${level}`} value={level} />
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium text-foreground">{option.label}</p>
+                        <p className="text-xs text-muted-foreground">{option.description}</p>
+                      </div>
+                    </Label>
+                  );
+                })}
+              </RadioGroup>
+            </FieldContent>
           </Field>
 
           <div className="space-y-4 border-t border-border pt-6">
@@ -203,30 +203,29 @@ async function SettingsContent({
             <div className="space-y-4">
               <Field>
                 <FieldLabel htmlFor="instagram">Instagram</FieldLabel>
-                <FieldControl
-                  render={<Input autoCapitalize="none" autoCorrect="off" id="instagram" name="instagram" placeholder="username" defaultValue={instagramHandle} />}
-                />
+                <FieldContent>
+                  <Input autoCapitalize="none" autoCorrect="off" id="instagram" name="instagram" placeholder="username" defaultValue={instagramHandle} />
+                </FieldContent>
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="github">GitHub</FieldLabel>
-                <FieldControl
-                  render={<Input autoCapitalize="none" autoCorrect="off" id="github" name="github" placeholder="username" defaultValue={githubHandle} />}
-                />
+                <FieldContent>
+                  <Input autoCapitalize="none" autoCorrect="off" id="github" name="github" placeholder="username" defaultValue={githubHandle} />
+                </FieldContent>
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="twitter">Twitter / X</FieldLabel>
-                <FieldControl
-                  render={<Input autoCapitalize="none" autoCorrect="off" id="twitter" name="twitter" placeholder="username" defaultValue={twitterHandle} />}
-                />
+                <FieldContent>
+                  <Input autoCapitalize="none" autoCorrect="off" id="twitter" name="twitter" placeholder="username" defaultValue={twitterHandle} />
+                </FieldContent>
               </Field>
             </div>
           </div>
 
           <Button type="submit" className="w-full">저장하기</Button>
         </form>
-      </Card>
     </MainContent>
   );
 }
