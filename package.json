@@ -12,7 +12,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "prepare": "lefthook install",
-    "format": "bun x ultracite fix"
+    "format": "bun x ultracite fix",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",

@@ -57,6 +57,52 @@ export const answers = goongoom.table(
   (table) => [index("answers_question_id_idx").on(table.questionId)]
 )
 
+// Temporary types until lib/audit/types.ts is created (Task 2)
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue }
+type EntityType = "question" | "answer"
+
+export const logs = goongoom.table(
+  "logs",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    // Request metadata
+    ipAddress: text("ip_address"),
+    geoCity: text("geo_city"),
+    geoCountry: text("geo_country"),
+    geoRegion: text("geo_region"),
+    geoLatitude: text("geo_latitude"),
+    geoLongitude: text("geo_longitude"),
+    userAgent: text("user_agent"),
+    referer: text("referer"),
+    acceptLanguage: text("accept_language"),
+    // Action metadata
+    userId: text("user_id"),
+    action: text("action").notNull(),
+    payload: jsonb("payload").$type<JsonValue | null>(),
+    // Entity tracking (links to questions/answers)
+    entityType: text("entity_type").$type<EntityType | null>(),
+    entityId: integer("entity_id"),
+    // Result
+    success: integer("success").notNull(),
+    errorMessage: text("error_message"),
+    // Timestamps
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("logs_user_id_idx").on(table.userId),
+    index("logs_created_at_idx").on(table.createdAt),
+    index("logs_action_idx").on(table.action),
+    index("logs_entity_type_idx").on(table.entityType),
+    index("logs_entity_id_idx").on(table.entityId),
+  ]
+)
+
 export const usersRelations = relations(users, ({ many }) => ({
   receivedQuestions: many(questions, { relationName: "recipient" }),
   sentQuestions: many(questions, { relationName: "sender" }),

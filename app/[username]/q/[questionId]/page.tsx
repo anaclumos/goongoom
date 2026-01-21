@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
@@ -9,9 +10,12 @@ import { InstagramSharePrefetch } from "@/components/questions/instagram-share-p
 import { ShareInstagramButton } from "@/components/questions/share-instagram-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { getClerkUserByUsername } from "@/lib/clerk"
-import { getQuestionByIdAndRecipient } from "@/lib/db/queries"
+import {
+  getAnsweredQuestionNumber,
+  getQuestionByIdAndRecipient,
+} from "@/lib/db/queries"
 import type { QuestionWithAnswers } from "@/lib/types"
 import { formatRelativeTime } from "@/lib/utils/format-time"
 
@@ -46,25 +50,30 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
     notFound()
   }
 
-  const clerkUser = await getClerkUserByUsername(username)
+  const [clerkUser, { userId: viewerId }] = await Promise.all([
+    getClerkUserByUsername(username),
+    auth(),
+  ])
   if (!clerkUser) {
     notFound()
   }
 
-  const qa = await getQuestionByIdAndRecipient(
-    parsedQuestionId,
-    clerkUser.clerkId
-  )
+  const [qa, questionNumber] = await Promise.all([
+    getQuestionByIdAndRecipient(parsedQuestionId, clerkUser.clerkId),
+    getAnsweredQuestionNumber(parsedQuestionId, clerkUser.clerkId),
+  ])
   if (!qa || qa.answers.length === 0) {
     notFound()
   }
 
-  const [tCommon, tAnswers, tProfile, locale] = await Promise.all([
+  const [tCommon, tProfile, tQuestions, locale] = await Promise.all([
     getTranslations("common"),
-    getTranslations("answers"),
     getTranslations("profile"),
+    getTranslations("questions"),
     getLocale(),
   ])
+
+  const isOwner = viewerId === clerkUser.clerkId
 
   const fullName = clerkUser.displayName || clerkUser.username || username
   const displayName = fullName.split(" ")[0] || fullName
@@ -83,74 +92,92 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
 
   return (
     <MainContent>
-      <div className="mb-6">
+      <div className="mb-4">
         <Button
-          className="w-full justify-start pl-0 font-medium text-lg text-muted-foreground hover:text-foreground"
+          className="gap-2 pl-2"
           nativeButton={false}
           render={<Link href={`/${username}`} />}
           size="lg"
           variant="ghost"
         >
-          <HugeiconsIcon className="mr-2 size-6" icon={ArrowLeft01Icon} />
+          <HugeiconsIcon className="size-5" icon={ArrowLeft01Icon} />
           {tProfile("backToProfile", { displayName })}
         </Button>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-3xl bg-card p-6 shadow-sm ring-1 ring-border/50">
-        <div className="flex w-full items-start gap-3">
-          <Avatar className="size-10 flex-shrink-0">
-            <AvatarImage
-              alt="Avatar"
-              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa.id}`}
+      <h1 className="mb-6 font-bold text-2xl">
+        {tQuestions("questionNumber", { displayName, number: questionNumber })}
+      </h1>
+
+      <Card>
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex w-full items-start gap-3">
+            <Avatar className="size-10 flex-shrink-0">
+              <AvatarImage
+                alt="Avatar"
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa.id}`}
+              />
+              <AvatarFallback>?</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <Card className="max-w-prose bg-muted/40 px-4 py-3">
+                <p className="text-foreground leading-relaxed">{qa.content}</p>
+              </Card>
+              <p className="mt-1 ml-1 text-muted-foreground text-xs">
+                {qa.isAnonymous === 1
+                  ? tCommon("anonymous")
+                  : tCommon("identified")}{" "}
+                · {formatRelativeTime(qa.createdAt, locale)}
+              </p>
+            </div>
+          </div>
+          <div className="flex w-full items-start justify-end gap-3">
+            <div className="flex flex-1 flex-col items-end">
+              <Card className="max-w-prose border-none bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-white">
+                <p className="leading-relaxed">{answer.content}</p>
+              </Card>
+              <p className="mt-1 mr-1 text-muted-foreground text-xs">
+                {displayName} · {formatRelativeTime(answer.createdAt, locale)}
+              </p>
+            </div>
+            <Avatar className="size-10 flex-shrink-0">
+              {clerkUser.avatarUrl ? (
+                <AvatarImage alt={displayName} src={clerkUser.avatarUrl} />
+              ) : null}
+              <AvatarFallback>{displayName[0] || "?"}</AvatarFallback>
+            </Avatar>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="mt-6 flex flex-col gap-3">
+        {isOwner ? (
+          <>
+            <ShareInstagramButton
+              className="h-14 w-full rounded-xl font-semibold"
+              mode="button"
+              shareUrl={instagramShareUrl}
             />
-            <AvatarFallback>?</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <Card className="max-w-prose bg-muted/40 px-4 py-3 shadow-none">
-              <p className="text-foreground leading-relaxed">{qa.content}</p>
-            </Card>
-            <p className="mt-1 ml-1 text-muted-foreground text-xs">
-              {qa.isAnonymous === 1
-                ? tCommon("anonymous")
-                : tCommon("identified")}{" "}
-              · {formatRelativeTime(qa.createdAt, locale)}
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full items-start justify-end gap-3">
-          <div className="flex flex-1 flex-col items-end">
-            <Card className="max-w-prose border-primary/20 bg-primary px-4 py-3 text-primary-foreground shadow-none">
-              <p className="leading-relaxed">{answer.content}</p>
-            </Card>
-            <p className="mt-1 mr-1 text-muted-foreground text-xs">
-              {displayName} · {formatRelativeTime(answer.createdAt, locale)}{" "}
-              {tAnswers("answer")}
-            </p>
-          </div>
-          <Avatar className="size-10 flex-shrink-0">
-            {clerkUser.avatarUrl ? (
-              <AvatarImage alt={displayName} src={clerkUser.avatarUrl} />
-            ) : null}
-            <AvatarFallback>{displayName[0] || "?"}</AvatarFallback>
-          </Avatar>
-        </div>
+            <CopyLinkButton
+              className="h-14 w-full rounded-xl"
+              fullWidth
+              url={canonicalUrl}
+              variant="secondary"
+            />
+          </>
+        ) : (
+          <Button
+            className="h-14 w-full rounded-xl font-semibold"
+            nativeButton={false}
+            render={<Link href={`/${username}`} />}
+            size="lg"
+          >
+            {tQuestions("askAnotherQuestion", { displayName })}
+          </Button>
+        )}
       </div>
 
-      <div className="flex flex-col gap-3">
-        <ShareInstagramButton
-          className="w-full rounded-2xl font-semibold text-base shadow-sm"
-          mode="button"
-          shareUrl={instagramShareUrl}
-        />
-        <CopyLinkButton
-          className="w-full rounded-2xl font-medium text-base"
-          fullWidth
-          url={canonicalUrl}
-          variant="secondary"
-        />
-      </div>
-
-      <InstagramSharePrefetch imageUrl={instagramShareUrl} />
+      {isOwner && <InstagramSharePrefetch imageUrl={instagramShareUrl} />}
     </MainContent>
   )
 }

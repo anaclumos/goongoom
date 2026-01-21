@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server"
 import { getTranslations } from "next-intl/server"
+import { withAudit } from "@/lib/audit/with-audit"
 import { getClerkUserById } from "@/lib/clerk"
 import { getOrCreateUser, updateUserProfile } from "@/lib/db/queries"
 import {
@@ -58,52 +59,58 @@ export async function updateProfile(data: {
   socialLinks?: SocialLinks | null
   questionSecurityLevel?: string | null
 }): Promise<ProfileActionResult<UserProfile>> {
-  const t = await getTranslations("errors")
-  try {
-    const { userId: clerkId } = await auth()
+  return await withAudit(
+    { action: "updateProfile", payload: data },
+    async () => {
+      const t = await getTranslations("errors")
+      try {
+        const { userId: clerkId } = await auth()
 
-    if (!clerkId) {
-      return { success: false, error: t("loginRequired") }
+        if (!clerkId) {
+          return { success: false, error: t("loginRequired") }
+        }
+
+        await getOrCreateUser(clerkId)
+
+        if (
+          data.questionSecurityLevel &&
+          !isQuestionSecurityLevel(data.questionSecurityLevel)
+        ) {
+          return { success: false, error: t("invalidSecuritySetting") }
+        }
+
+        const validatedSecurityLevel =
+          data.questionSecurityLevel &&
+          isQuestionSecurityLevel(data.questionSecurityLevel)
+            ? data.questionSecurityLevel
+            : undefined
+
+        const updated = await updateUserProfile(clerkId, {
+          bio: data.bio,
+          socialLinks: data.socialLinks,
+          questionSecurityLevel: validatedSecurityLevel,
+        })
+
+        const clerkUser = await getClerkUserById(clerkId)
+
+        return {
+          success: true,
+          data: {
+            clerkId,
+            username: clerkUser?.username || null,
+            displayName: clerkUser?.displayName || null,
+            avatarUrl: clerkUser?.avatarUrl || null,
+            bio: updated[0]?.bio || null,
+            socialLinks: updated[0]?.socialLinks || null,
+            questionSecurityLevel:
+              updated[0]?.questionSecurityLevel ||
+              DEFAULT_QUESTION_SECURITY_LEVEL,
+          },
+        }
+      } catch (error) {
+        console.error("Profile update error:", error)
+        return { success: false, error: t("profileUpdateError") }
+      }
     }
-
-    await getOrCreateUser(clerkId)
-
-    if (
-      data.questionSecurityLevel &&
-      !isQuestionSecurityLevel(data.questionSecurityLevel)
-    ) {
-      return { success: false, error: t("invalidSecuritySetting") }
-    }
-
-    const validatedSecurityLevel =
-      data.questionSecurityLevel &&
-      isQuestionSecurityLevel(data.questionSecurityLevel)
-        ? data.questionSecurityLevel
-        : undefined
-
-    const updated = await updateUserProfile(clerkId, {
-      bio: data.bio,
-      socialLinks: data.socialLinks,
-      questionSecurityLevel: validatedSecurityLevel,
-    })
-
-    const clerkUser = await getClerkUserById(clerkId)
-
-    return {
-      success: true,
-      data: {
-        clerkId,
-        username: clerkUser?.username || null,
-        displayName: clerkUser?.displayName || null,
-        avatarUrl: clerkUser?.avatarUrl || null,
-        bio: updated[0]?.bio || null,
-        socialLinks: updated[0]?.socialLinks || null,
-        questionSecurityLevel:
-          updated[0]?.questionSecurityLevel || DEFAULT_QUESTION_SECURITY_LEVEL,
-      },
-    }
-  } catch (error) {
-    console.error("Profile update error:", error)
-    return { success: false, error: t("profileUpdateError") }
-  }
+  )
 }

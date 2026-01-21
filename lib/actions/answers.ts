@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server"
 import { getTranslations } from "next-intl/server"
+import { withAudit } from "@/lib/audit/with-audit"
 import {
   createAnswer as createAnswerDB,
   getQuestionById,
@@ -16,41 +17,46 @@ export async function createAnswer(data: {
   questionId: number
   content: string
 }): Promise<AnswerActionResult<Answer>> {
-  const t = await getTranslations("errors")
-  try {
-    const { userId: clerkId } = await auth()
+  return await withAudit(
+    { action: "createAnswer", payload: data, entityType: "answer" },
+    async () => {
+      const t = await getTranslations("errors")
+      try {
+        const { userId: clerkId } = await auth()
 
-    if (!clerkId) {
-      return { success: false, error: t("loginRequired") }
+        if (!clerkId) {
+          return { success: false, error: t("loginRequired") }
+        }
+
+        const { questionId, content } = data
+
+        if (!(questionId && content)) {
+          return { success: false, error: t("questionIdAndContentRequired") }
+        }
+
+        const question = await getQuestionById(Number(questionId))
+        if (!question) {
+          return { success: false, error: t("questionNotFound") }
+        }
+
+        if (question.recipientClerkId !== clerkId) {
+          return { success: false, error: t("onlyRecipientCanAnswer") }
+        }
+
+        const [answer] = await createAnswerDB({
+          questionId: Number(questionId),
+          content,
+        })
+
+        if (!answer) {
+          return { success: false, error: t("answerCreateFailed") }
+        }
+
+        return { success: true, data: answer }
+      } catch (error) {
+        console.error("Answer creation error:", error)
+        return { success: false, error: t("answerCreateError") }
+      }
     }
-
-    const { questionId, content } = data
-
-    if (!(questionId && content)) {
-      return { success: false, error: t("questionIdAndContentRequired") }
-    }
-
-    const question = await getQuestionById(Number(questionId))
-    if (!question) {
-      return { success: false, error: t("questionNotFound") }
-    }
-
-    if (question.recipientClerkId !== clerkId) {
-      return { success: false, error: t("onlyRecipientCanAnswer") }
-    }
-
-    const [answer] = await createAnswerDB({
-      questionId: Number(questionId),
-      content,
-    })
-
-    if (!answer) {
-      return { success: false, error: t("answerCreateFailed") }
-    }
-
-    return { success: true, data: answer }
-  } catch (error) {
-    console.error("Answer creation error:", error)
-    return { success: false, error: t("answerCreateError") }
-  }
+  )
 }
