@@ -11,7 +11,7 @@ export default defineConfig({
   },
   schemaFilter: [env.DATABASE_SCHEMA],
   migrations: {
-    schema: "public",
+    schema: "goongoom",
     table: "__drizzle_migrations",
   },
 })
