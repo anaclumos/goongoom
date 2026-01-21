@@ -1,7 +1,7 @@
 import { Message01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
-import { NavAuthButtons } from "@/components/auth/auth-buttons"
+import { ProfileDrawer } from "@/components/layout/profile-drawer"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export function GlobalNav() {
@@ -21,7 +21,7 @@ export function GlobalNav() {
         </Link>
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <NavAuthButtons />
+          <ProfileDrawer />
         </div>
       </div>
     </nav>
