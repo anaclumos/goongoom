@@ -38,7 +38,7 @@ export default async function Home() {
 
         <div className="relative mx-auto max-w-5xl px-6 pb-24 text-center">
           <Badge className="mb-6 gap-2" variant="secondary">
-            <span className="size-2 animate-pulse rounded-full bg-neon-pink" />
+            <span className="size-2 rounded-full bg-neon-pink" />
             <span className="font-semibold text-neon-pink text-xs tracking-wide">
               {t("hotTitle")}
             </span>

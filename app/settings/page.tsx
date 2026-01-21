@@ -101,7 +101,7 @@ export default async function SettingsPage({
 
   return (
     <MainContent>
-      <div className="mb-8 animate-slide-up-fade space-y-2">
+      <div className="mb-8 space-y-2">
         <h1 className="font-bold text-3xl text-foreground">{t("title")}</h1>
         <p className="text-muted-foreground text-sm">{t("description")}</p>
       </div>
@@ -109,31 +109,15 @@ export default async function SettingsPage({
       {error && <ToastOnMount message={error} type="error" />}
 
       <div className="space-y-6">
-        <div
-          className="animate-slide-up-fade"
-          style={{ animationDelay: "0.1s" }}
-        >
-          <PasskeyNudge />
-        </div>
+        <PasskeyNudge />
 
-        <div
-          className="animate-slide-up-fade"
-          style={{ animationDelay: "0.15s" }}
-        >
-          <ClerkAccountCard />
-        </div>
+        <ClerkAccountCard />
 
-        <div
-          className="animate-slide-up-fade rounded-2xl border border-border bg-card p-6"
-          style={{ animationDelay: "0.2s" }}
-        >
+        <div className="rounded-2xl border border-border bg-card p-6">
           <LocaleSelector />
         </div>
 
-        <div
-          className="animate-slide-up-fade rounded-2xl border border-border bg-card p-6"
-          style={{ animationDelay: "0.25s" }}
-        >
+        <div className="rounded-2xl border border-border bg-card p-6">
           <SettingsForm
             initialBio={initialBio}
             initialInstagramHandle={instagramHandle}

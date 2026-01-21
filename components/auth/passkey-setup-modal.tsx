@@ -91,8 +91,8 @@ export function PasskeySetupModal() {
 
         <div className="relative z-10 flex flex-col items-center p-8 pt-12 text-center">
           {success ? (
-            <div className="flex animate-scale-in flex-col items-center">
-              <div className="mb-6 flex size-20 animate-bounce items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
+            <div className="flex flex-col items-center">
+              <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
                 <CheckCircleIcon className="size-10" />
               </div>
               <h2 className="mb-2 font-bold text-2xl text-white">
@@ -106,7 +106,7 @@ export function PasskeySetupModal() {
                 <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-white/20 text-white backdrop-blur-md">
                   <FingerprintIcon className="size-10" />
                 </div>
-                <div className="absolute -top-2 -right-2 flex size-8 animate-bounce items-center justify-center rounded-full bg-white/30 text-white">
+                <div className="absolute -top-2 -right-2 flex size-8 items-center justify-center rounded-full bg-white/30 text-white">
                   <ShieldCheckIcon className="size-4" />
                 </div>
               </div>

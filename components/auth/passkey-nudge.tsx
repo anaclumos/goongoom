@@ -46,7 +46,7 @@ export function PasskeyNudge() {
 
   if (success) {
     return (
-      <Card className="relative my-6 animate-pop overflow-hidden border-lime/20 bg-lime/10">
+      <Card className="relative my-6 overflow-hidden border-lime/20 bg-lime/10">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-lime/5 to-transparent" />
         <CardContent className="flex flex-col items-center justify-center gap-4 p-8 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-lime/20 text-lime">
@@ -68,7 +68,7 @@ export function PasskeyNudge() {
   return (
     <Card
       className={cn(
-        "group relative my-6 animate-slide-up-fade overflow-hidden border-primary/20 bg-primary/5",
+        "group relative my-6 overflow-hidden border-primary/20 bg-primary/5",
         "text-foreground"
       )}
     >

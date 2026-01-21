@@ -174,7 +174,7 @@ export function SettingsForm({
             </p>
           </div>
           {isPending && (
-            <span className="shrink-0 animate-pulse text-muted-foreground text-xs">
+            <span className="shrink-0 text-muted-foreground text-xs">
               {t("saving")}
             </span>
           )}
