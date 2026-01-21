@@ -79,7 +79,7 @@ export function QuestionDrawer({
           </DrawerTitle>
         </DrawerHeader>
 
-        <div className="max-h-[60vh] overflow-y-auto px-4 pb-6">
+        <div className="max-h-[85vh] overflow-y-auto px-4 pb-6">
           {requiresSignIn ? (
             <div className="space-y-6">
               <p className="text-muted-foreground">{tAuth("loginRequired")}</p>
@@ -114,54 +114,66 @@ export function QuestionDrawer({
                   defaultValue={canAskAnonymously ? "anonymous" : "public"}
                   name="questionType"
                 >
-                  {canAskAnonymously && (
-                    <Label className="group relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5">
-                      <RadioGroupItem
-                        className="pointer-events-none absolute opacity-0"
-                        id="r-anonymous"
-                        value="anonymous"
+                  <Label
+                    className={`group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all ${
+                      canAskAnonymously
+                        ? "cursor-pointer hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5"
+                        : "cursor-not-allowed opacity-50"
+                    }`}
+                  >
+                    <RadioGroupItem
+                      className="pointer-events-none absolute opacity-0"
+                      disabled={!canAskAnonymously}
+                      id="r-anonymous"
+                      value="anonymous"
+                    />
+                    <div className="rounded-full bg-gradient-to-br from-muted to-muted/50 p-3 text-muted-foreground transition-colors group-has-data-checked:from-electric-blue group-has-data-checked:to-electric-blue/90 group-has-data-checked:text-white">
+                      <HugeiconsIcon
+                        className="size-6"
+                        icon={AnonymousIcon}
+                        strokeWidth={2}
                       />
-                      <div className="rounded-full bg-gradient-to-br from-muted to-muted/50 p-3 text-muted-foreground transition-colors group-has-data-checked:from-electric-blue group-has-data-checked:to-electric-blue/90 group-has-data-checked:text-white">
-                        <HugeiconsIcon
-                          className="size-6"
-                          icon={AnonymousIcon}
-                          strokeWidth={2}
-                        />
-                      </div>
-                      <div className="space-y-0.5 text-center">
-                        <p className="font-bold text-foreground text-sm group-has-data-checked:text-electric-blue">
-                          {t("anonymousOption")}
-                        </p>
-                        <p className="font-medium text-muted-foreground/70 text-xs">
-                          {t("anonymousDescription")}
-                        </p>
-                      </div>
-                    </Label>
-                  )}
-                  {canAskPublic && (
-                    <Label className="group relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5">
-                      <RadioGroupItem
-                        className="pointer-events-none absolute opacity-0"
-                        id="r-public"
-                        value="public"
+                    </div>
+                    <div className="space-y-0.5 text-center">
+                      <p className="font-bold text-foreground text-sm group-has-data-checked:text-electric-blue">
+                        {t("anonymousOption")}
+                      </p>
+                      <p className="font-medium text-muted-foreground/70 text-xs">
+                        {t("anonymousDescription")}
+                      </p>
+                    </div>
+                  </Label>
+                  <Label
+                    className={`group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition-all ${
+                      canAskPublic
+                        ? "cursor-pointer hover:border-electric-blue/50 hover:bg-muted/30 has-data-checked:border-electric-blue has-data-checked:bg-electric-blue/5"
+                        : "cursor-not-allowed opacity-50"
+                    }`}
+                  >
+                    <RadioGroupItem
+                      className="pointer-events-none absolute opacity-0"
+                      disabled={!canAskPublic}
+                      id="r-public"
+                      value="public"
+                    />
+                    <div className="rounded-full bg-gradient-to-br from-muted to-muted/50 p-3 text-muted-foreground transition-colors group-has-data-checked:from-electric-blue group-has-data-checked:to-electric-blue/90 group-has-data-checked:text-white">
+                      <HugeiconsIcon
+                        className="size-6"
+                        icon={UserIcon}
+                        strokeWidth={2}
                       />
-                      <div className="rounded-full bg-gradient-to-br from-muted to-muted/50 p-3 text-muted-foreground transition-colors group-has-data-checked:from-electric-blue group-has-data-checked:to-electric-blue/90 group-has-data-checked:text-white">
-                        <HugeiconsIcon
-                          className="size-6"
-                          icon={UserIcon}
-                          strokeWidth={2}
-                        />
-                      </div>
-                      <div className="space-y-0.5 text-center">
-                        <p className="font-bold text-foreground text-sm group-has-data-checked:text-electric-blue">
-                          {t("identifiedOption")}
-                        </p>
-                        <p className="font-medium text-muted-foreground/70 text-xs">
-                          {t("identifiedDescription")}
-                        </p>
-                      </div>
-                    </Label>
-                  )}
+                    </div>
+                    <div className="space-y-0.5 text-center">
+                      <p className="font-bold text-foreground text-sm group-has-data-checked:text-electric-blue">
+                        {t("identifiedOption")}
+                      </p>
+                      <p className="font-medium text-muted-foreground/70 text-xs">
+                        {canAskPublic
+                          ? t("identifiedDescription")
+                          : tRestrictions("loginForIdentified")}
+                      </p>
+                    </div>
+                  </Label>
                 </RadioGroup>
               </div>
 

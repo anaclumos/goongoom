@@ -42,7 +42,7 @@ export function LocaleSelector() {
       >
         {locales.map((locale) => (
           <Label
-            className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-electric-blue/30 hover:bg-accent/30 disabled:opacity-50 has-[data-checked]:border-electric-blue has-[data-checked]:bg-electric-blue/5 has-[data-checked]:shadow-sm"
+            className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-electric-blue/30 hover:bg-accent/30 disabled:opacity-50 has-[data-checked]:border-electric-blue has-[data-checked]:bg-electric-blue/5 has-[data-checked]:shadow-sm"
             key={locale}
           >
             <RadioGroupItem id={`locale-${locale}`} value={locale} />

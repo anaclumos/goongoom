@@ -197,7 +197,7 @@ export function SettingsForm({
                 }
                 return (
                   <Label
-                    className="flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-lime/30 hover:bg-accent/30 has-[data-checked]:border-lime has-[data-checked]:bg-lime/5 has-[data-checked]:shadow-sm"
+                    className="flex min-h-12 cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-lime/30 hover:bg-accent/30 has-[data-checked]:border-lime has-[data-checked]:bg-lime/5 has-[data-checked]:shadow-sm"
                     key={level}
                   >
                     <RadioGroupItem
@@ -236,7 +236,7 @@ export function SettingsForm({
             {t("bioLabel")}
           </FieldLabel>
           <Textarea
-            className="min-h-11 resize-none rounded-xl"
+            className="min-h-12 resize-none rounded-xl"
             id="bio"
             name="bio"
             onChange={(e) => handleBioChange(e.target.value)}
@@ -259,7 +259,7 @@ export function SettingsForm({
               <Input
                 autoCapitalize="none"
                 autoCorrect="off"
-                className="min-h-11 rounded-xl"
+                className="min-h-12 rounded-xl"
                 id="instagram"
                 name="instagram"
                 onChange={(e) => handleInstagramChange(e.target.value)}
@@ -277,7 +277,7 @@ export function SettingsForm({
               <Input
                 autoCapitalize="none"
                 autoCorrect="off"
-                className="min-h-11 rounded-xl"
+                className="min-h-12 rounded-xl"
                 id="twitter"
                 name="twitter"
                 onChange={(e) => handleTwitterChange(e.target.value)}
