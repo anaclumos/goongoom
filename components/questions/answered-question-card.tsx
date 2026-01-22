@@ -76,7 +76,7 @@ export function AnsweredQuestionCard({
           </div>
           <div className="flex w-full items-start justify-end gap-3">
             <div className="flex flex-1 flex-col items-end">
-              <Card className="max-w-prose border-none bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-white">
+              <Card className="max-w-prose border-none bg-gradient-to-br from-purple to-neon-pink px-4 py-3 text-white">
                 <ClampedAnswer content={answerContent} />
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">

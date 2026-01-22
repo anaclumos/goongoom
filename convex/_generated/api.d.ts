@@ -10,8 +10,9 @@
 
 import type * as answers from "../answers.js";
 import type * as logs from "../logs.js";
-import type * as pushSubscriptions from "../pushSubscriptions.js";
+import type * as push from "../push.js";
 import type * as questions from "../questions.js";
+import type * as types from "../types.js";
 import type * as users from "../users.js";
 
 import type {
@@ -23,8 +24,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   answers: typeof answers;
   logs: typeof logs;
-  pushSubscriptions: typeof pushSubscriptions;
+  push: typeof push;
   questions: typeof questions;
+  types: typeof types;
   users: typeof users;
 }>;
 

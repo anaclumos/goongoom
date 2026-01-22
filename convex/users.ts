@@ -1,6 +1,14 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 
+export const count = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect()
+    return users.length
+  },
+})
+
 export const getByClerkId = query({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {

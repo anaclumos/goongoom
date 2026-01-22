@@ -124,3 +124,7 @@ export async function getUserLocale(clerkId: string) {
   const user = await fetchQuery(api.users.getByClerkId, { clerkId })
   return user?.locale
 }
+
+export async function getUserCount() {
+  return await fetchQuery(api.users.count, {})
+}

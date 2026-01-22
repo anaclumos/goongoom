@@ -7,6 +7,7 @@ import { AccountSettingsButton } from "@/components/settings/account-settings-bu
 import { LocaleSelector } from "@/components/settings/locale-selector"
 import { LogoutButton } from "@/components/settings/logout-button"
 import { ThemeSelector } from "@/components/settings/theme-selector"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Empty,
   EmptyDescription,
@@ -65,20 +66,28 @@ export default async function SettingsPage({
 
       {error && <ToastOnMount message={error} type="error" />}
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         <AccountSettingsButton />
 
         <PasskeyNudge />
 
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <ThemeSelector />
-        </div>
+        <Card>
+          <CardContent>
+            <ThemeSelector />
+          </CardContent>
+        </Card>
 
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <LocaleSelector />
-        </div>
+        <Card>
+          <CardContent>
+            <LocaleSelector />
+          </CardContent>
+        </Card>
 
-        <LogoutButton />
+        <Card>
+          <CardContent className="py-0">
+            <LogoutButton />
+          </CardContent>
+        </Card>
       </div>
     </MainContent>
   )

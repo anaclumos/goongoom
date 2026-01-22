@@ -70,8 +70,10 @@ export default async function InboxPage({ searchParams }: InboxPageProps) {
 
   return (
     <MainContent>
-      <h1 className="mb-2 font-bold text-3xl text-foreground">{t("title")}</h1>
-      <p className="mb-8 text-muted-foreground">{t("description")}</p>
+      <div className="mb-8 space-y-2">
+        <h1 className="font-bold text-3xl text-foreground">{t("title")}</h1>
+        <p className="text-muted-foreground text-sm">{t("description")}</p>
+      </div>
 
       {error && <ToastOnMount message={error} type="error" />}
 

@@ -86,7 +86,7 @@ export function InboxList({ questions }: InboxListProps) {
             onClick={() => handleQuestionClick(question)}
             type="button"
           >
-            <div className="flex items-start gap-4 rounded-2xl border border-border/40 bg-background p-4 transition-all group-hover:border-electric-blue/50 group-hover:bg-electric-blue/5 group-hover:ring-2 group-hover:ring-electric-blue/10 group-active:scale-[0.98]">
+            <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-background p-4 transition-all group-hover:border-electric-blue/50 group-hover:bg-electric-blue/5 group-hover:ring-2 group-hover:ring-electric-blue/10 group-active:scale-[0.98]">
               <div className="relative flex-shrink-0">
                 <Avatar className="size-12 ring-2 ring-background">
                   {!question.isAnonymous && question.senderAvatarUrl ? (
@@ -158,7 +158,7 @@ export function InboxList({ questions }: InboxListProps) {
                 {t("answerDrawerTitle")}
               </DrawerTitle>
               {selectedQuestion && (
-                <DrawerDescription className="mt-3 rounded-xl border border-border/40 bg-muted/30 p-4 text-left text-foreground">
+                <DrawerDescription className="mt-3 rounded-xl border border-border/50 bg-muted/30 p-4 text-left text-foreground">
                   <div className="mb-2 flex items-center gap-2">
                     <div
                       className={`flex size-6 items-center justify-center rounded-full ${

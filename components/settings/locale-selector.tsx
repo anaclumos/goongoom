@@ -24,29 +24,29 @@ export function LocaleSelector() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h3 className="font-semibold text-base text-foreground">
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h3 className="font-semibold text-foreground">
           {t("languageSettings")}
         </h3>
-        <p className="text-muted-foreground text-sm leading-relaxed">
+        <p className="text-muted-foreground text-sm">
           {t("languageSettingsDescription")}
         </p>
       </div>
 
       <RadioGroup
-        className="w-full space-y-3"
+        className="w-full space-y-2"
         disabled={isPending}
         onValueChange={handleLocaleChange}
         value={selectedLocale}
       >
         {locales.map((locale) => (
           <Label
-            className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-electric-blue/30 hover:bg-accent/30 disabled:opacity-50 has-[data-checked]:border-electric-blue has-[data-checked]:bg-electric-blue/5 has-[data-checked]:shadow-sm"
+            className="group flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-background px-4 py-3 transition-all hover:border-electric-blue/30 hover:bg-electric-blue/5 disabled:opacity-50 has-data-checked:border-electric-blue/50 has-data-checked:bg-electric-blue/5"
             key={locale}
           >
             <RadioGroupItem id={`locale-${locale}`} value={locale} />
-            <span className="font-medium text-foreground text-sm">
+            <span className="font-medium text-muted-foreground text-sm transition-colors group-has-data-checked:text-foreground">
               {localeNames[locale]}
             </span>
           </Label>

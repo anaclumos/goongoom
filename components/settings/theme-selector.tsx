@@ -23,29 +23,29 @@ export function ThemeSelector() {
 
   if (!isClient) {
     return (
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <h3 className="font-semibold text-base text-foreground">
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <h3 className="font-semibold text-foreground">
             {t("themeSettings")}
           </h3>
-          <p className="text-muted-foreground text-sm leading-relaxed">
+          <p className="text-muted-foreground text-sm">
             {t("themeSettingsDescription")}
           </p>
         </div>
-        <div className="grid w-full grid-cols-3 gap-3">
+        <div className="grid w-full grid-cols-3 gap-2">
           {themes.map((themeOption) => (
             <div
-              className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background p-4"
+              className="flex min-h-16 flex-col items-center justify-center gap-1.5 rounded-xl border border-border/50 bg-background p-3"
               key={themeOption.value}
             >
-              <div className="flex size-10 items-center justify-center rounded-full bg-muted/80">
+              <div className="flex size-8 items-center justify-center rounded-full bg-muted/50">
                 <HugeiconsIcon
-                  className="size-5 text-muted-foreground"
+                  className="size-4 text-muted-foreground"
                   icon={themeOption.icon}
                   strokeWidth={2}
                 />
               </div>
-              <span className="font-medium text-foreground text-xs">
+              <span className="font-medium text-muted-foreground text-xs">
                 {t(
                   `theme${themeOption.value.charAt(0).toUpperCase()}${themeOption.value.slice(1)}` as
                     | "themeLight"
@@ -61,24 +61,22 @@ export function ThemeSelector() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h3 className="font-semibold text-base text-foreground">
-          {t("themeSettings")}
-        </h3>
-        <p className="text-muted-foreground text-sm leading-relaxed">
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h3 className="font-semibold text-foreground">{t("themeSettings")}</h3>
+        <p className="text-muted-foreground text-sm">
           {t("themeSettingsDescription")}
         </p>
       </div>
 
       <RadioGroup
-        className="grid w-full grid-cols-3 gap-3"
+        className="grid w-full grid-cols-3 gap-2"
         onValueChange={(value) => setTheme(value as Theme)}
         value={theme}
       >
         {themes.map((themeOption) => (
           <Label
-            className="flex min-h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-transparent bg-background p-4 transition-all hover:border-electric-blue/30 hover:bg-accent/30 has-[data-checked]:border-electric-blue has-[data-checked]:bg-electric-blue/5"
+            className="group flex min-h-16 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-border/50 bg-background p-3 transition-all hover:border-electric-blue/30 hover:bg-electric-blue/5 has-data-checked:border-electric-blue/50 has-data-checked:bg-electric-blue/5"
             key={themeOption.value}
           >
             <RadioGroupItem
@@ -86,14 +84,14 @@ export function ThemeSelector() {
               id={`theme-${themeOption.value}`}
               value={themeOption.value}
             />
-            <div className="flex size-10 items-center justify-center rounded-full bg-muted/80 transition-colors group-has-[data-checked]:bg-electric-blue/20 group-has-[data-checked]:text-electric-blue">
+            <div className="flex size-8 items-center justify-center rounded-full bg-muted/50 transition-colors group-has-data-checked:bg-electric-blue/20 group-has-data-checked:text-electric-blue">
               <HugeiconsIcon
-                className="size-5"
+                className="size-4"
                 icon={themeOption.icon}
                 strokeWidth={2}
               />
             </div>
-            <span className="font-medium text-foreground text-xs">
+            <span className="font-medium text-muted-foreground text-xs transition-colors group-has-data-checked:text-foreground">
               {t(
                 `theme${themeOption.value.charAt(0).toUpperCase()}${themeOption.value.slice(1)}` as
                   | "themeLight"

@@ -33,7 +33,11 @@ import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { ToastOnMount } from "@/components/ui/toast-on-mount"
 import { createQuestion } from "@/lib/actions/questions"
 import { getClerkUserById } from "@/lib/clerk"
-import { getOrCreateUser, getUserWithAnsweredQuestions } from "@/lib/db/queries"
+import {
+  getOrCreateUser,
+  getUserCount,
+  getUserWithAnsweredQuestions,
+} from "@/lib/db/queries"
 import {
   DEFAULT_QUESTION_SECURITY_LEVEL,
   getQuestionSecurityOptions,
@@ -59,11 +63,12 @@ export default async function Home({ searchParams }: HomePageProps) {
 }
 
 async function LandingPage() {
-  const [t, tNav, tFooter, tShare] = await Promise.all([
+  const [t, tNav, tFooter, tShare, userCount] = await Promise.all([
     getTranslations("home"),
     getTranslations("nav"),
     getTranslations("footer"),
     getTranslations("share"),
+    getUserCount(),
   ])
 
   return (
@@ -156,7 +161,7 @@ async function LandingPage() {
               {t("ctaTitle")}
             </h2>
             <p className="mb-10 text-lg text-muted-foreground">
-              {t("ctaDescription")}
+              {t("ctaDescription", { userCount })}
             </p>
             <BottomCTAButton />
           </div>
