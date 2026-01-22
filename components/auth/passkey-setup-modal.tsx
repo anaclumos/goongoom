@@ -2,11 +2,12 @@
 
 import { useUser } from "@clerk/nextjs"
 import {
-  CheckCircleIcon,
-  FingerprintIcon,
-  ShieldCheckIcon,
-  XIcon,
-} from "lucide-react"
+  Cancel01Icon,
+  CheckmarkCircle02Icon,
+  FingerPrintIcon,
+  SecurityCheckIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -85,7 +86,7 @@ export function PasskeySetupModal() {
             onClick={handleDismiss}
             type="button"
           >
-            <XIcon className="size-5" />
+            <HugeiconsIcon className="size-5" icon={Cancel01Icon} />
           </button>
         )}
 
@@ -93,7 +94,10 @@ export function PasskeySetupModal() {
           {success ? (
             <div className="flex flex-col items-center">
               <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
-                <CheckCircleIcon className="size-10" />
+                <HugeiconsIcon
+                  className="size-10"
+                  icon={CheckmarkCircle02Icon}
+                />
               </div>
               <h2 className="mb-2 font-bold text-2xl text-white">
                 {t("setupComplete")}
@@ -104,10 +108,10 @@ export function PasskeySetupModal() {
             <>
               <div className="relative mb-6">
                 <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-white/20 text-white backdrop-blur-md">
-                  <FingerprintIcon className="size-10" />
+                  <HugeiconsIcon className="size-10" icon={FingerPrintIcon} />
                 </div>
                 <div className="absolute -top-2 -right-2 flex size-8 items-center justify-center rounded-full bg-white/30 text-white">
-                  <ShieldCheckIcon className="size-4" />
+                  <HugeiconsIcon className="size-4" icon={SecurityCheckIcon} />
                 </div>
               </div>
 

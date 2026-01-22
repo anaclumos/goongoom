@@ -1,7 +1,11 @@
 "use client"
 
 import { useUser } from "@clerk/nextjs"
-import { CheckCircleIcon, FingerprintIcon } from "lucide-react"
+import {
+  CheckmarkCircle02Icon,
+  FingerPrintIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -50,7 +54,7 @@ export function PasskeyNudge() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-lime/5 to-transparent" />
         <CardContent className="flex flex-col items-center justify-center gap-4 p-8 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-lime/20 text-lime">
-            <CheckCircleIcon className="size-6" />
+            <HugeiconsIcon className="size-6" icon={CheckmarkCircle02Icon} />
           </div>
           <div className="space-y-1">
             <h3 className="font-semibold text-lg text-lime-700 dark:text-lime-400">
@@ -86,7 +90,7 @@ export function PasskeyNudge() {
             </CardDescription>
           </div>
           <div className="hidden size-10 rotate-3 items-center justify-center rounded-xl bg-primary/10 text-primary backdrop-blur-md transition-transform duration-300 group-hover:rotate-12 sm:flex">
-            <FingerprintIcon className="size-6" />
+            <HugeiconsIcon className="size-6" icon={FingerPrintIcon} />
           </div>
         </div>
       </CardHeader>
@@ -106,7 +110,10 @@ export function PasskeyNudge() {
           ) : (
             <>
               {t("setupNow")}
-              <FingerprintIcon className="ml-2 size-4 transition-transform group-hover/btn:scale-110" />
+              <HugeiconsIcon
+                className="ml-2 size-4 transition-transform group-hover/btn:scale-110"
+                icon={FingerPrintIcon}
+              />
             </>
           )}
         </Button>
