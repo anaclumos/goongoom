@@ -52,7 +52,7 @@ export function AppSidebar({
   const navItems = [
     {
       title: tSidebar("home"),
-      url: "/",
+      url: user?.username ? `/${user.username}` : "/",
       icon: Home01Icon,
     },
     {
