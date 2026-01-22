@@ -14,6 +14,7 @@ import { isEmpty } from "es-toolkit/compat"
 import { useTranslations } from "next-intl"
 import { useCallback, useState } from "react"
 import { toast } from "sonner"
+import { useDebounceCallback } from "usehooks-ts"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -28,7 +29,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { useDebouncedCallback } from "@/hooks/use-debounced-callback"
 import { updateProfile } from "@/lib/actions/profile"
 import { QUESTION_SECURITY_LEVELS } from "@/lib/question-security"
 import type { SocialLinks } from "@/lib/types"
@@ -82,11 +82,11 @@ export function ProfileEditDrawer({
     [t]
   )
 
-  const debouncedSaveBio = useDebouncedCallback((value: string) => {
+  const debouncedSaveBio = useDebounceCallback((value: string) => {
     saveProfile({ bio: value.trim() || null })
   }, DEBOUNCE_MS)
 
-  const debouncedSaveSocialLinks = useDebouncedCallback(
+  const debouncedSaveSocialLinks = useDebounceCallback(
     (instagramValue: string, twitterValue: string) => {
       const normalizedInstagram = normalizeHandle(instagramValue)
       const normalizedTwitter = normalizeHandle(twitterValue)

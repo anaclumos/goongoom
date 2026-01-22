@@ -1,8 +1,11 @@
+import { formatDistanceToNow } from "date-fns"
+import { enUS, ko } from "date-fns/locale"
 import Link from "next/link"
 import { ClampedAnswer } from "@/components/questions/clamped-answer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
-import { formatRelativeTime } from "@/lib/utils/format-time"
+
+const localeMap = { ko, en: enUS } as const
 
 interface AnsweredQuestionCardProps {
   questionId: string
@@ -63,7 +66,10 @@ export function AnsweredQuestionCard({
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
                 {anonymityLabel} ·{" "}
-                {formatRelativeTime(questionCreatedAt, locale)}{" "}
+                {formatDistanceToNow(questionCreatedAt, {
+                  addSuffix: true,
+                  locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
+                })}{" "}
                 {labels.question}
               </p>
             </div>
@@ -74,7 +80,11 @@ export function AnsweredQuestionCard({
                 <ClampedAnswer content={answerContent} />
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
-                {displayName} · {formatRelativeTime(answerCreatedAt, locale)}{" "}
+                {displayName} ·{" "}
+                {formatDistanceToNow(answerCreatedAt, {
+                  addSuffix: true,
+                  locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
+                })}{" "}
                 {labels.answer}
               </p>
             </div>

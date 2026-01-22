@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { formatDistanceToNow } from "date-fns"
+import { enUS, ko } from "date-fns/locale"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
@@ -17,7 +19,8 @@ import {
   getQuestionByIdAndRecipient,
 } from "@/lib/db/queries"
 import type { QuestionId } from "@/lib/types"
-import { formatRelativeTime } from "@/lib/utils/format-time"
+
+const localeMap = { ko, en: enUS } as const
 
 interface QADetailPageProps {
   params: Promise<{ username: string; questionId: string }>
@@ -118,7 +121,11 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
                 {qa.isAnonymous ? tCommon("anonymous") : tCommon("identified")}{" "}
-                · {formatRelativeTime(qa._creationTime, locale)}
+                ·{" "}
+                {formatDistanceToNow(qa._creationTime, {
+                  addSuffix: true,
+                  locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
+                })}
               </p>
             </div>
           </div>
@@ -129,7 +136,10 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
                 {displayName} ·{" "}
-                {formatRelativeTime(answer._creationTime, locale)}
+                {formatDistanceToNow(answer._creationTime, {
+                  addSuffix: true,
+                  locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
+                })}
               </p>
             </div>
             <Avatar className="size-10 flex-shrink-0">

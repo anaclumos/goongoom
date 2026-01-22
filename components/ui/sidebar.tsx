@@ -15,6 +15,7 @@ import {
   useMemo,
   useState,
 } from "react"
+import { useMediaQuery } from "usehooks-ts"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -31,7 +32,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -75,7 +75,10 @@ function SidebarProvider({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
-  const isMobile = useIsMobile()
+  const isMobile = useMediaQuery("(max-width: 767px)", {
+    defaultValue: false,
+    initializeWithValue: false,
+  })
   const [openMobile, setOpenMobile] = useState(false)
 
   // This is the internal state of the sidebar.

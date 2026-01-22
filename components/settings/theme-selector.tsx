@@ -4,7 +4,7 @@ import { ComputerIcon, Moon02Icon, Sun03Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
-import { useSyncExternalStore } from "react"
+import { useIsClient } from "usehooks-ts"
 import { Label } from "../ui/label"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 
@@ -16,24 +16,12 @@ const themes = [
 
 type Theme = (typeof themes)[number]["value"]
 
-const emptySubscribe = () => () => {
-  /* no-op unsubscribe */
-}
-
-function useHasMounted() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  )
-}
-
 export function ThemeSelector() {
   const t = useTranslations("settings")
   const { theme, setTheme } = useTheme()
-  const mounted = useHasMounted()
+  const isClient = useIsClient()
 
-  if (!mounted) {
+  if (!isClient) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">

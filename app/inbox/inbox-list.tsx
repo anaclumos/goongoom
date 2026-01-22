@@ -7,6 +7,7 @@ import {
   UserIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
@@ -23,7 +24,6 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { createAnswer } from "@/lib/actions/answers"
-import { useRelativeTime } from "@/lib/hooks/use-relative-time"
 
 interface QuestionItem {
   id: string
@@ -41,7 +41,7 @@ interface InboxListProps {
 export function InboxList({ questions }: InboxListProps) {
   const t = useTranslations("answers")
   const tCommon = useTranslations("common")
-  const formatRelativeTime = useRelativeTime()
+
   const router = useRouter()
   const [selectedQuestion, setSelectedQuestion] = useState<QuestionItem | null>(
     null
@@ -127,7 +127,11 @@ export function InboxList({ questions }: InboxListProps) {
                       : question.senderName}
                   </span>
                   <span className="text-muted-foreground/40">·</span>
-                  <span>{formatRelativeTime(question.createdAt)}</span>
+                  <span>
+                    {formatDistanceToNow(question.createdAt, {
+                      addSuffix: true,
+                    })}
+                  </span>
                 </div>
               </div>
 
