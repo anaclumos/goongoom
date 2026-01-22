@@ -11,7 +11,6 @@ import {
 import { ToastOnMount } from "@/components/ui/toast-on-mount"
 import { getClerkUsersByIds } from "@/lib/clerk"
 import { getOrCreateUser, getUnansweredQuestions } from "@/lib/db/queries"
-import type { Question } from "@/lib/types"
 import { InboxList } from "./inbox-list"
 
 interface InboxPageProps {
@@ -37,33 +36,37 @@ export default async function InboxPage({ searchParams }: InboxPageProps) {
 
   const senderIds = Array.from(
     new Set(
-      unansweredQuestions
-        .filter((question) => question.isAnonymous !== 1)
-        .map((question) => question.senderClerkId)
+      (unansweredQuestions ?? [])
+        .filter((question) => question && !question.isAnonymous)
+        .map((question) => question?.senderClerkId)
         .filter((id): id is string => Boolean(id))
     )
   )
 
   const senderMap = await getClerkUsersByIds(senderIds)
 
-  const questionsWithSenders = unansweredQuestions.map((question: Question) => {
-    const sender =
-      question.isAnonymous !== 1 && question.senderClerkId
-        ? senderMap.get(question.senderClerkId) || null
-        : null
-    const isAnonymous = question.isAnonymous === 1 || !sender
+  const questionsWithSenders = (unansweredQuestions ?? [])
+    .filter(
+      (question): question is NonNullable<typeof question> => question !== null
+    )
+    .map((question) => {
+      const sender =
+        !question.isAnonymous && question.senderClerkId
+          ? senderMap.get(question.senderClerkId) || null
+          : null
+      const isAnonymous = question.isAnonymous || !sender
 
-    return {
-      id: question.id,
-      content: question.content,
-      isAnonymous,
-      createdAt: question.createdAt,
-      senderName: isAnonymous
-        ? tCommon("anonymous")
-        : sender?.displayName || sender?.username || tCommon("user"),
-      senderAvatarUrl: isAnonymous ? undefined : sender?.avatarUrl,
-    }
-  })
+      return {
+        id: question._id,
+        content: question.content,
+        isAnonymous,
+        createdAt: question._creationTime,
+        senderName: isAnonymous
+          ? tCommon("anonymous")
+          : sender?.displayName || sender?.username || tCommon("user"),
+        senderAvatarUrl: isAnonymous ? undefined : sender?.avatarUrl,
+      }
+    })
 
   return (
     <MainContent>

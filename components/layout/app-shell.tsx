@@ -7,9 +7,9 @@ import { QuickAnswerDialog } from "@/components/questions/quick-answer-dialog"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 interface RecentQuestion {
-  id: number
+  id: string
   content: string
-  createdAt: Date
+  createdAt: number
   senderName?: string
   senderAvatarUrl?: string | null
   isAnonymous?: boolean
@@ -30,7 +30,7 @@ export function AppShell({
     useState<RecentQuestion | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  function handleQuestionClick(id: number) {
+  function handleQuestionClick(id: string) {
     const question = recentQuestions.find((q) => q.id === id)
     if (question) {
       setSelectedQuestion(question)

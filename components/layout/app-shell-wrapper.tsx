@@ -11,22 +11,24 @@ export async function AppShellWrapper({ children }: AppShellWrapperProps) {
   const { userId: clerkId } = await auth()
 
   let recentQuestions: Array<{
-    id: number
+    id: string
     content: string
-    createdAt: Date
+    createdAt: number
     senderName?: string
     senderAvatarUrl?: string | null
     isAnonymous?: boolean
   }> = []
 
   if (clerkId) {
-    const questions = await getUnansweredQuestions(clerkId)
-    const recentFive = questions.slice(0, 5)
+    const questions = (await getUnansweredQuestions(clerkId)) ?? []
+    const recentFive = questions
+      .filter((q): q is NonNullable<typeof q> => q !== null)
+      .slice(0, 5)
 
     const senderIds = Array.from(
       new Set(
         recentFive
-          .filter((q) => q.isAnonymous !== 1 && q.senderClerkId)
+          .filter((q) => !q.isAnonymous && q.senderClerkId)
           .map((q) => q.senderClerkId as string)
       )
     )
@@ -36,17 +38,17 @@ export async function AppShellWrapper({ children }: AppShellWrapperProps) {
 
     recentQuestions = recentFive.map((q) => {
       const sender =
-        q.isAnonymous !== 1 && q.senderClerkId
+        !q.isAnonymous && q.senderClerkId
           ? senderMap.get(q.senderClerkId)
           : null
 
       return {
-        id: q.id,
+        id: q._id,
         content: q.content,
-        createdAt: q.createdAt,
+        createdAt: q._creationTime,
         senderName: sender?.displayName || sender?.username || undefined,
         senderAvatarUrl: sender?.avatarUrl || null,
-        isAnonymous: q.isAnonymous === 1,
+        isAnonymous: q.isAnonymous,
       }
     })
   }

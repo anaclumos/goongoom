@@ -386,16 +386,16 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
           {questionsWithAnswers.map((qa) => (
             <AnsweredQuestionCard
               answerContent={qa.firstAnswer.content}
-              answerCreatedAt={qa.firstAnswer.createdAt}
+              answerCreatedAt={qa.firstAnswer._creationTime}
               avatarUrl={clerkUser.avatarUrl}
               displayName={displayName}
-              isAnonymous={qa.isAnonymous === 1}
-              key={qa.id}
+              isAnonymous={qa.isAnonymous}
+              key={qa._id}
               labels={cardLabels}
               locale={locale}
               questionContent={qa.content}
-              questionCreatedAt={qa.createdAt}
-              questionId={qa.id}
+              questionCreatedAt={qa._creationTime}
+              questionId={qa._id}
               username={clerkUser.username as string}
             />
           ))}

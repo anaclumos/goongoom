@@ -45,11 +45,6 @@ function buildShareUrl({
 export default async function QADetailPage({ params }: QADetailPageProps) {
   const { username, questionId } = await params
 
-  const parsedQuestionId = Number.parseInt(questionId, 10)
-  if (Number.isNaN(parsedQuestionId)) {
-    notFound()
-  }
-
   const [clerkUser, { userId: viewerId }] = await Promise.all([
     getClerkUserByUsername(username),
     auth(),
@@ -59,8 +54,8 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
   }
 
   const [qa, questionNumber] = await Promise.all([
-    getQuestionByIdAndRecipient(parsedQuestionId, clerkUser.clerkId),
-    getAnsweredQuestionNumber(parsedQuestionId, clerkUser.clerkId),
+    getQuestionByIdAndRecipient(questionId, clerkUser.clerkId),
+    getAnsweredQuestionNumber(questionId, clerkUser.clerkId),
   ])
   if (!qa || qa.answers.length === 0) {
     notFound()
@@ -115,7 +110,7 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
             <Avatar className="size-10 flex-shrink-0">
               <AvatarImage
                 alt="Avatar"
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa.id}`}
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa._id}`}
               />
               <AvatarFallback>?</AvatarFallback>
             </Avatar>
@@ -124,10 +119,8 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
                 <p className="text-foreground leading-relaxed">{qa.content}</p>
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
-                {qa.isAnonymous === 1
-                  ? tCommon("anonymous")
-                  : tCommon("identified")}{" "}
-                · {formatRelativeTime(qa.createdAt, locale)}
+                {qa.isAnonymous ? tCommon("anonymous") : tCommon("identified")}{" "}
+                · {formatRelativeTime(qa._creationTime, locale)}
               </p>
             </div>
           </div>
@@ -137,7 +130,8 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
                 <p className="leading-relaxed">{answer.content}</p>
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
-                {displayName} · {formatRelativeTime(answer.createdAt, locale)}
+                {displayName} ·{" "}
+                {formatRelativeTime(answer._creationTime, locale)}
               </p>
             </div>
             <Avatar className="size-10 flex-shrink-0">

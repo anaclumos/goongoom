@@ -1,10 +1,9 @@
 import type { WebhookEvent } from "@clerk/nextjs/server"
-import { eq } from "drizzle-orm"
+import { fetchMutation } from "convex/nextjs"
 import { headers } from "next/headers"
 import { Webhook } from "svix"
+import { api } from "@/convex/_generated/api"
 import { env } from "@/env"
-import { db } from "@/src/db"
-import { users } from "@/src/db/schema"
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = env.CLERK_WEBHOOK_SECRET
@@ -42,13 +41,7 @@ export async function POST(req: Request) {
     const { id } = evt.data
 
     try {
-      await db
-        .insert(users)
-        .values({
-          clerkId: id,
-        })
-        .onConflictDoNothing()
-
+      await fetchMutation(api.users.getOrCreate, { clerkId: id })
       console.log(`Created user record for clerkId: ${id}`)
     } catch (error) {
       console.error("Error creating user:", error)
@@ -60,13 +53,9 @@ export async function POST(req: Request) {
     const { id } = evt.data
 
     try {
-      await db
-        .update(users)
-        .set({
-          updatedAt: new Date(),
-        })
-        .where(eq(users.clerkId, id))
-
+      await fetchMutation(api.users.updateProfile, {
+        clerkId: id,
+      })
       console.log(`Updated user record for clerkId: ${id}`)
     } catch (error) {
       console.error("Error updating user:", error)
@@ -79,10 +68,9 @@ export async function POST(req: Request) {
 
     if (id) {
       try {
-        await db.delete(users).where(eq(users.clerkId, id))
+        await fetchMutation(api.users.deleteByClerkId, { clerkId: id })
         console.log(`Deleted user record for clerkId: ${id}`)
       } catch (error) {
-        // Silently fail - user may not exist in our DB yet
         console.error(`Failed to delete user ${id}:`, error)
       }
     }

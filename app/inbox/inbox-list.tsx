@@ -26,10 +26,10 @@ import { createAnswer } from "@/lib/actions/answers"
 import { useRelativeTime } from "@/lib/hooks/use-relative-time"
 
 interface QuestionItem {
-  id: number
+  id: string
   content: string
   isAnonymous: boolean
-  createdAt: Date
+  createdAt: number
   senderName: string
   senderAvatarUrl?: string | null
 }

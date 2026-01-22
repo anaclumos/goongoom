@@ -5,12 +5,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { formatRelativeTime } from "@/lib/utils/format-time"
 
 interface AnsweredQuestionCardProps {
-  questionId: number
+  questionId: string
   questionContent: string
   isAnonymous: boolean
-  questionCreatedAt: Date
+  questionCreatedAt: number
   answerContent: string
-  answerCreatedAt: Date
+  answerCreatedAt: number
   username: string
   displayName: string
   avatarUrl: string | null

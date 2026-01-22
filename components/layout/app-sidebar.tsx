@@ -29,14 +29,14 @@ import {
 } from "@/components/ui/sidebar"
 
 interface RecentQuestion {
-  id: number
+  id: string
   content: string
-  createdAt: Date
+  createdAt: number
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   recentQuestions?: RecentQuestion[]
-  onQuestionClick?: (id: number) => void
+  onQuestionClick?: (id: string) => void
 }
 
 export function AppSidebar({

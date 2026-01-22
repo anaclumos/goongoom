@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 
 interface QuickAnswerDialogProps {
   question: {
-    id: number
+    id: string
     content: string
     senderName?: string
     senderAvatarUrl?: string | null

@@ -1,29 +1,34 @@
 "use client"
 
-import { debounce } from "es-toolkit"
-import { useEffect, useMemo, useRef } from "react"
+import { type DebouncedFunction, debounce } from "es-toolkit"
+import { useCallback, useEffect, useRef } from "react"
 
-export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
+type AnyFunction = (...args: never[]) => unknown
+
+export function useDebouncedCallback<T extends AnyFunction>(
   callback: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  const callbackRef = useRef(callback)
+  const callbackRef = useRef<T>(callback)
+  const debouncedRef = useRef<DebouncedFunction<
+    (...args: Parameters<T>) => void
+  > | null>(null)
 
   useEffect(() => {
     callbackRef.current = callback
   }, [callback])
 
-  const debouncedFn = useMemo(() => {
-    return debounce((...args: Parameters<T>) => {
+  useEffect(() => {
+    debouncedRef.current = debounce((...args: Parameters<T>) => {
       callbackRef.current(...args)
     }, wait)
+
+    return () => {
+      debouncedRef.current?.cancel()
+    }
   }, [wait])
 
-  useEffect(() => {
-    return () => {
-      debouncedFn.cancel()
-    }
-  }, [debouncedFn])
-
-  return debouncedFn
+  return useCallback((...args: Parameters<T>) => {
+    debouncedRef.current?.(...args)
+  }, [])
 }
