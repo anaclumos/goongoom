@@ -79,6 +79,7 @@ export async function createQuestion(data: {
   recipientClerkId: string
   content: string
   isAnonymous: boolean
+  anonymousAvatarSeed?: string
 }): Promise<QuestionActionResult<Question>> {
   return await withAudit(
     { action: "createQuestion", payload: data, entityType: "question" },
@@ -118,6 +119,9 @@ export async function createQuestion(data: {
           senderClerkId,
           content,
           isAnonymous: isAnonymous ? 1 : 0,
+          anonymousAvatarSeed: isAnonymous
+            ? data.anonymousAvatarSeed
+            : undefined,
         })
 
         if (!question) {

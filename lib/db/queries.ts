@@ -31,12 +31,14 @@ export async function createQuestion(data: {
   senderClerkId?: string | null
   content: string
   isAnonymous: number
+  anonymousAvatarSeed?: string
 }) {
   const result = await fetchMutation(api.questions.create, {
     recipientClerkId: data.recipientClerkId,
     senderClerkId: data.senderClerkId ?? undefined,
     content: data.content,
     isAnonymous: data.isAnonymous === 1,
+    anonymousAvatarSeed: data.anonymousAvatarSeed,
   })
   return result ? [result] : []
 }

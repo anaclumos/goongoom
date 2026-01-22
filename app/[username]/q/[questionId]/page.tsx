@@ -13,7 +13,7 @@ import { ShareInstagramButton } from "@/components/questions/share-instagram-but
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getClerkUserByUsername } from "@/lib/clerk"
+import { getClerkUserById, getClerkUserByUsername } from "@/lib/clerk"
 import {
   getAnsweredQuestionNumber,
   getQuestionByIdAndRecipient,
@@ -65,6 +65,11 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
     notFound()
   }
 
+  const senderClerk =
+    !qa.isAnonymous && qa.senderClerkId
+      ? await getClerkUserById(qa.senderClerkId)
+      : null
+
   const [tCommon, tProfile, tQuestions, locale] = await Promise.all([
     getTranslations("common"),
     getTranslations("profile"),
@@ -77,6 +82,16 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
   const fullName = clerkUser.displayName || clerkUser.username || username
   const displayName = fullName.split(" ")[0] || fullName
   const { answer } = qa
+
+  const questionerAvatarUrl = qa.isAnonymous
+    ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${qa.anonymousAvatarSeed || `anon_${qa._id}`}`
+    : senderClerk?.avatarUrl || null
+  const questionerName = qa.isAnonymous
+    ? tCommon("anonymous")
+    : senderClerk?.displayName || senderClerk?.username || tCommon("identified")
+  const questionerFallback = qa.isAnonymous
+    ? "?"
+    : senderClerk?.displayName?.[0] || senderClerk?.username?.[0] || "?"
 
   const instagramShareUrl = buildShareUrl({
     question: qa.content,
@@ -109,19 +124,17 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
         <CardContent className="flex flex-col gap-4">
           <div className="flex w-full items-start gap-3">
             <Avatar className="size-10 flex-shrink-0">
-              <AvatarImage
-                alt="Avatar"
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${qa._id}`}
-              />
-              <AvatarFallback>?</AvatarFallback>
+              {questionerAvatarUrl && (
+                <AvatarImage alt={questionerName} src={questionerAvatarUrl} />
+              )}
+              <AvatarFallback>{questionerFallback}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <Card className="max-w-prose bg-muted/40 px-4 py-3">
                 <p className="text-foreground leading-relaxed">{qa.content}</p>
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
-                {qa.isAnonymous ? tCommon("anonymous") : tCommon("identified")}{" "}
-                ·{" "}
+                {questionerName} ·{" "}
                 {formatDistanceToNow(qa._creationTime, {
                   addSuffix: true,
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,

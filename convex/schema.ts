@@ -23,6 +23,7 @@ export default defineSchema({
     senderClerkId: v.optional(v.string()),
     content: v.string(),
     isAnonymous: v.boolean(),
+    anonymousAvatarSeed: v.optional(v.string()),
     answerId: v.optional(v.id("answers")),
   })
     .index("by_recipient", ["recipientClerkId"])

@@ -11,6 +11,9 @@ interface AnsweredQuestionCardProps {
   questionId: string
   questionContent: string
   isAnonymous: boolean
+  anonymousAvatarSeed?: string
+  senderName?: string
+  senderAvatarUrl?: string | null
   questionCreatedAt: number
   answerContent: string
   answerCreatedAt: number
@@ -26,10 +29,26 @@ interface AnsweredQuestionCardProps {
   }
 }
 
+function getQuestionerAvatarUrl(
+  isAnonymous: boolean,
+  anonymousAvatarSeed: string | undefined,
+  questionId: string,
+  senderAvatarUrl: string | null | undefined
+): string | null {
+  if (isAnonymous) {
+    const seed = anonymousAvatarSeed || `anon_${questionId}`
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
+  }
+  return senderAvatarUrl || null
+}
+
 export function AnsweredQuestionCard({
   questionId,
   questionContent,
   isAnonymous,
+  anonymousAvatarSeed,
+  senderName,
+  senderAvatarUrl,
   questionCreatedAt,
   answerContent,
   answerCreatedAt,
@@ -39,8 +58,17 @@ export function AnsweredQuestionCard({
   locale,
   labels,
 }: AnsweredQuestionCardProps) {
-  const anonymityLabel = isAnonymous ? labels.anonymous : labels.identified
+  const anonymityLabel = isAnonymous
+    ? labels.anonymous
+    : senderName || labels.identified
   const fallbackInitial = displayName[0] || "?"
+  const questionerAvatarUrl = getQuestionerAvatarUrl(
+    isAnonymous,
+    anonymousAvatarSeed,
+    questionId,
+    senderAvatarUrl
+  )
+  const questionerFallback = isAnonymous ? "?" : senderName?.[0] || "?"
 
   return (
     <Link
@@ -52,11 +80,13 @@ export function AnsweredQuestionCard({
         <CardContent className="flex flex-col gap-4">
           <div className="flex w-full items-start gap-3">
             <Avatar className="size-10 flex-shrink-0">
-              <AvatarImage
-                alt="Avatar"
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=anon_${questionId}`}
-              />
-              <AvatarFallback>?</AvatarFallback>
+              {questionerAvatarUrl && (
+                <AvatarImage
+                  alt={isAnonymous ? "Anonymous" : senderName || "User"}
+                  src={questionerAvatarUrl}
+                />
+              )}
+              <AvatarFallback>{questionerFallback}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <Card className="max-w-prose bg-muted/40 px-4 py-3">

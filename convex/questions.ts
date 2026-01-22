@@ -7,6 +7,7 @@ export const create = mutation({
     senderClerkId: v.optional(v.string()),
     content: v.string(),
     isAnonymous: v.boolean(),
+    anonymousAvatarSeed: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const id = await ctx.db.insert("questions", {
@@ -14,6 +15,7 @@ export const create = mutation({
       senderClerkId: args.senderClerkId,
       content: args.content,
       isAnonymous: args.isAnonymous,
+      anonymousAvatarSeed: args.anonymousAvatarSeed,
     })
     return await ctx.db.get(id)
   },

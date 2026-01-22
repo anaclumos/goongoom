@@ -15,7 +15,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { ToastOnMount } from "@/components/ui/toast-on-mount"
 import { createQuestion } from "@/lib/actions/questions"
-import { getClerkUserByUsername } from "@/lib/clerk"
+import { getClerkUserByUsername, getClerkUsersByIds } from "@/lib/clerk"
 import { getOrCreateUser, getUserWithAnsweredQuestions } from "@/lib/db/queries"
 import {
   DEFAULT_QUESTION_SECURITY_LEVEL,
@@ -83,6 +83,7 @@ export default async function UserProfilePage({
     const tErrors = await getTranslations("errors")
     const content = String(formData.get("question") || "").trim()
     const questionType = String(formData.get("questionType") || "anonymous")
+    const avatarSeed = String(formData.get("avatarSeed") || "")
 
     if (!content) {
       redirect(
@@ -90,10 +91,12 @@ export default async function UserProfilePage({
       )
     }
 
+    const isAnonymous = questionType !== "public"
     const result = await createQuestion({
       recipientClerkId,
       content,
-      isAnonymous: questionType !== "public",
+      isAnonymous,
+      anonymousAvatarSeed: isAnonymous && avatarSeed ? avatarSeed : undefined,
     })
 
     if (!result.success) {
@@ -118,8 +121,32 @@ export default async function UserProfilePage({
     ? normalizeHandle(dbUser.socialLinks.twitter)
     : ""
 
+  const senderIds = Array.from(
+    new Set(
+      answeredQuestions
+        .filter((qa) => qa.answer && !qa.isAnonymous && qa.senderClerkId)
+        .map((qa) => qa.senderClerkId)
+        .filter((id): id is string => Boolean(id))
+    )
+  )
+  const senderMap = await getClerkUsersByIds(senderIds)
+
   const questionsWithAnswers = answeredQuestions
-    .map((qa) => (qa.answer ? { ...qa, firstAnswer: qa.answer } : null))
+    .map((qa) => {
+      if (!qa.answer) {
+        return null
+      }
+      const sender =
+        !qa.isAnonymous && qa.senderClerkId
+          ? senderMap.get(qa.senderClerkId)
+          : null
+      return {
+        ...qa,
+        firstAnswer: qa.answer,
+        senderName: sender?.displayName || sender?.username || null,
+        senderAvatarUrl: sender?.avatarUrl || null,
+      }
+    })
     .filter((qa) => qa !== null)
 
   const cardLabels = {
@@ -205,6 +232,7 @@ export default async function UserProfilePage({
         <div className="space-y-6 pb-24">
           {questionsWithAnswers.map((qa) => (
             <AnsweredQuestionCard
+              anonymousAvatarSeed={qa.anonymousAvatarSeed}
               answerContent={qa.firstAnswer.content}
               answerCreatedAt={qa.firstAnswer._creationTime}
               avatarUrl={clerkUser.avatarUrl}
@@ -216,6 +244,8 @@ export default async function UserProfilePage({
               questionContent={qa.content}
               questionCreatedAt={qa._creationTime}
               questionId={qa._id}
+              senderAvatarUrl={qa.senderAvatarUrl}
+              senderName={qa.senderName || undefined}
               username={username}
             />
           ))}
