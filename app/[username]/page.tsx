@@ -191,26 +191,22 @@ export default async function UserProfilePage({
         {socialLinks.length > 0 && (
           <CardContent className="flex flex-wrap gap-4 pt-0">
             {socialLinks.map((link) => (
-              <div className="flex flex-col items-center gap-2" key={link.key}>
-                <Button
-                  aria-label={link.label}
-                  className="rounded-full"
-                  render={
-                    <Link
-                      href={link.href}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    />
-                  }
-                  size="icon"
-                  variant="ghost"
-                >
-                  <HugeiconsIcon className="size-4" icon={link.icon} />
-                </Button>
-                <span className="text-muted-foreground text-xs">
-                  {link.label}
-                </span>
-              </div>
+              <Button
+                aria-label={link.label}
+                className="rounded-full"
+                key={link.key}
+                render={
+                  <Link
+                    href={link.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  />
+                }
+                size="icon"
+                variant="outline"
+              >
+                <HugeiconsIcon className="size-4" icon={link.icon} />
+              </Button>
             ))}
           </CardContent>
         )}

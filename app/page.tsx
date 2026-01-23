@@ -328,34 +328,24 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
         </CardContent>
         {socialLinks.length > 0 && (
           <CardContent className="flex flex-wrap gap-4 pt-0">
-            {socialLinks.map((link) => {
-              const Icon = link.icon
-              return (
-                <div
-                  className="flex flex-col items-center gap-2"
-                  key={link.key}
-                >
-                  <Button
-                    aria-label={link.label}
-                    className="rounded-full"
-                    render={
-                      <Link
-                        href={link.href}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      />
-                    }
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <HugeiconsIcon className="size-4" icon={Icon} />
-                  </Button>
-                  <span className="text-muted-foreground text-xs">
-                    {link.label}
-                  </span>
-                </div>
-              )
-            })}
+            {socialLinks.map((link) => (
+              <Button
+                aria-label={link.label}
+                className="rounded-full"
+                key={link.key}
+                render={
+                  <Link
+                    href={link.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  />
+                }
+                size="icon"
+                variant="outline"
+              >
+                <HugeiconsIcon className="size-4" icon={link.icon} />
+              </Button>
+            ))}
           </CardContent>
         )}
         <CardContent className="pt-0">
