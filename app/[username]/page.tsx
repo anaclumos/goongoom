@@ -46,16 +46,29 @@ export default async function UserProfilePage({
     notFound()
   }
 
-  const [dbUser, { answeredQuestions }, t, tCommon, , tAnswers, locale] =
-    await Promise.all([
-      getOrCreateUser(clerkUser.clerkId),
-      getUserWithAnsweredQuestions(clerkUser.clerkId),
-      getTranslations("questions"),
-      getTranslations("common"),
-      getTranslations("errors"),
-      getTranslations("answers"),
-      getLocale(),
-    ])
+  const isOwnProfile = viewerId === clerkUser.clerkId
+
+  const [
+    dbUser,
+    { answeredQuestions },
+    t,
+    tCommon,
+    ,
+    tAnswers,
+    locale,
+    tProfile,
+    securityOptions,
+  ] = await Promise.all([
+    getOrCreateUser(clerkUser.clerkId),
+    getUserWithAnsweredQuestions(clerkUser.clerkId),
+    getTranslations("questions"),
+    getTranslations("common"),
+    getTranslations("errors"),
+    getTranslations("answers"),
+    getLocale(),
+    getTranslations("profile"),
+    isOwnProfile ? getQuestionSecurityOptions() : Promise.resolve(null),
+  ])
 
   const displayName = clerkUser.displayName || clerkUser.username || username
   const recipientClerkId = clerkUser.clerkId
@@ -75,7 +88,6 @@ export default async function UserProfilePage({
     viewerIsVerified
   )
   const requiresSignIn = !viewerIsVerified && securityLevel !== "anyone"
-  const isOwnProfile = viewerId === clerkUser.clerkId
 
   async function submitQuestion(formData: FormData) {
     "use server"
@@ -107,11 +119,6 @@ export default async function UserProfilePage({
     revalidatePath(`/${recipientUsername}`)
     redirect(`/${recipientUsername}?sent=1`)
   }
-
-  const [tProfile, securityOptions] = await Promise.all([
-    getTranslations("profile"),
-    isOwnProfile ? getQuestionSecurityOptions() : Promise.resolve(null),
-  ])
 
   const instagramHandle = dbUser?.socialLinks?.instagram
     ? normalizeHandle(dbUser.socialLinks.instagram)

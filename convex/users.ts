@@ -1,6 +1,11 @@
 import { v } from "convex/values"
 import { internalMutation, mutation, query } from "./_generated/server"
 
+// NOTE: Convex doesn't provide a native count() operation, so this implementation
+// fetches all user documents to count them. This is the recommended Convex pattern
+// for counting. For production scale with very large user counts (100k+), consider:
+// 1. Maintaining a separate counter document that increments/decrements on user create/delete
+// 2. Caching this value with a reasonable TTL if exact real-time accuracy isn't critical
 export const count = query({
   args: {},
   handler: async (ctx) => {

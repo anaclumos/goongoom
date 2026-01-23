@@ -1,5 +1,24 @@
 import { v } from "convex/values"
-import { mutation, query } from "./_generated/server"
+import type { Doc, Id } from "./_generated/dataModel"
+import { mutation, type QueryCtx, query } from "./_generated/server"
+
+/**
+ * Fetches answers for a list of questions and returns a map for efficient lookup.
+ * Filters out any null/undefined answer IDs and handles deleted answers gracefully.
+ */
+async function fetchAnswersMap(
+  ctx: QueryCtx,
+  questions: Array<{ answerId?: Id<"answers"> }>
+): Promise<Map<Id<"answers">, Doc<"answers">>> {
+  const answerIds = questions
+    .map((q) => q.answerId)
+    .filter((id): id is Id<"answers"> => id !== undefined)
+
+  const answers = await Promise.all(answerIds.map((id) => ctx.db.get(id)))
+  const validAnswers = answers.filter((a): a is Doc<"answers"> => a !== null)
+
+  return new Map(validAnswers.map((a) => [a._id, a]))
+}
 
 export const create = mutation({
   args: {
@@ -61,18 +80,13 @@ export const getByRecipient = query({
       .order("desc")
       .take(args.limit ?? 100)
 
-    const answerIds = questions
-      .map((q) => q.answerId)
-      .filter((id): id is NonNullable<typeof id> => id !== undefined)
-    const answers = await Promise.all(answerIds.map((id) => ctx.db.get(id)))
-    const validAnswers = answers.filter(
-      (a): a is NonNullable<typeof a> => a !== null
-    )
-    const answerMap = new Map(validAnswers.map((a) => [a._id, a]))
+    const answerMap = await fetchAnswersMap(ctx, questions)
 
     return questions.map((question) => ({
       ...question,
-      answer: question.answerId ? answerMap.get(question.answerId) : null,
+      answer: question.answerId
+        ? (answerMap.get(question.answerId) ?? null)
+        : null,
     }))
   },
 })
@@ -103,18 +117,13 @@ export const getAnsweredByRecipient = query({
       .order("desc")
       .collect()
 
-    const answerIds = questions
-      .map((q) => q.answerId)
-      .filter((id): id is NonNullable<typeof id> => id !== undefined)
-    const answers = await Promise.all(answerIds.map((id) => ctx.db.get(id)))
-    const validAnswers = answers.filter(
-      (a): a is NonNullable<typeof a> => a !== null
-    )
-    const answerMap = new Map(validAnswers.map((a) => [a._id, a]))
+    const answerMap = await fetchAnswersMap(ctx, questions)
 
     return questions.map((question) => ({
       ...question,
-      answer: question.answerId ? answerMap.get(question.answerId) : null,
+      answer: question.answerId
+        ? (answerMap.get(question.answerId) ?? null)
+        : null,
     }))
   },
 })
@@ -131,18 +140,13 @@ export const getSentByUser = query({
       .order("desc")
       .take(args.limit ?? 100)
 
-    const answerIds = questions
-      .map((q) => q.answerId)
-      .filter((id): id is NonNullable<typeof id> => id !== undefined)
-    const answers = await Promise.all(answerIds.map((id) => ctx.db.get(id)))
-    const validAnswers = answers.filter(
-      (a): a is NonNullable<typeof a> => a !== null
-    )
-    const answerMap = new Map(validAnswers.map((a) => [a._id, a]))
+    const answerMap = await fetchAnswersMap(ctx, questions)
 
     return questions.map((question) => ({
       ...question,
-      answer: question.answerId ? answerMap.get(question.answerId) : null,
+      answer: question.answerId
+        ? (answerMap.get(question.answerId) ?? null)
+        : null,
     }))
   },
 })
@@ -158,16 +162,32 @@ export const getAnsweredNumber = query({
       return 0
     }
 
-    const answeredQuestions = await ctx.db
+    // If the question itself isn't answered, return 0
+    if (question.answerId === undefined) {
+      return 0
+    }
+
+    // Collect answered questions in ascending order (oldest first)
+    // and count only those up to and including our target question
+    let count = 0
+    const queryIter = ctx.db
       .query("questions")
       .withIndex("by_recipient", (q) =>
         q.eq("recipientClerkId", args.recipientClerkId)
       )
-      .filter((q) => q.neq(q.field("answerId"), undefined))
-      .collect()
+      .order("asc")
 
-    return answeredQuestions.filter(
-      (q) => q._creationTime <= question._creationTime
-    ).length
+    for await (const q of queryIter) {
+      // Stop once we've reached our target question
+      if (q._id === args.questionId) {
+        break
+      }
+      // Only count questions that have been answered
+      if (q.answerId !== undefined) {
+        count++
+      }
+    }
+
+    return count
   },
 })
