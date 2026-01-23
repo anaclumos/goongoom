@@ -14,6 +14,9 @@ import { PushNotificationProvider } from "@/components/notifications/push-provid
 import { AddToHomeScreenNudge } from "@/components/pwa/add-to-homescreen-nudge"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
+import { Inter } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const clerkLocalizations = {
   ko: koKR,
@@ -44,7 +47,7 @@ export default async function RootLayout({
     clerkLocalizations[locale as keyof typeof clerkLocalizations] || koKR
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html className={inter.variable} lang={locale} suppressHydrationWarning>
       <body className="bg-background font-sans antialiased">
         <ClerkProvider localization={clerkLocalization}>
           <NextIntlClientProvider messages={messages}>
