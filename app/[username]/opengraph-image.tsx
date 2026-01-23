@@ -10,10 +10,10 @@ export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 const fontRegularPromise = readFile(
-  join(process.cwd(), "public/fonts/Pretendard-Regular.ttf")
+  join(process.cwd(), "public/fonts/Pretendard-Regular.otf")
 )
 const fontBoldPromise = readFile(
-  join(process.cwd(), "public/fonts/Pretendard-Bold.ttf")
+  join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
 
 const clamp = (value: string, max: number) =>

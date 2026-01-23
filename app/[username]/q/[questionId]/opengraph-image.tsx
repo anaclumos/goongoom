@@ -11,13 +11,13 @@ export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 const fontRegularPromise = readFile(
-  join(process.cwd(), "public/fonts/Pretendard-Regular.ttf")
+  join(process.cwd(), "public/fonts/Pretendard-Regular.otf")
 )
 const fontSemiBoldPromise = readFile(
-  join(process.cwd(), "public/fonts/Pretendard-SemiBold.ttf")
+  join(process.cwd(), "public/fonts/Pretendard-SemiBold.otf")
 )
 const fontBoldPromise = readFile(
-  join(process.cwd(), "public/fonts/Pretendard-Bold.ttf")
+  join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
 
 const clamp = (value: string, max: number) =>
@@ -127,7 +127,9 @@ export default async function Image({ params }: PageProps) {
           >
             궁
           </div>
-          <div style={{ fontSize: "28px", fontWeight: 700 }}>궁금닷컴</div>
+          <div style={{ display: "flex", fontSize: "28px", fontWeight: 700 }}>
+            궁금닷컴
+          </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           {clerkUser.avatarUrl ? (
@@ -157,7 +159,7 @@ export default async function Image({ params }: PageProps) {
               {displayName[0] || "?"}
             </div>
           )}
-          <div style={{ fontSize: "24px", fontWeight: 600 }}>
+          <div style={{ display: "flex", fontSize: "24px", fontWeight: 600 }}>
             {clamp(displayName, 20)}
           </div>
         </div>
@@ -175,6 +177,7 @@ export default async function Image({ params }: PageProps) {
       >
         <div
           style={{
+            display: "flex",
             alignSelf: "flex-start",
             maxWidth: "85%",
             backgroundColor: "#FFFFFF",
@@ -190,6 +193,7 @@ export default async function Image({ params }: PageProps) {
         </div>
         <div
           style={{
+            display: "flex",
             alignSelf: "flex-end",
             maxWidth: "85%",
             background: "linear-gradient(135deg, #A855F7 0%, #EC4899 100%)",
@@ -214,8 +218,10 @@ export default async function Image({ params }: PageProps) {
           color: "#9CA3AF",
         }}
       >
-        <div>무엇이든 물어보세요</div>
-        <div>goongoom.com/{clamp(clerkUser.username || username, 20)}</div>
+        <div style={{ display: "flex" }}>무엇이든 물어보세요</div>
+        <div style={{ display: "flex" }}>
+          goongoom.com/{clamp(clerkUser.username || username, 20)}
+        </div>
       </div>
     </div>,
     {
