@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
+    viewTransition: true,
     optimizePackageImports: ["@hugeicons/react", "@hugeicons/core-free-icons"],
   },
 }

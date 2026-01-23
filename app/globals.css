@@ -344,6 +344,108 @@
   }
 }
 
+/* ============================================
+   iOS-Style View Transitions
+   ============================================ */
+
+/* Opt-in to cross-document view transitions */
+@view-transition {
+  navigation: auto;
+}
+
+/* iOS-style timing function (spring-like curve) */
+:root {
+  --ios-timing: cubic-bezier(0.32, 0.72, 0, 1);
+  --ios-duration: 350ms;
+}
+
+/* iOS-style slide animation for push navigation (forward) */
+@keyframes ios-slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ios-slide-out-to-left {
+  from {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+  to {
+    transform: translateX(-30%);
+    filter: brightness(0.9);
+  }
+}
+
+/* iOS-style slide animation for pop navigation (back) */
+@keyframes ios-slide-in-from-left {
+  from {
+    transform: translateX(-30%);
+    filter: brightness(0.9);
+  }
+  to {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes ios-slide-out-to-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Default: Push navigation (forward) */
+::view-transition-old(main-content) {
+  animation: ios-slide-out-to-left var(--ios-duration) var(--ios-timing) both;
+}
+
+::view-transition-new(main-content) {
+  animation: ios-slide-in-from-right var(--ios-duration) var(--ios-timing) both;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Back navigation (pop) - reverse the animations */
+html[data-nav-direction="back"] {
+  &::view-transition-old(main-content) {
+    animation: ios-slide-out-to-right var(--ios-duration) var(--ios-timing) both;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+  }
+
+  &::view-transition-new(main-content) {
+    animation: ios-slide-in-from-left var(--ios-duration) var(--ios-timing) both;
+    box-shadow: none;
+  }
+}
+
+/* Disable default fade for root to prevent double animation */
+::view-transition-group(root) {
+  animation-duration: 0s;
+}
+
+/* Keep navigation elements stable during transitions */
+::view-transition-old(mobile-tab-bar),
+::view-transition-new(mobile-tab-bar),
+::view-transition-old(app-sidebar),
+::view-transition-new(app-sidebar) {
+  animation: none;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 @layer utilities {
   .pt-safe {
     padding-top: env(safe-area-inset-top, 0px);

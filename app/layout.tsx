@@ -9,6 +9,7 @@ import { getLocale, getMessages } from "next-intl/server"
 import { ThemeProvider } from "next-themes"
 import { PasskeySetupModal } from "@/components/auth/passkey-setup-modal"
 import { AppShellWrapper } from "@/components/layout/app-shell-wrapper"
+import { NavigationProvider } from "@/components/navigation/navigation-provider"
 import { PushNotificationProvider } from "@/components/notifications/push-provider"
 import { AddToHomeScreenNudge } from "@/components/pwa/add-to-homescreen-nudge"
 import { Toaster } from "@/components/ui/sonner"
@@ -53,6 +54,7 @@ export default async function RootLayout({
               disableTransitionOnChange
               enableSystem
             >
+              <NavigationProvider />
               <EscapeInAppBrowser />
               <AppShellWrapper>
                 <main className="flex-1">{children}</main>

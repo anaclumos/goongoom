@@ -5,5 +5,12 @@ interface MainContentProps {
 }
 
 export function MainContent({ children }: MainContentProps) {
-  return <div className="mx-auto max-w-3xl p-4 sm:p-6">{children}</div>
+  return (
+    <div
+      className="mx-auto max-w-3xl p-4 sm:p-6"
+      style={{ viewTransitionName: "main-content" }}
+    >
+      {children}
+    </div>
+  )
 }
