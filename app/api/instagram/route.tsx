@@ -13,8 +13,14 @@ const pickText = (value: string | null, fallback: string, max: number) => {
   return clamp(trimmed, max)
 }
 
-const fontPromise = readFile(
-  join(process.cwd(), "public/fonts/PretendardVariable.ttf")
+const fontRegularPromise = readFile(
+  join(process.cwd(), "public/fonts/Pretendard-Regular.otf")
+)
+const fontSemiBoldPromise = readFile(
+  join(process.cwd(), "public/fonts/Pretendard-SemiBold.otf")
+)
+const fontBoldPromise = readFile(
+  join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
 
 export async function GET(request: Request) {
@@ -32,7 +38,11 @@ export async function GET(request: Request) {
   )
   const name = pickText(searchParams.get("name"), "사용자", 40)
 
-  const fontData = await fontPromise
+  const [fontRegular, fontSemiBold, fontBold] = await Promise.all([
+    fontRegularPromise,
+    fontSemiBoldPromise,
+    fontBoldPromise,
+  ])
 
   return new ImageResponse(
     <div
@@ -43,7 +53,7 @@ export async function GET(request: Request) {
         flexDirection: "column",
         padding: "80px",
         backgroundColor: "#FFF7ED",
-        fontFamily: "Pretendard Variable",
+        fontFamily: "Pretendard",
         color: "#111827",
         wordWrap: "break-word",
         wordBreak: "keep-all",
@@ -143,9 +153,9 @@ export async function GET(request: Request) {
       width: 1080,
       height: 1920,
       fonts: [
-        { name: "Pretendard Variable", data: fontData, weight: 400 },
-        { name: "Pretendard Variable", data: fontData, weight: 600 },
-        { name: "Pretendard Variable", data: fontData, weight: 700 },
+        { name: "Pretendard", data: fontRegular, weight: 400 },
+        { name: "Pretendard", data: fontSemiBold, weight: 600 },
+        { name: "Pretendard", data: fontBold, weight: 700 },
       ],
       headers: {
         "Cache-Control": "public, max-age=31536000, immutable",

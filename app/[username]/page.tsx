@@ -5,8 +5,8 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { MainContent } from "@/components/layout/main-content"
+import { EditProfileButton } from "@/components/profile/edit-profile-button"
 import { ProfileActions } from "@/components/profile/profile-actions"
-import { ProfileEditDrawer } from "@/components/profile/profile-edit-drawer"
 import { AnsweredQuestionCard } from "@/components/questions/answered-question-card"
 import { QuestionDrawer } from "@/components/questions/question-drawer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,15 +17,11 @@ import { ToastOnMount } from "@/components/ui/toast-on-mount"
 import { createQuestion } from "@/lib/actions/questions"
 import { getClerkUserByUsername, getClerkUsersByIds } from "@/lib/clerk"
 import { getOrCreateUser, getUserWithAnsweredQuestions } from "@/lib/db/queries"
-import {
-  DEFAULT_QUESTION_SECURITY_LEVEL,
-  getQuestionSecurityOptions,
-} from "@/lib/question-security"
+import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security"
 import {
   buildSocialLinks,
   canAskAnonymousQuestion,
   getPageStatus,
-  normalizeHandle,
 } from "@/lib/utils/social-links"
 
 interface UserProfilePageProps {
@@ -57,7 +53,6 @@ export default async function UserProfilePage({
     tAnswers,
     locale,
     tProfile,
-    securityOptions,
   ] = await Promise.all([
     getOrCreateUser(clerkUser.clerkId),
     getUserWithAnsweredQuestions(clerkUser.clerkId),
@@ -67,7 +62,6 @@ export default async function UserProfilePage({
     getTranslations("answers"),
     getLocale(),
     getTranslations("profile"),
-    isOwnProfile ? getQuestionSecurityOptions() : Promise.resolve(null),
   ])
 
   const displayName = clerkUser.displayName || clerkUser.username || username
@@ -119,13 +113,6 @@ export default async function UserProfilePage({
     revalidatePath(`/${recipientUsername}`)
     redirect(`/${recipientUsername}?sent=1`)
   }
-
-  const instagramHandle = dbUser?.socialLinks?.instagram
-    ? normalizeHandle(dbUser.socialLinks.instagram)
-    : ""
-  const twitterHandle = dbUser?.socialLinks?.twitter
-    ? normalizeHandle(dbUser.socialLinks.twitter)
-    : ""
 
   const senderIds = Array.from(
     new Set(
@@ -210,18 +197,10 @@ export default async function UserProfilePage({
             ))}
           </CardContent>
         )}
-        {isOwnProfile && securityOptions && (
+        {isOwnProfile && (
           <CardContent className="pt-0">
             <ProfileActions
-              editButton={
-                <ProfileEditDrawer
-                  initialBio={dbUser?.bio || null}
-                  initialInstagramHandle={instagramHandle}
-                  initialQuestionSecurityLevel={securityLevel}
-                  initialTwitterHandle={twitterHandle}
-                  securityOptions={securityOptions}
-                />
-              }
+              editButton={<EditProfileButton />}
               username={recipientUsername}
             />
           </CardContent>

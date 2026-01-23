@@ -20,7 +20,7 @@
   },
   "metadata": {
     "title": "Goongoom - Anonymous Q&A Platform",
-    "description": "Ask questions and get answers anonymously"
+    "description": "Ask anything and get honest answers"
   },
   "nav": {
     "appName": "Goongoom",
@@ -37,23 +37,23 @@
     "login": "Log in",
     "createProfile": "Create my profile",
     "viewProfile": "View my profile",
-    "loginRequired": "Please log in to send a question.",
+    "loginRequired": "Please log in first to send a question.",
     "welcome": "Welcome to Goongoom!",
     "welcomeDescription": "Log in to send and receive anonymous questions",
     "openProfileMenu": "Open profile menu",
     "start": "Start"
   },
   "passkey": {
-    "setupError": "An error occurred while setting up passkey. Please try again.",
-    "setupComplete": "Setup complete!",
+    "setupError": "Something went wrong while setting up passkey. Please try again.",
+    "setupComplete": "All set!",
     "setupCompleteDescription": "You can now log in faster and more securely.",
     "nudgeTitle": "What if someone answers without permission?",
-    "nudgeDescription": "Log in faster and more securely with Face ID or Touch ID",
-    "settingUp": "Setting up...",
+    "nudgeDescription": "Log in faster and safer with Face ID or Touch ID",
+    "settingUp": "Setting up…",
     "setupNow": "Set up now",
     "later": "Maybe later",
     "fasterTitle": "🔐 Faster with Passkey!",
-    "fasterDescription": "Log in with Face ID, fingerprint, or device lock\nwith just one touch."
+    "fasterDescription": "One touch to log in with Face ID,\nfingerprint, or device lock."
   },
   "theme": {
     "toggle": "Toggle theme"
@@ -64,29 +64,29 @@
     "more": "More",
     "instagramDescription": "Share this answer on Instagram",
     "instagramImageShare": "Share Instagram image",
-    "instagramImageShareLoading": "Preparing Instagram share...",
+    "instagramImageShareLoading": "Getting ready for Instagram…",
     "copyLink": "Copy link",
-    "linkCopied": "Link copied",
+    "linkCopied": "Link copied!",
     "easyShare": "Easy sharing",
     "easyShareDescription": "Share your link on Instagram, Twitter, anywhere. Get questions with just one click.",
     "instagramShare": "Instagram sharing",
-    "instagramShareDescription": "Save witty answers as images and share them directly to Instagram Stories and feeds."
+    "instagramShareDescription": "Save your witty answers as images and share them right to Instagram Stories and feeds."
   },
   "questions": {
     "sendQuestion": "Send question",
-    "sending": "Sending...",
-    "inputPlaceholder": "Type your question…",
+    "sending": "Sending…",
+    "inputPlaceholder": "What would you like to ask?",
     "writeQuestion": "Write a question",
     "toRecipient": "To {recipientName}",
     "newQuestion": "Leave a new question",
     "whoToAsk": "How do you want to ask?",
     "anonymousOption": "Anonymous",
-    "anonymousDescription": "Ask anonymously",
+    "anonymousDescription": "Ask without revealing yourself",
     "identifiedOption": "Identified",
-    "identifiedDescription": "Ask with my name",
+    "identifiedDescription": "Ask with your name",
     "shuffleAvatar": "Shuffle",
     "termsAgreement": "By asking, you agree to our terms of service",
-    "questionSent": "Question sent!",
+    "questionSent": "Your question has been sent!",
     "questionLabel": "Question",
     "defaultQuestion": "Your question will appear here.",
     "defaultAnswer": "Share your witty answer.",
@@ -104,54 +104,54 @@
     "title": "Inbox",
     "description": "Questions waiting for your answer",
     "emptyTitle": "No new questions",
-    "emptyDescription": "New questions will appear here."
+    "emptyDescription": "New questions will show up here."
   },
   "profile": {
     "myProfile": "My profile",
     "inboxMenu": "Inbox",
     "settingsMenu": "Settings",
-    "noBio": "No bio set",
+    "noBio": "No bio yet",
     "backToProfile": "{displayName}'s profile",
     "edit": "Edit",
     "shareLink": "Share Link"
   },
   "settings": {
     "title": "Settings",
-    "description": "Edit your profile information",
-    "profileRequired": "Profile setup required",
+    "description": "Update your profile info",
+    "profileRequired": "Profile setup needed",
     "profileRequiredDescription": "Please complete your account setup.",
     "profileUpdated": "Profile updated!",
     "themeSettings": "Appearance",
-    "themeSettingsDescription": "Choose your preferred theme.",
+    "themeSettingsDescription": "Pick your preferred theme.",
     "themeLight": "Light",
     "themeLightDescription": "Light theme",
     "themeDark": "Dark",
     "themeDarkDescription": "Dark theme",
     "themeSystem": "System",
-    "themeSystemDescription": "Follow system setting",
+    "themeSystemDescription": "Follow your device settings",
     "languageSettings": "Language",
-    "languageSettingsDescription": "Choose your preferred language.",
+    "languageSettingsDescription": "Pick your preferred language.",
     "anonymousRestriction": "Anonymous restriction",
-    "anonymousRestrictionDescription": "Restrict anonymous questions to reduce malicious messages.",
+    "anonymousRestrictionDescription": "Limit anonymous questions to reduce unwanted messages.",
     "whoCanAsk": "Who can send you questions?",
     "profileSettings": "Profile settings",
-    "profileSettingsDescription": "Set your profile info and social links.",
+    "profileSettingsDescription": "Set up your profile info and social links.",
     "bioLabel": "Bio",
-    "bioPlaceholder": "Write a short bio…",
+    "bioPlaceholder": "Tell us about yourself…",
     "socialLinks": "Social Usernames",
     "accountSettings": "Account settings",
-    "accountSettingsDescription": "Username, phone number, and security",
+    "accountSettingsDescription": "Manage your username, phone, and security",
     "saving": "Saving…"
   },
 
   "home": {
     "hotTitle": "The hottest anonymous Q&A",
     "heroTitle": "Ask anything you're curious about",
-    "heroDescription": "Ask anonymously, answer honestly.\nShare your profile and hear your friends' true thoughts.",
+    "heroDescription": "Ask anonymously, answer honestly.\nShare your profile and hear what your friends really think.",
     "safeAnonymity": "Safe anonymity",
-    "safeAnonymityDescription": "Questioners' identities are kept strictly anonymous. Start honest conversations without pressure.",
+    "safeAnonymityDescription": "Questioner identities stay completely anonymous. Start honest conversations without any pressure.",
     "ctaTitle": "Get started now",
-    "ctaDescription": "Already {userCount} users are using Goongoom."
+    "ctaDescription": "Already {userCount} people are using Goongoom."
   },
   "footer": {
     "terms": "Terms of Service",
@@ -160,46 +160,46 @@
   },
   "questionSecurity": {
     "anyoneLabel": "Anyone can ask",
-    "anyoneDescription": "Non-members can also send anonymous questions.",
-    "verifiedLabel": "Allow anonymous only from verified users",
-    "verifiedDescription": "Only users with verified phone numbers can send anonymous questions. Goongoom will not share questioner information without a legal request.",
+    "anyoneDescription": "Even non-members can send anonymous questions.",
+    "verifiedLabel": "Only verified users can ask anonymously",
+    "verifiedDescription": "Only users with verified phone numbers can send anonymous questions. Don't worry—we won't share questioner info without a legal request.",
     "identifiedOnlyLabel": "Identified questions only",
     "identifiedOnlyDescription": "Only accept identified questions.",
-    "invalidSetting": "Invalid question security setting"
+    "invalidSetting": "Please check your question security setting"
   },
   "restrictions": {
-    "anonymousLoginRequired": "Anonymous questions require login. Your identity won't be revealed unless required by law.",
+    "anonymousLoginRequired": "Don't worry, you can still ask anonymously. Your identity won't be revealed unless required by law.",
     "identifiedOnly": "This user only accepts identified questions.",
-    "loginForIdentified": "Log in to send identified questions."
+    "loginForIdentified": "Log in to send questions with your name."
   },
   "errors": {
-    "loginRequired": "Login required",
-    "userNotFound": "User not found",
-    "profileLoadError": "Error loading profile information",
-    "invalidSecuritySetting": "Invalid question security setting",
-    "profileUpdateError": "Error updating profile",
-    "recipientAndContentRequired": "Recipient and content are required",
-    "userDoesNotExist": "User does not exist",
-    "publicQuestionLoginRequired": "Login required to send public questions",
+    "loginRequired": "Please log in first",
+    "userNotFound": "We couldn't find this user",
+    "profileLoadError": "We had trouble loading your profile. Please try again.",
+    "invalidSecuritySetting": "Please check your question security setting",
+    "profileUpdateError": "We had trouble updating your profile. Please try again.",
+    "recipientAndContentRequired": "Please add a recipient and question content",
+    "userDoesNotExist": "This user doesn't exist",
+    "publicQuestionLoginRequired": "Please log in first to send public questions",
     "publicQuestionOnly": "This user only accepts public questions",
-    "anonymousLoginRequired": "Login required to send anonymous questions",
-    "questionCreateFailed": "Failed to create question",
-    "questionCreateError": "Error creating question",
-    "questionIdAndContentRequired": "Question ID and content are required",
-    "questionNotFound": "Question not found",
+    "anonymousLoginRequired": "Please log in first to send anonymous questions",
+    "questionCreateFailed": "We couldn't send your question. Please try again.",
+    "questionCreateError": "Something went wrong while sending your question",
+    "questionIdAndContentRequired": "Please add question ID and answer content",
+    "questionNotFound": "We couldn't find this question",
     "onlyRecipientCanAnswer": "Only the recipient can answer this question",
-    "answerCreateFailed": "Failed to create answer",
-    "answerCreateError": "Error creating answer",
+    "answerCreateFailed": "We couldn't save your answer. Please try again.",
+    "answerCreateError": "Something went wrong while saving your answer",
     "pleaseEnterQuestion": "Please enter a question"
   },
   "instagram": {
-    "shareTitle": "Instagram Share"
+    "shareTitle": "Share to Instagram"
   },
   "friends": {
     "title": "Friends",
     "description": "See what your friends are asking and answering",
     "emptyTitle": "No friends activity yet",
-    "emptyDescription": "When your friends answer questions, they'll appear here.",
+    "emptyDescription": "When your friends answer questions, they'll show up here.",
     "questionLabel": "Question"
   },
   "a2hs": {
@@ -213,7 +213,7 @@
     "dismiss": "Maybe later"
   },
   "push": {
-    "newQuestionTitle": "You have a new question!",
+    "newQuestionTitle": "You got a new question!",
     "newQuestionBody": "{content}"
   }
 }

@@ -16,8 +16,8 @@ import {
   HeroAuthButtons,
 } from "@/components/auth/auth-buttons"
 import { MainContent } from "@/components/layout/main-content"
+import { EditProfileButton } from "@/components/profile/edit-profile-button"
 import { ProfileActions } from "@/components/profile/profile-actions"
-import { ProfileEditDrawer } from "@/components/profile/profile-edit-drawer"
 import { AnsweredQuestionCard } from "@/components/questions/answered-question-card"
 import { QuestionDrawer } from "@/components/questions/question-drawer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -38,15 +38,8 @@ import {
   getUserCount,
   getUserWithAnsweredQuestions,
 } from "@/lib/db/queries"
-import {
-  DEFAULT_QUESTION_SECURITY_LEVEL,
-  getQuestionSecurityOptions,
-} from "@/lib/question-security"
-import {
-  buildSocialLinks,
-  getPageStatus,
-  normalizeHandle,
-} from "@/lib/utils/social-links"
+import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security"
+import { buildSocialLinks, getPageStatus } from "@/lib/utils/social-links"
 
 interface HomePageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -213,10 +206,9 @@ interface MyProfileProps {
 }
 
 async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
-  const [clerkUser, query, securityOptions] = await Promise.all([
+  const [clerkUser, query] = await Promise.all([
     getClerkUserById(clerkId),
     searchParams,
-    getQuestionSecurityOptions(),
   ])
 
   if (!clerkUser?.username) {
@@ -255,13 +247,6 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
 
   const securityLevel =
     dbUser?.questionSecurityLevel || DEFAULT_QUESTION_SECURITY_LEVEL
-
-  const instagramHandle = dbUser?.socialLinks?.instagram
-    ? normalizeHandle(dbUser.socialLinks.instagram)
-    : ""
-  const twitterHandle = dbUser?.socialLinks?.twitter
-    ? normalizeHandle(dbUser.socialLinks.twitter)
-    : ""
 
   const questionsWithAnswers = answeredQuestions
     .map((qa) => (qa.answer ? { ...qa, firstAnswer: qa.answer } : null))
@@ -350,15 +335,7 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
         )}
         <CardContent className="pt-0">
           <ProfileActions
-            editButton={
-              <ProfileEditDrawer
-                initialBio={dbUser?.bio || null}
-                initialInstagramHandle={instagramHandle}
-                initialQuestionSecurityLevel={securityLevel}
-                initialTwitterHandle={twitterHandle}
-                securityOptions={securityOptions}
-              />
-            }
+            editButton={<EditProfileButton />}
             username={clerkUser.username}
           />
         </CardContent>
