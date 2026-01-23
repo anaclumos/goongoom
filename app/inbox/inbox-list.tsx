@@ -217,7 +217,7 @@ export function InboxList({ questions }: InboxListProps) {
 
             <DrawerFooter className="pt-4">
               <Button
-                className="h-14 w-full rounded-2xl bg-gradient-to-r from-electric-blue to-electric-blue/90 font-semibold text-base ring-1 ring-electric-blue/50 transition-all hover:ring-2 hover:ring-electric-blue/70 disabled:opacity-70"
+                className="h-14 w-full rounded-2xl bg-gradient-to-r from-electric-blue to-electric-blue/90 font-semibold text-base transition-all disabled:opacity-70"
                 disabled={!answer.trim() || isSubmitting}
                 onClick={handleSubmit}
                 type="button"

@@ -22,6 +22,52 @@ import type { QuestionId } from "@/lib/types"
 
 const localeMap = { ko, en: enUS } as const
 
+function getShareAvatarUrl(
+  clerkAvatarUrl: string | null | undefined,
+  seed: string
+) {
+  if (clerkAvatarUrl) {
+    return clerkAvatarUrl
+  }
+  return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&backgroundColor=f97316,f59e0b,84cc16,22c55e,06b6d4,3b82f6,8b5cf6,d946ef,ec4899&backgroundType=gradientLinear`
+}
+
+function getDicebearAvatarUrl(seed: string) {
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
+}
+
+interface QuestionerInfo {
+  avatarUrl: string | null
+  name: string
+  fallback: string
+}
+
+function getQuestionerInfo(
+  isAnonymous: boolean,
+  anonymousSeed: string,
+  senderClerk: {
+    avatarUrl?: string | null
+    displayName?: string | null
+    username?: string | null
+  } | null,
+  anonymousLabel: string,
+  identifiedLabel: string
+): QuestionerInfo {
+  if (isAnonymous) {
+    return {
+      avatarUrl: getDicebearAvatarUrl(anonymousSeed),
+      name: anonymousLabel,
+      fallback: "?",
+    }
+  }
+  return {
+    avatarUrl: senderClerk?.avatarUrl || null,
+    name: senderClerk?.displayName || senderClerk?.username || identifiedLabel,
+    fallback:
+      senderClerk?.displayName?.[0] || senderClerk?.username?.[0] || "?",
+  }
+}
+
 interface QADetailPageProps {
   params: Promise<{ username: string; questionId: string }>
 }
@@ -30,10 +76,14 @@ function buildShareUrl({
   question,
   answer,
   name,
+  askerAvatarUrl,
+  answererAvatarUrl,
 }: {
   question: string
   answer: string
   name: string
+  askerAvatarUrl: string
+  answererAvatarUrl: string
 }) {
   const normalize = (value: string, max: number) =>
     value.length > max ? `${value.slice(0, max - 1)}…` : value
@@ -41,6 +91,8 @@ function buildShareUrl({
     question: normalize(question, 160),
     answer: normalize(answer, 260),
     name: normalize(name, 40),
+    askerAvatar: askerAvatarUrl,
+    answererAvatar: answererAvatarUrl,
   })
   return `/api/instagram?${params.toString()}`
 }
@@ -82,20 +134,28 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
   const displayName = clerkUser.displayName || clerkUser.username || username
   const { answer } = qa
 
-  const questionerAvatarUrl = qa.isAnonymous
-    ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${qa.anonymousAvatarSeed || `anon_${qa._id}`}`
-    : senderClerk?.avatarUrl || null
-  const questionerName = qa.isAnonymous
-    ? tCommon("anonymous")
-    : senderClerk?.displayName || senderClerk?.username || tCommon("identified")
-  const questionerFallback = qa.isAnonymous
-    ? "?"
-    : senderClerk?.displayName?.[0] || senderClerk?.username?.[0] || "?"
+  const questioner = getQuestionerInfo(
+    qa.isAnonymous,
+    qa.anonymousAvatarSeed || `anon_${qa._id}`,
+    senderClerk,
+    tCommon("anonymous"),
+    tCommon("identified")
+  )
+
+  const askerAvatarForShare = qa.isAnonymous
+    ? getShareAvatarUrl(null, qa.anonymousAvatarSeed || `anon_${qa._id}`)
+    : getShareAvatarUrl(senderClerk?.avatarUrl, qa.senderClerkId || qa._id)
+  const answererAvatarForShare = getShareAvatarUrl(
+    clerkUser.avatarUrl,
+    clerkUser.clerkId
+  )
 
   const instagramShareUrl = buildShareUrl({
     question: qa.content,
     answer: answer.content,
     name: displayName,
+    askerAvatarUrl: askerAvatarForShare,
+    answererAvatarUrl: answererAvatarForShare,
   })
 
   const canonicalUrl = `/${username}/q/${questionId}`
@@ -123,17 +183,17 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
         <CardContent className="flex flex-col gap-4">
           <div className="flex w-full items-start gap-3">
             <Avatar className="size-10 flex-shrink-0">
-              {questionerAvatarUrl && (
-                <AvatarImage alt={questionerName} src={questionerAvatarUrl} />
+              {questioner.avatarUrl && (
+                <AvatarImage alt={questioner.name} src={questioner.avatarUrl} />
               )}
-              <AvatarFallback>{questionerFallback}</AvatarFallback>
+              <AvatarFallback>{questioner.fallback}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <Card className="max-w-prose bg-muted/40 px-4 py-3">
                 <p className="text-foreground leading-relaxed">{qa.content}</p>
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
-                {questionerName} ·{" "}
+                {questioner.name} ·{" "}
                 {formatDistanceToNow(qa._creationTime, {
                   addSuffix: true,
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,

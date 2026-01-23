@@ -13,6 +13,10 @@ const pickText = (value: string | null, fallback: string, max: number) => {
   return clamp(trimmed, max)
 }
 
+function getDicebearUrl(seed: string) {
+  return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&backgroundColor=f97316,f59e0b,84cc16,22c55e,06b6d4,3b82f6,8b5cf6,d946ef,ec4899&backgroundType=gradientLinear`
+}
+
 const fontRegularPromise = readFile(
   join(process.cwd(), "public/fonts/Pretendard-Regular.otf")
 )
@@ -22,6 +26,7 @@ const fontSemiBoldPromise = readFile(
 const fontBoldPromise = readFile(
   join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
+const logoPromise = readFile(join(process.cwd(), "assets/logo.png"))
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -38,11 +43,18 @@ export async function GET(request: Request) {
   )
   const name = pickText(searchParams.get("name"), "사용자", 40)
 
-  const [fontRegular, fontSemiBold, fontBold] = await Promise.all([
+  const askerAvatarUrl =
+    searchParams.get("askerAvatar") || getDicebearUrl("anonymous")
+  const answererAvatarUrl =
+    searchParams.get("answererAvatar") || getDicebearUrl(name)
+
+  const [fontRegular, fontSemiBold, fontBold, logoData] = await Promise.all([
     fontRegularPromise,
     fontSemiBoldPromise,
     fontBoldPromise,
+    logoPromise,
   ])
+  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`
 
   return new ImageResponse(
     <div
@@ -66,87 +78,124 @@ export async function GET(request: Request) {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
+          <img
+            alt="궁금닷컴"
+            height={80}
+            src={logoBase64}
+            style={{ borderRadius: "20px" }}
+            width={80}
+          />
+          <div style={{ fontSize: "56px", fontWeight: 700 }}>궁금닷컴</div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
+          <img
+            alt={name}
+            height={64}
+            src={answererAvatarUrl}
+            style={{ borderRadius: "32px" }}
+            width={64}
+          />
           <div
             style={{
-              width: "88px",
-              height: "88px",
-              borderRadius: "24px",
-              backgroundColor: "#F97316",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#FFFFFF",
-              fontSize: "48px",
-              fontWeight: 700,
+              flexDirection: "column",
+              alignItems: "flex-end",
             }}
           >
-            궁
+            <div style={{ fontSize: "36px", fontWeight: 600 }}>
+              {clamp(name, 12)}
+            </div>
+            <div style={{ fontSize: "28px", color: "#9CA3AF" }}>
+              goongoom.com
+            </div>
           </div>
-          <div style={{ fontSize: "64px", fontWeight: 700 }}>궁금닷컴</div>
-        </div>
-        <div
-          style={{
-            padding: "20px 36px",
-            borderRadius: "999px",
-            backgroundColor: "#FFEDD5",
-            color: "#9A3412",
-            fontSize: "40px",
-            fontWeight: 600,
-          }}
-        >
-          Instagram 공유
         </div>
       </div>
 
       <div
         style={{
-          marginTop: "120px",
+          flex: 1,
           display: "flex",
           flexDirection: "column",
-          gap: "56px",
+          justifyContent: "center",
+          gap: "48px",
+          marginTop: "40px",
         }}
       >
-        <div
-          style={{
-            backgroundColor: "#FFFFFF",
-            borderRadius: "56px",
-            padding: "60px 68px",
-            fontSize: "72px",
-            fontWeight: 600,
-            lineHeight: 1.4,
-          }}
-        >
-          {question}
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "20px" }}>
+          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
+          <img
+            alt="Asker"
+            height={80}
+            src={askerAvatarUrl}
+            style={{ borderRadius: "40px", flexShrink: 0 }}
+            width={80}
+          />
+          <div
+            style={{
+              display: "flex",
+              maxWidth: "85%",
+              backgroundColor: "#FFFFFF",
+              borderRadius: "48px",
+              padding: "48px 56px",
+              fontSize: "56px",
+              fontWeight: 600,
+              lineHeight: 1.4,
+              boxShadow: "0 4px 24px rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            {question}
+          </div>
         </div>
+
         <div
           style={{
-            alignSelf: "flex-end",
-            backgroundColor: "#F97316",
-            borderRadius: "56px",
-            padding: "60px 68px",
-            fontSize: "72px",
-            fontWeight: 600,
-            lineHeight: 1.4,
-            color: "#FFFFFF",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "flex-end",
+            gap: "20px",
           }}
         >
-          {answer}
+          <div
+            style={{
+              display: "flex",
+              maxWidth: "85%",
+              background: "linear-gradient(135deg, #A855F7 0%, #EC4899 100%)",
+              borderRadius: "48px",
+              padding: "48px 56px",
+              fontSize: "56px",
+              fontWeight: 600,
+              lineHeight: 1.4,
+              color: "#FFFFFF",
+            }}
+          >
+            {answer}
+          </div>
+          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
+          <img
+            alt={name}
+            height={80}
+            src={answererAvatarUrl}
+            style={{ borderRadius: "40px", flexShrink: 0 }}
+            width={80}
+          />
         </div>
       </div>
 
       <div
         style={{
-          marginTop: "auto",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          fontSize: "44px",
-          color: "#6B7280",
+          justifyContent: "center",
+          fontSize: "36px",
+          color: "#9CA3AF",
+          marginTop: "auto",
         }}
       >
-        <div style={{ fontWeight: 600 }}>{name}</div>
-        <div>goongoom.com</div>
+        무엇이든 물어보세요
       </div>
     </div>,
     {

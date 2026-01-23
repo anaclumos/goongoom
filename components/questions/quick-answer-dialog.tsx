@@ -1,12 +1,15 @@
 "use client"
 
 import { Dialog } from "@base-ui/react/dialog"
-import { Cancel01Icon } from "@hugeicons/core-free-icons"
+import {
+  AnonymousIcon,
+  Cancel01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { createAnswer } from "@/lib/actions/answers"
@@ -75,14 +78,14 @@ export function QuickAnswerDialog({
         <Dialog.Popup
           className={cn(
             "fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2",
-            "rounded-2xl border border-border bg-background p-6 shadow-xl",
+            "rounded-2xl border border-border/50 bg-background p-6",
             "data-[ending-style]:scale-95 data-[ending-style]:opacity-0",
             "data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
             "transition-all duration-200"
           )}
         >
           <div className="flex items-start justify-between gap-4">
-            <Dialog.Title className="font-semibold text-foreground text-lg">
+            <Dialog.Title className="font-bold text-xl tracking-tight">
               {t("answerDrawerTitle")}
             </Dialog.Title>
             <Dialog.Close
@@ -96,51 +99,57 @@ export function QuickAnswerDialog({
           </div>
 
           {question && (
-            <div className="mt-4 flex items-start gap-3">
-              <Avatar className="size-12 flex-shrink-0">
-                {!question.isAnonymous && question.senderAvatarUrl ? (
-                  <AvatarImage
-                    alt={question.senderName || ""}
-                    src={question.senderAvatarUrl}
+            <div className="mt-4 rounded-xl border border-border/50 bg-muted/30 p-4 text-left text-foreground">
+              <div className="mb-2 flex items-center gap-2">
+                <div
+                  className={`flex size-6 items-center justify-center rounded-full ${
+                    question.isAnonymous
+                      ? "bg-gradient-to-br from-purple to-purple/80"
+                      : "bg-gradient-to-br from-electric-blue to-electric-blue/80"
+                  }`}
+                >
+                  <HugeiconsIcon
+                    className="size-3.5 text-white"
+                    icon={question.isAnonymous ? AnonymousIcon : UserIcon}
+                    strokeWidth={2.5}
                   />
-                ) : null}
-                <AvatarFallback>
-                  {question.senderName?.[0] || "?"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 rounded-xl bg-muted/50 p-4">
-                <Dialog.Description className="text-foreground leading-relaxed">
-                  {question.content}
-                </Dialog.Description>
-                <p className="mt-2 text-muted-foreground text-xs">
+                </div>
+                <span
+                  className={`font-semibold text-sm ${
+                    question.isAnonymous ? "text-purple" : "text-electric-blue"
+                  }`}
+                >
                   {question.isAnonymous
                     ? tCommon("anonymous")
                     : question.senderName || tCommon("user")}
-                </p>
+                </span>
               </div>
+              <Dialog.Description className="text-foreground leading-relaxed">
+                {question.content}
+              </Dialog.Description>
             </div>
           )}
 
           <div className="mt-4">
             <Textarea
-              className="min-h-28 w-full resize-none"
+              className="min-h-28 resize-none rounded-2xl border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-electric-blue focus:bg-background focus:ring-2 focus:ring-electric-blue/20"
               onChange={(e) => setAnswer(e.target.value)}
               placeholder={t("answerPlaceholder")}
               value={answer}
             />
           </div>
 
-          <div className="mt-4 flex gap-3">
+          <div className="mt-6 flex gap-3">
             <Button
-              className="min-h-12 flex-1"
+              className="h-14 flex-1 rounded-2xl font-semibold text-base"
               onClick={handleClose}
               type="button"
-              variant="ghost"
+              variant="outline"
             >
               {tCommon("cancel")}
             </Button>
             <Button
-              className="min-h-12 flex-1"
+              className="h-14 flex-1 rounded-2xl bg-gradient-to-r from-electric-blue to-electric-blue/90 font-semibold text-base transition-all disabled:opacity-70"
               disabled={!answer.trim() || isSubmitting}
               onClick={handleSubmit}
               type="button"
