@@ -37,7 +37,7 @@
     "login": "로그인하기",
     "createProfile": "내 프로필 만들기",
     "viewProfile": "내 프로필 보기",
-    "loginRequired": "질문을 보내려면 로그인이 필요해요.",
+    "loginRequired": "질문을 보내려면 전화번호 인증이 필요해요.",
     "welcome": "궁금닷컴에 오신 것을 환영해요!",
     "welcomeDescription": "로그인하고 익명 질문을 주고받아 보세요",
     "openProfileMenu": "프로필 메뉴 열기",
@@ -167,9 +167,9 @@
     "invalidSetting": "질문 보안 설정이 올바르지 않아요"
   },
   "restrictions": {
-    "anonymousLoginRequired": "사법 기관의 요청이 있는 경우 질문자 정보가 공유될 수 있어요.",
+    "anonymousLoginRequired": "걱정 마세요. 여전히 익명으로 질문을 보낼 수 있어요.",
     "identifiedOnly": "이 사용자는 실명 질문만 받아요.",
-    "loginForIdentified": "로그인하면 실명 질문도 보낼 수 있어요."
+    "loginForIdentified": "로그인하면 내 이름으로 질문도 보낼 수 있어요."
   },
   "errors": {
     "loginRequired": "로그인이 필요해요",
