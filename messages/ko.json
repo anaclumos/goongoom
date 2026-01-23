@@ -63,6 +63,7 @@
     "more": "더보기",
     "instagramDescription": "이 답변을 인스타그램에 공유하세요",
     "instagramImageShare": "인스타그램 이미지 공유",
+    "instagramImageShareLoading": "인스타그램 공유 준비 중...",
     "copyLink": "링크 복사",
     "linkCopied": "링크 복사됨",
     "easyShare": "쉬운 공유",

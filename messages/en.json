@@ -63,6 +63,7 @@
     "more": "More",
     "instagramDescription": "Share this answer on Instagram",
     "instagramImageShare": "Share Instagram image",
+    "instagramImageShareLoading": "Preparing Instagram share...",
     "copyLink": "Copy link",
     "linkCopied": "Link copied",
     "easyShare": "Easy sharing",

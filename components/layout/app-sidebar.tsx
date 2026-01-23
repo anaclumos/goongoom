@@ -9,11 +9,10 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { formatDistanceToNow } from "date-fns"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import type * as React from "react"
-
+import { TransitionLink } from "@/components/navigation/transition-link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Sidebar,
@@ -82,7 +81,9 @@ export function AppSidebar({
             <SidebarMenuButton
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               render={
-                user?.username ? <Link href={`/${user.username}`} /> : undefined
+                user?.username ? (
+                  <TransitionLink href={`/${user.username}`} />
+                ) : undefined
               }
               size="lg"
             >
@@ -129,7 +130,7 @@ export function AppSidebar({
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     isActive={isActive(item.url)}
-                    render={<Link href={item.url} />}
+                    render={<TransitionLink href={item.url} />}
                     tooltip={item.title}
                   >
                     <HugeiconsIcon icon={item.icon} />

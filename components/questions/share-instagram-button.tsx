@@ -1,9 +1,13 @@
 "use client"
 
-import { InstagramIcon, MoreVerticalIcon } from "@hugeicons/core-free-icons"
+import {
+  InstagramIcon,
+  Loading03Icon,
+  MoreVerticalIcon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -30,30 +34,29 @@ export function ShareInstagramButton({
   const sharingRef = useRef(false)
   const fileRef = useRef<File | null>(null)
   const [open, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const fetchImage = useCallback(async (): Promise<File | null> => {
+    try {
+      const response = await fetch(shareUrl)
+      if (!response.ok) {
+        return null
+      }
+      const blob = await response.blob()
+      return new File([blob], "goongoom-share.png", { type: "image/png" })
+    } catch (error) {
+      console.error("Failed to fetch Instagram share image:", error)
+      return null
+    }
+  }, [shareUrl])
 
   useEffect(() => {
     let cancelled = false
 
     async function prefetch() {
-      try {
-        const response = await fetch(shareUrl)
-        if (cancelled) {
-          return
-        }
-        if (!response.ok) {
-          return
-        }
-
-        const blob = await response.blob()
-        if (cancelled) {
-          return
-        }
-
-        fileRef.current = new File([blob], "goongoom-share.png", {
-          type: "image/png",
-        })
-      } catch (error) {
-        console.error("Failed to prefetch Instagram share image:", error)
+      const file = await fetchImage()
+      if (!cancelled && file) {
+        fileRef.current = file
       }
     }
 
@@ -61,37 +64,52 @@ export function ShareInstagramButton({
     return () => {
       cancelled = true
     }
-  }, [shareUrl])
+  }, [fetchImage])
 
-  const handleShare = async () => {
-    if (sharingRef.current) {
-      return
-    }
-
-    if (!fileRef.current) {
-      window.open(shareUrl, "_blank")
-      return
-    }
-
-    sharingRef.current = true
-
-    try {
-      const canShare = navigator.canShare?.({ files: [fileRef.current] })
+  const shareOrDownload = useCallback(
+    async (file: File) => {
+      const canShare = navigator.canShare?.({ files: [file] })
 
       if (canShare) {
         await navigator.share({
-          files: [fileRef.current],
+          files: [file],
           title: tCommon("appName"),
           text: t("shareToInstagram"),
         })
       } else {
-        const url = URL.createObjectURL(fileRef.current)
+        const url = URL.createObjectURL(file)
         const a = document.createElement("a")
         a.href = url
         a.download = "goongoom-share.png"
         a.click()
         URL.revokeObjectURL(url)
       }
+    },
+    [t, tCommon]
+  )
+
+  const handleShare = async () => {
+    if (sharingRef.current || isLoading) {
+      return
+    }
+
+    sharingRef.current = true
+    setIsLoading(true)
+
+    try {
+      let file = fileRef.current
+      if (!file) {
+        file = await fetchImage()
+        if (file) {
+          fileRef.current = file
+        }
+      }
+
+      if (!file) {
+        return
+      }
+
+      await shareOrDownload(file)
     } catch (error) {
       const isUserCancelled =
         error instanceof Error && error.name === "AbortError"
@@ -105,6 +123,7 @@ export function ShareInstagramButton({
       }
     } finally {
       sharingRef.current = false
+      setIsLoading(false)
     }
   }
 
@@ -112,12 +131,16 @@ export function ShareInstagramButton({
     return (
       <Button
         className={className}
+        disabled={isLoading}
         onClick={handleShare}
         size="lg"
         variant="default"
       >
-        <HugeiconsIcon className="mr-2 size-5" icon={InstagramIcon} />
-        {t("instagramImageShare")}
+        <HugeiconsIcon
+          className={`mr-2 size-5 ${isLoading ? "animate-spin" : ""}`}
+          icon={isLoading ? Loading03Icon : InstagramIcon}
+        />
+        {isLoading ? t("instagramImageShareLoading") : t("instagramImageShare")}
       </Button>
     )
   }
@@ -142,13 +165,22 @@ export function ShareInstagramButton({
         <div className="flex flex-col gap-2 px-4 pb-4">
           <Button
             className="w-full font-semibold text-base"
-            onClick={() => {
-              handleShare()
+            disabled={isLoading}
+            onClick={async () => {
+              await handleShare()
               setOpen(false)
             }}
             size="lg"
           >
-            {t("instagramImageShare")}
+            {isLoading && (
+              <HugeiconsIcon
+                className="mr-2 size-5 animate-spin"
+                icon={Loading03Icon}
+              />
+            )}
+            {isLoading
+              ? t("instagramImageShareLoading")
+              : t("instagramImageShare")}
           </Button>
         </div>
       </DrawerContent>

@@ -6,9 +6,9 @@ import {
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { TransitionLink } from "@/components/navigation/transition-link"
 import { cn } from "@/lib/utils"
 
 const tabItems = [
@@ -38,7 +38,7 @@ export function MobileTabBar() {
         {tabItems.map((item) => {
           const active = isActive(item.href)
           return (
-            <Link
+            <TransitionLink
               className={cn(
                 "flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 transition-colors",
                 active
@@ -54,7 +54,7 @@ export function MobileTabBar() {
                 strokeWidth={active ? 2.5 : 2}
               />
               <span className="font-medium text-xs">{t(item.titleKey)}</span>
-            </Link>
+            </TransitionLink>
           )
         })}
       </div>
