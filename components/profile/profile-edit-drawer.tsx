@@ -12,9 +12,8 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { isEmpty } from "es-toolkit/compat"
 import { useTranslations } from "next-intl"
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { toast } from "sonner"
-import { useDebounceCallback } from "usehooks-ts"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -39,8 +38,6 @@ const SECURITY_ICONS: Record<string, typeof AnonymousIcon> = {
   login: UserIcon,
   none: AnonymousIcon,
 }
-
-const DEBOUNCE_MS = 500
 
 interface ProfileEditDrawerProps {
   initialBio: string | null
@@ -67,6 +64,11 @@ export function ProfileEditDrawer({
     initialQuestionSecurityLevel
   )
 
+  // Track last saved values to avoid unnecessary mutations
+  const lastSavedBio = useRef(initialBio || "")
+  const lastSavedInstagram = useRef(initialInstagramHandle)
+  const lastSavedTwitter = useRef(initialTwitterHandle)
+
   const saveProfile = useCallback(
     (data: {
       bio?: string | null
@@ -82,14 +84,26 @@ export function ProfileEditDrawer({
     [t]
   )
 
-  const debouncedSaveBio = useDebounceCallback((value: string) => {
-    saveProfile({ bio: value.trim() || null })
-  }, DEBOUNCE_MS)
+  const handleBioBlur = useCallback(() => {
+    const trimmedBio = bio.trim()
+    if (trimmedBio !== lastSavedBio.current) {
+      lastSavedBio.current = trimmedBio
+      saveProfile({ bio: trimmedBio || null })
+    }
+  }, [bio, saveProfile])
 
-  const debouncedSaveSocialLinks = useDebounceCallback(
-    (instagramValue: string, twitterValue: string) => {
-      const normalizedInstagram = normalizeHandle(instagramValue)
-      const normalizedTwitter = normalizeHandle(twitterValue)
+  const handleSocialLinksBlur = useCallback(() => {
+    const normalizedInstagram = normalizeHandle(instagram)
+    const normalizedTwitter = normalizeHandle(twitter)
+
+    // Only save if either value has changed
+    if (
+      normalizedInstagram !== lastSavedInstagram.current ||
+      normalizedTwitter !== lastSavedTwitter.current
+    ) {
+      lastSavedInstagram.current = normalizedInstagram
+      lastSavedTwitter.current = normalizedTwitter
+
       const links: SocialLinks = {}
       if (normalizedInstagram) {
         links.instagram = normalizedInstagram
@@ -100,33 +114,8 @@ export function ProfileEditDrawer({
       saveProfile({
         socialLinks: isEmpty(links) ? null : links,
       })
-    },
-    DEBOUNCE_MS
-  )
-
-  const handleBioChange = useCallback(
-    (value: string) => {
-      setBio(value)
-      debouncedSaveBio(value)
-    },
-    [debouncedSaveBio]
-  )
-
-  const handleInstagramChange = useCallback(
-    (value: string) => {
-      setInstagram(value)
-      debouncedSaveSocialLinks(value, twitter)
-    },
-    [debouncedSaveSocialLinks, twitter]
-  )
-
-  const handleTwitterChange = useCallback(
-    (value: string) => {
-      setTwitter(value)
-      debouncedSaveSocialLinks(instagram, value)
-    },
-    [debouncedSaveSocialLinks, instagram]
-  )
+    }
+  }, [instagram, twitter, saveProfile])
 
   const handleSecurityLevelChange = useCallback(
     (value: string) => {
@@ -170,7 +159,8 @@ export function ProfileEditDrawer({
                   className="min-h-24 resize-none rounded-xl border border-border/50 bg-background transition-all focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20"
                   id="bio"
                   name="bio"
-                  onChange={(e) => handleBioChange(e.target.value)}
+                  onBlur={handleBioBlur}
+                  onChange={(e) => setBio(e.target.value)}
                   placeholder={t("bioPlaceholder")}
                   rows={3}
                   value={bio}
@@ -196,7 +186,8 @@ export function ProfileEditDrawer({
                       className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20"
                       id="instagram"
                       name="instagram"
-                      onChange={(e) => handleInstagramChange(e.target.value)}
+                      onBlur={handleSocialLinksBlur}
+                      onChange={(e) => setInstagram(e.target.value)}
                       placeholder="Instagram"
                       value={instagram}
                     />
@@ -216,7 +207,8 @@ export function ProfileEditDrawer({
                       className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20"
                       id="twitter"
                       name="twitter"
-                      onChange={(e) => handleTwitterChange(e.target.value)}
+                      onBlur={handleSocialLinksBlur}
+                      onChange={(e) => setTwitter(e.target.value)}
                       placeholder="Twitter"
                       value={twitter}
                     />
