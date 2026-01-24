@@ -1,34 +1,27 @@
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
-import { getLocale, getTranslations } from "next-intl/server"
-import { MainContent } from "@/components/layout/main-content"
-import { AnsweredQuestionCard } from "@/components/questions/answered-question-card"
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
-} from "@/components/ui/empty"
-import { getClerkUsersByIds } from "@/lib/clerk"
-import { getFriendsAnswers } from "@/lib/db/queries"
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
+import { getLocale, getTranslations } from 'next-intl/server'
+import { MainContent } from '@/components/layout/main-content'
+import { AnsweredQuestionCard } from '@/components/questions/answered-question-card'
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
+import { getClerkUsersByIds } from '@/lib/clerk'
+import { getFriendsAnswers } from '@/lib/db/queries'
 
 export default async function FriendsPage() {
   const { userId: clerkId } = await auth()
   if (!clerkId) {
-    redirect("/")
+    redirect('/')
   }
 
   const [friendsAnswers, t, tCommon, tAnswers, locale] = await Promise.all([
     getFriendsAnswers(clerkId, 30),
-    getTranslations("friends"),
-    getTranslations("common"),
-    getTranslations("answers"),
+    getTranslations('friends'),
+    getTranslations('common'),
+    getTranslations('answers'),
     getLocale(),
   ])
 
-  const recipientIds = [
-    ...new Set(friendsAnswers.map((qa) => qa.recipientClerkId)),
-  ]
+  const recipientIds = [...new Set(friendsAnswers.map((qa) => qa.recipientClerkId))]
   const senderIds = [
     ...new Set(
       friendsAnswers
@@ -38,16 +31,13 @@ export default async function FriendsPage() {
     ),
   ]
 
-  const [recipientMap, senderMap] = await Promise.all([
-    getClerkUsersByIds(recipientIds),
-    getClerkUsersByIds(senderIds),
-  ])
+  const [recipientMap, senderMap] = await Promise.all([getClerkUsersByIds(recipientIds), getClerkUsersByIds(senderIds)])
 
   const cardLabels = {
-    anonymous: tCommon("anonymous"),
-    identified: tCommon("identified"),
-    question: t("questionLabel"),
-    answer: tAnswers("answer"),
+    anonymous: tCommon('anonymous'),
+    identified: tCommon('identified'),
+    question: t('questionLabel'),
+    answer: tAnswers('answer'),
   }
 
   const questionsWithInfo = friendsAnswers
@@ -58,15 +48,12 @@ export default async function FriendsPage() {
       }
 
       const sender =
-        !qa.question.isAnonymous && qa.question.senderClerkId
-          ? senderMap.get(qa.question.senderClerkId)
-          : null
+        !qa.question.isAnonymous && qa.question.senderClerkId ? senderMap.get(qa.question.senderClerkId) : null
 
       return {
         ...qa,
         recipientUsername: recipient.username,
-        recipientDisplayName:
-          recipient.displayName || recipient.username || "User",
+        recipientDisplayName: recipient.displayName || recipient.username || 'User',
         recipientAvatarUrl: recipient.avatarUrl,
         recipientSignatureColor: qa.recipientSignatureColor,
         senderName: sender?.displayName || sender?.username || null,
@@ -78,15 +65,15 @@ export default async function FriendsPage() {
   return (
     <MainContent>
       <div className="mb-8 space-y-2">
-        <h1 className="font-bold text-3xl text-foreground">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm">{t("description")}</p>
+        <h1 className="font-bold text-3xl text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground text-sm">{t('description')}</p>
       </div>
 
       {questionsWithInfo.length === 0 ? (
         <Empty>
           <EmptyHeader>
-            <EmptyTitle>{t("emptyTitle")}</EmptyTitle>
-            <EmptyDescription>{t("emptyDescription")}</EmptyDescription>
+            <EmptyTitle>{t('emptyTitle')}</EmptyTitle>
+            <EmptyDescription>{t('emptyDescription')}</EmptyDescription>
           </EmptyHeader>
         </Empty>
       ) : (

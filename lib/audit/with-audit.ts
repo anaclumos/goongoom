@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server"
-import { geolocation, ipAddress } from "@vercel/functions"
-import { headers } from "next/headers"
-import { logAuditEntry } from "./logger"
-import type { AuditRequestData, EntityType, JsonValue } from "./types"
+import { auth } from '@clerk/nextjs/server'
+import { geolocation, ipAddress } from '@vercel/functions'
+import { headers } from 'next/headers'
+import { logAuditEntry } from './logger'
+import type { AuditRequestData, EntityType, JsonValue } from './types'
 
 interface WithAuditOptions {
   action: string
@@ -35,27 +35,23 @@ function serializePayload(payload: unknown): JsonValue | undefined {
 
 function isSuccessResult(result: ActionResult): result is SuccessResult {
   return (
-    typeof result === "object" &&
-    result !== null &&
-    "success" in result &&
-    result.success === true &&
-    "data" in result
+    typeof result === 'object' && result !== null && 'success' in result && result.success === true && 'data' in result
   )
 }
 
 function isErrorResult(result: ActionResult): result is ErrorResult {
   return (
-    typeof result === "object" &&
+    typeof result === 'object' &&
     result !== null &&
-    "success" in result &&
+    'success' in result &&
     result.success === false &&
-    "error" in result &&
-    typeof result.error === "string"
+    'error' in result &&
+    typeof result.error === 'string'
   )
 }
 
 function hasIdProperty(data: unknown): data is { id: unknown } {
-  return typeof data === "object" && data !== null && "id" in data
+  return typeof data === 'object' && data !== null && 'id' in data
 }
 
 function extractEntityId(result: ActionResult): string | undefined {
@@ -68,7 +64,7 @@ function extractEntityId(result: ActionResult): string | undefined {
   }
 
   const id = result.data.id
-  return typeof id === "string" ? id : undefined
+  return typeof id === 'string' ? id : undefined
 }
 
 function extractErrorMessage(result: ActionResult): string | undefined {
@@ -79,7 +75,7 @@ function extractErrorMessage(result: ActionResult): string | undefined {
 }
 
 function getActionSuccess(result: ActionResult): boolean {
-  if (typeof result === "object" && result !== null && "success" in result) {
+  if (typeof result === 'object' && result !== null && 'success' in result) {
     return result.success === true
   }
   return true
@@ -92,9 +88,9 @@ async function buildRequestData(): Promise<AuditRequestData> {
 
   return {
     ipAddress: ipAddress(request) || undefined,
-    userAgent: headersList.get("user-agent") || undefined,
-    referer: headersList.get("referer") || undefined,
-    acceptLanguage: headersList.get("accept-language") || undefined,
+    userAgent: headersList.get('user-agent') || undefined,
+    referer: headersList.get('referer') || undefined,
+    acceptLanguage: headersList.get('accept-language') || undefined,
     geoCity: geo.city || undefined,
     geoCountry: geo.country || undefined,
     geoCountryFlag: geo.flag || undefined,
@@ -106,10 +102,7 @@ async function buildRequestData(): Promise<AuditRequestData> {
   }
 }
 
-export async function withAudit<T>(
-  options: WithAuditOptions,
-  action: () => Promise<T>
-): Promise<T> {
+export async function withAudit<T>(options: WithAuditOptions, action: () => Promise<T>): Promise<T> {
   const { action: actionName, payload, entityType } = options
   const requestData = await buildRequestData()
   const { userId } = await auth()

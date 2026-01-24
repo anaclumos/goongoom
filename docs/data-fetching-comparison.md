@@ -14,17 +14,17 @@ This document compares data fetching patterns between Next.js Server Components 
 
 ```tsx
 // app/posts/page.tsx
-import { fetchQuery } from "convex/nextjs"
-import { api } from "@/convex/_generated/api"
+import { fetchQuery } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
 
 // Server Component - runs on server only
 export default async function PostsPage() {
   // Direct async data fetching in component
   const posts = await fetchQuery(api.posts.list)
-  
+
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <PostCard key={post._id} post={post} />
       ))}
     </div>
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
     fetchQuery(api.posts.list),
     fetchQuery(api.stats.get),
   ])
-  
+
   return <Dashboard user={user} posts={posts} stats={stats} />
 }
 ```
@@ -52,9 +52,9 @@ export default async function DashboardPage() {
 
 ```tsx
 // lib/queries.ts
-import { cache } from "react"
-import { fetchQuery } from "convex/nextjs"
-import { api } from "@/convex/_generated/api"
+import { cache } from 'react'
+import { fetchQuery } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
 
 // Deduplicate identical requests across Server Components
 export const getCurrentUser = cache(async () => {
@@ -102,10 +102,10 @@ export const Route = createFileRoute('/posts')({
 function PostsPage() {
   // Access loader data
   const posts = Route.useLoaderData()
-  
+
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>
@@ -132,12 +132,8 @@ const getStats = createServerFn({ method: 'GET' }).handler(async () => {
 export const Route = createFileRoute('/dashboard')({
   loader: async () => {
     // Parallel fetching in loader
-    const [user, posts, stats] = await Promise.all([
-      getUser(),
-      getPosts(),
-      getStats(),
-    ])
-    
+    const [user, posts, stats] = await Promise.all([getUser(), getPosts(), getStats()])
+
     return { user, posts, stats }
   },
   component: DashboardPage,
@@ -179,20 +175,20 @@ export const Route = createFileRoute('/posts/$postId')({
 
 ```tsx
 // components/PostList.tsx
-"use client"
+'use client'
 
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
+import { useQuery } from 'convex/react'
+import { api } from '@/convex/_generated/api'
 
 export function PostList() {
   // Real-time subscription to Convex
   const posts = useQuery(api.posts.list)
-  
+
   if (posts === undefined) return <Skeleton />
-  
+
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <PostCard key={post._id} post={post} />
       ))}
     </div>
@@ -203,9 +199,9 @@ export function PostList() {
 **With TanStack Query** (non-Convex APIs):
 
 ```tsx
-"use client"
+'use client'
 
-import { useQuery } from "@tanstack/react-query"
+import { useQuery } from '@tanstack/react-query'
 
 export function UserProfile({ userId }: { userId: string }) {
   const { data: user, isLoading } = useQuery({
@@ -215,9 +211,9 @@ export function UserProfile({ userId }: { userId: string }) {
       return res.json()
     },
   })
-  
+
   if (isLoading) return <Skeleton />
-  
+
   return <Profile user={user} />
 }
 ```
@@ -240,17 +236,17 @@ const getPosts = createServerFn({ method: 'GET' }).handler(async () => {
 function PostList() {
   // Convert server function to client-callable function
   const getPostsFn = useServerFn(getPosts)
-  
+
   const { data: posts, isLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: () => getPostsFn(),
   })
-  
+
   if (isLoading) return <Skeleton />
-  
+
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>
@@ -266,16 +262,16 @@ import { Suspense } from 'react'
 
 function PostList() {
   const getPostsFn = useServerFn(getPosts)
-  
+
   // No loading state needed - Suspense handles it
   const { data: posts } = useSuspenseQuery({
     queryKey: ['posts'],
     queryFn: () => getPostsFn(),
   })
-  
+
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>
@@ -298,13 +294,14 @@ function PostsPage() {
 // routes/posts.tsx
 import { queryOptions } from '@tanstack/react-query'
 
-const postsQueryOptions = () => queryOptions({
-  queryKey: ['posts'],
-  queryFn: async () => {
-    const posts = await db.posts.list()
-    return posts
-  },
-})
+const postsQueryOptions = () =>
+  queryOptions({
+    queryKey: ['posts'],
+    queryFn: async () => {
+      const posts = await db.posts.list()
+      return posts
+    },
+  })
 
 export const Route = createFileRoute('/posts')({
   loader: async ({ context }) => {
@@ -317,10 +314,10 @@ export const Route = createFileRoute('/posts')({
 function PostsPage() {
   // Use the same query in component (already prefetched)
   const { data: posts } = useSuspenseQuery(postsQueryOptions())
-  
+
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>
@@ -338,20 +335,20 @@ function PostsPage() {
 
 ```tsx
 // app/posts/new/page.tsx
-import { revalidatePath } from "next/cache"
-import { api } from "@/convex/_generated/api"
-import { fetchMutation } from "convex/nextjs"
+import { revalidatePath } from 'next/cache'
+import { api } from '@/convex/_generated/api'
+import { fetchMutation } from 'convex/nextjs'
 
 // Server Action
 async function createPost(formData: FormData) {
-  "use server"
-  
-  const title = formData.get("title") as string
-  const content = formData.get("content") as string
-  
+  'use server'
+
+  const title = formData.get('title') as string
+  const content = formData.get('content') as string
+
   await fetchMutation(api.posts.create, { title, content })
-  
-  revalidatePath("/posts")
+
+  revalidatePath('/posts')
 }
 
 export default function NewPostPage() {
@@ -368,7 +365,7 @@ export default function NewPostPage() {
 **With Validation** (Zod):
 
 ```tsx
-import { z } from "zod"
+import { z } from 'zod'
 
 const createPostSchema = z.object({
   title: z.string().min(1).max(100),
@@ -376,34 +373,34 @@ const createPostSchema = z.object({
 })
 
 async function createPost(formData: FormData) {
-  "use server"
-  
+  'use server'
+
   const rawData = {
-    title: formData.get("title"),
-    content: formData.get("content"),
+    title: formData.get('title'),
+    content: formData.get('content'),
   }
-  
+
   const validated = createPostSchema.parse(rawData)
-  
+
   await fetchMutation(api.posts.create, validated)
-  
-  revalidatePath("/posts")
+
+  revalidatePath('/posts')
 }
 ```
 
 **Progressive Enhancement** with `useFormStatus`:
 
 ```tsx
-"use client"
+'use client'
 
-import { useFormStatus } from "react-dom"
+import { useFormStatus } from 'react-dom'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
-  
+
   return (
     <button type="submit" disabled={pending}>
-      {pending ? "Creating..." : "Create Post"}
+      {pending ? 'Creating...' : 'Create Post'}
     </button>
   )
 }
@@ -450,7 +447,7 @@ export const Route = createFileRoute('/posts/new')({
 function NewPostPage() {
   const router = useRouter()
   const createPostFn = useServerFn(createPost)
-  
+
   // Custom useMutation hook (simplified)
   const mutation = useMutation({
     fn: createPostFn,
@@ -459,17 +456,17 @@ function NewPostPage() {
       router.navigate({ to: '/posts' })
     },
   })
-  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    
+
     await mutation.mutate({
       title: formData.get('title') as string,
       content: formData.get('content') as string,
     })
   }
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input name="title" required />
@@ -492,7 +489,7 @@ function NewPostPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const createPostFn = useServerFn(createPost)
-  
+
   const mutation = useMutation({
     mutationFn: createPostFn,
     onSuccess: () => {
@@ -501,17 +498,17 @@ function NewPostPage() {
       router.navigate({ to: '/posts' })
     },
   })
-  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    
+
     mutation.mutate({
       title: formData.get('title') as string,
       content: formData.get('content') as string,
     })
   }
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input name="title" required />
@@ -532,13 +529,13 @@ const mutation = useMutation({
   onMutate: async (newPost) => {
     // Cancel outgoing refetches
     await queryClient.cancelQueries({ queryKey: ['posts'] })
-    
+
     // Snapshot previous value
     const previousPosts = queryClient.getQueryData(['posts'])
-    
+
     // Optimistically update
     queryClient.setQueryData(['posts'], (old) => [...old, newPost])
-    
+
     return { previousPosts }
   },
   onError: (err, newPost, context) => {
@@ -571,12 +568,12 @@ const posts = await fetchQuery(api.posts.list)
 // Server Action
 async function createPost(formData: FormData) {
   "use server"
-  
+
   await fetchMutation(api.posts.create, { ... })
-  
+
   // Revalidate specific path
   revalidatePath("/posts")
-  
+
   // Or revalidate layout
   revalidatePath("/posts", "layout")
 }
@@ -593,9 +590,9 @@ const posts = await fetchQuery(api.posts.list, {
 // In Server Action
 async function createPost(formData: FormData) {
   "use server"
-  
+
   await fetchMutation(api.posts.create, { ... })
-  
+
   // Revalidate all requests tagged with 'posts'
   revalidateTag('posts')
 }
@@ -606,7 +603,7 @@ async function createPost(formData: FormData) {
 ```tsx
 // Revalidate every 60 seconds
 const posts = await fetchQuery(api.posts.list, {
-  next: { revalidate: 60 }
+  next: { revalidate: 60 },
 })
 ```
 
@@ -615,7 +612,7 @@ const posts = await fetchQuery(api.posts.list, {
 ```tsx
 // No caching
 const posts = await fetchQuery(api.posts.list, {
-  cache: 'no-store'
+  cache: 'no-store',
 })
 
 // Or at route level
@@ -625,7 +622,7 @@ export const dynamic = 'force-dynamic'
 **React `cache()` for Deduplication**:
 
 ```tsx
-import { cache } from "react"
+import { cache } from 'react'
 
 export const getCurrentUser = cache(async () => {
   return await fetchQuery(api.users.current)
@@ -651,12 +648,13 @@ export const Route = createFileRoute('/posts/$postId')({
 **TanStack Query Caching** (when using `queryOptions`):
 
 ```tsx
-const postsQueryOptions = () => queryOptions({
-  queryKey: ['posts'],
-  queryFn: async () => await db.posts.list(),
-  staleTime: 1000 * 60 * 5, // 5 minutes
-  gcTime: 1000 * 60 * 10, // 10 minutes
-})
+const postsQueryOptions = () =>
+  queryOptions({
+    queryKey: ['posts'],
+    queryFn: async () => await db.posts.list(),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+  })
 
 export const Route = createFileRoute('/posts')({
   loader: async ({ context }) => {
@@ -679,7 +677,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 function NewPostPage() {
   const queryClient = useQueryClient()
-  
+
   const mutation = useMutation({
     mutationFn: createPostFn,
     onSuccess: () => {
@@ -697,7 +695,7 @@ import { useRouter } from '@tanstack/react-router'
 
 function NewPostPage() {
   const router = useRouter()
-  
+
   const mutation = useMutation({
     fn: createPostFn,
     onSuccess: async () => {
@@ -731,21 +729,21 @@ export const Route = createFileRoute('/posts')({
 
 ```tsx
 // app/dashboard/page.tsx
-import { Suspense } from "react"
+import { Suspense } from 'react'
 
 export default function DashboardPage() {
   return (
     <div>
       <h1>Dashboard</h1>
-      
+
       {/* Fast component renders immediately */}
       <UserGreeting />
-      
+
       {/* Slow component streams in */}
       <Suspense fallback={<Skeleton />}>
         <SlowPosts />
       </Suspense>
-      
+
       <Suspense fallback={<Skeleton />}>
         <SlowStats />
       </Suspense>
@@ -789,7 +787,7 @@ export default async function PostsPage() {
 // Server function with async generator
 const streamMessages = createServerFn().handler(async function* () {
   const messages = generateMessages()
-  
+
   for (const msg of messages) {
     await sleep(500)
     yield msg // Stream each message
@@ -799,15 +797,15 @@ const streamMessages = createServerFn().handler(async function* () {
 function MessagesPage() {
   const streamFn = useServerFn(streamMessages)
   const [messages, setMessages] = useState([])
-  
+
   useEffect(() => {
     const stream = streamFn()
-    
+
     for await (const msg of stream) {
-      setMessages(prev => [...prev, msg])
+      setMessages((prev) => [...prev, msg])
     }
   }, [])
-  
+
   return <MessageList messages={messages} />
 }
 ```
@@ -821,11 +819,11 @@ function PostsPage() {
   return (
     <div>
       <h1>Posts</h1>
-      
+
       <Suspense fallback={<Skeleton />}>
         <PostList />
       </Suspense>
-      
+
       <Suspense fallback={<Skeleton />}>
         <Comments />
       </Suspense>
@@ -873,18 +871,18 @@ function DeferredContent() {
 
 ## 6. Key Differences Summary
 
-| Feature | Next.js Server Components | TanStack Start |
-|---------|---------------------------|----------------|
-| **Server Data Fetching** | Direct `async/await` in components | Route loaders with `createFileRoute` |
-| **Server Functions** | Server Actions (`"use server"`) | `createServerFn()` |
-| **Client Data Fetching** | `useQuery` (TanStack Query or Convex) | `useServerFn` + `useQuery` |
-| **Mutations** | Server Actions with `<form action={...}>` | `createServerFn` + `useMutation` |
-| **Caching** | Fetch cache + `revalidatePath/Tag` | Route-level `staleTime/gcTime` + TanStack Query |
-| **Deduplication** | React `cache()` | TanStack Query automatic deduplication |
-| **Streaming** | Suspense boundaries in Server Components | Async generators + Suspense |
-| **Form Handling** | Progressive enhancement with `useFormStatus` | Client-side with `useMutation` |
-| **Type Safety** | Convex auto-generates types | Zod validators with `inputValidator` |
-| **Revalidation** | `revalidatePath`, `revalidateTag` | `router.invalidate()`, `queryClient.invalidateQueries()` |
+| Feature                  | Next.js Server Components                    | TanStack Start                                           |
+| ------------------------ | -------------------------------------------- | -------------------------------------------------------- |
+| **Server Data Fetching** | Direct `async/await` in components           | Route loaders with `createFileRoute`                     |
+| **Server Functions**     | Server Actions (`"use server"`)              | `createServerFn()`                                       |
+| **Client Data Fetching** | `useQuery` (TanStack Query or Convex)        | `useServerFn` + `useQuery`                               |
+| **Mutations**            | Server Actions with `<form action={...}>`    | `createServerFn` + `useMutation`                         |
+| **Caching**              | Fetch cache + `revalidatePath/Tag`           | Route-level `staleTime/gcTime` + TanStack Query          |
+| **Deduplication**        | React `cache()`                              | TanStack Query automatic deduplication                   |
+| **Streaming**            | Suspense boundaries in Server Components     | Async generators + Suspense                              |
+| **Form Handling**        | Progressive enhancement with `useFormStatus` | Client-side with `useMutation`                           |
+| **Type Safety**          | Convex auto-generates types                  | Zod validators with `inputValidator`                     |
+| **Revalidation**         | `revalidatePath`, `revalidateTag`            | `router.invalidate()`, `queryClient.invalidateQueries()` |
 
 ---
 
@@ -896,12 +894,12 @@ function DeferredContent() {
 
 ```tsx
 // app/posts/page.tsx
-import { fetchQuery } from "convex/nextjs"
-import { api } from "@/convex/_generated/api"
+import { fetchQuery } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
 
 export default async function PostsPage() {
   const posts = await fetchQuery(api.posts.list)
-  
+
   return <PostList posts={posts} />
 }
 ```
@@ -937,12 +935,12 @@ function PostsPage() {
 ```tsx
 // app/posts/new/page.tsx
 async function createPost(formData: FormData) {
-  "use server"
-  
-  const title = formData.get("title") as string
+  'use server'
+
+  const title = formData.get('title') as string
   await fetchMutation(api.posts.create, { title })
-  
-  revalidatePath("/posts")
+
+  revalidatePath('/posts')
 }
 
 export default function NewPostPage() {
@@ -975,7 +973,7 @@ export const Route = createFileRoute('/posts/new')({
 function NewPostPage() {
   const router = useRouter()
   const createPostFn = useServerFn(createPost)
-  
+
   const mutation = useMutation({
     fn: createPostFn,
     onSuccess: async () => {
@@ -983,16 +981,16 @@ function NewPostPage() {
       router.navigate({ to: '/posts' })
     },
   })
-  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    
+
     await mutation.mutate({
       title: formData.get('title') as string,
     })
   }
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input name="title" required />
@@ -1036,5 +1034,6 @@ Both approaches are powerful but differ in philosophy:
 - **TanStack Start**: Router-centric with explicit loaders, flexible client/server boundary, strong TypeScript integration with Zod
 
 Choose based on your needs:
+
 - **Next.js** if you want maximum server-side rendering, minimal client JS, and tight React integration
 - **TanStack Start** if you want explicit data loading, flexible routing, and strong type safety with Zod

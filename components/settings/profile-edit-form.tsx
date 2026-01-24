@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   AnonymousIcon,
@@ -12,28 +12,24 @@ import {
   UserIcon,
   UserMultipleIcon,
   YoutubeIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { useTranslations } from "next-intl"
-import { useCallback, useMemo, useRef, useState } from "react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Textarea } from "@/components/ui/textarea"
-import { fetchNaverBlogTitleAction, updateProfile } from "@/lib/actions/profile"
-import type { SignatureColor } from "@/lib/colors/signature-colors"
-import { QUESTION_SECURITY_LEVELS } from "@/lib/question-security"
-import type { SocialLinkEntry, SocialLinks } from "@/lib/types"
-import {
-  normalizeHandle,
-  normalizeNaverBlogHandle,
-  normalizeYoutubeHandle,
-} from "@/lib/utils/social-links"
-import { SignatureColorPicker } from "./signature-color-picker"
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useTranslations } from 'next-intl'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Textarea } from '@/components/ui/textarea'
+import { fetchNaverBlogTitleAction, updateProfile } from '@/lib/actions/profile'
+import type { SignatureColor } from '@/lib/colors/signature-colors'
+import { QUESTION_SECURITY_LEVELS } from '@/lib/question-security'
+import type { SocialLinkEntry, SocialLinks } from '@/lib/types'
+import { normalizeHandle, normalizeNaverBlogHandle, normalizeYoutubeHandle } from '@/lib/utils/social-links'
+import { SignatureColorPicker } from './signature-color-picker'
 
 const SECURITY_ICONS: Record<string, typeof AnonymousIcon> = {
   public: UserMultipleIcon,
@@ -54,37 +50,30 @@ interface CustomLinkRow {
 
 const createId = () => Math.random().toString(36).slice(2, 10)
 
-const createHandleRow = (value = ""): HandleRow => ({
+const createHandleRow = (value = ''): HandleRow => ({
   id: createId(),
   value,
 })
 
-const createCustomRow = (label = "", handle = ""): CustomLinkRow => ({
+const createCustomRow = (label = '', handle = ''): CustomLinkRow => ({
   id: createId(),
   label,
   handle,
 })
 
-const ensureHandleList = (list: HandleRow[]) =>
-  list.length ? list : [createHandleRow()]
+const ensureHandleList = (list: HandleRow[]) => (list.length ? list : [createHandleRow()])
 
-const ensureCustomList = (list: CustomLinkRow[]) =>
-  list.length ? list : [createCustomRow()]
+const ensureCustomList = (list: CustomLinkRow[]) => (list.length ? list : [createCustomRow()])
 
-const extractHandle = (
-  content: string | { handle: string; label?: string }
-): string => (typeof content === "string" ? content : content.handle)
+const extractHandle = (content: string | { handle: string; label?: string }): string =>
+  typeof content === 'string' ? content : content.handle
 
-const extractCustom = (
-  content: string | { handle: string; label?: string }
-): { label: string; handle: string } =>
-  typeof content === "string"
+const extractCustom = (content: string | { handle: string; label?: string }): { label: string; handle: string } =>
+  typeof content === 'string'
     ? { label: content, handle: content }
     : { label: content.label ?? content.handle, handle: content.handle }
 
-const parseInitialSocialLinks = (
-  socialLinks: SocialLinks | null | undefined
-) => {
+const parseInitialSocialLinks = (socialLinks: SocialLinks | null | undefined) => {
   const instagram: HandleRow[] = []
   const twitter: HandleRow[] = []
   const youtube: HandleRow[] = []
@@ -95,21 +84,21 @@ const parseInitialSocialLinks = (
     for (const entry of socialLinks) {
       const { platform, content } = entry
       switch (platform) {
-        case "instagram":
+        case 'instagram':
           instagram.push(createHandleRow(extractHandle(content)))
           break
-        case "twitter":
+        case 'twitter':
           twitter.push(createHandleRow(extractHandle(content)))
           break
-        case "youtube":
+        case 'youtube':
           youtube.push(createHandleRow(extractHandle(content)))
           break
-        case "github": {
+        case 'github': {
           const { label, handle } = extractCustom(content)
           github.push(createCustomRow(label, handle))
           break
         }
-        case "naverBlog": {
+        case 'naverBlog': {
           const { label, handle } = extractCustom(content)
           naverBlog.push(createCustomRow(label, handle))
           break
@@ -139,20 +128,20 @@ const buildSocialLinksPayload = (data: {
   const links: SocialLinkEntry[] = []
 
   const addHandleLinks = (
-    platform: "instagram" | "twitter" | "youtube",
+    platform: 'instagram' | 'twitter' | 'youtube',
     values: HandleRow[],
     normalize: (value: string) => string
   ) => {
     for (const value of values) {
       const handle = normalize(value.value)
       if (handle) {
-        links.push({ platform, content: handle, labelType: "handle" })
+        links.push({ platform, content: handle, labelType: 'handle' })
       }
     }
   }
 
   const addCustomLinks = (
-    platform: "github" | "naverBlog",
+    platform: 'github' | 'naverBlog',
     values: CustomLinkRow[],
     normalize: (value: string) => string
   ) => {
@@ -165,16 +154,16 @@ const buildSocialLinksPayload = (data: {
       links.push({
         platform,
         content: { handle, label },
-        labelType: "custom",
+        labelType: 'custom',
       })
     }
   }
 
-  addHandleLinks("instagram", data.instagram, normalizeHandle)
-  addHandleLinks("twitter", data.twitter, normalizeHandle)
-  addHandleLinks("youtube", data.youtube, normalizeYoutubeHandle)
-  addCustomLinks("github", data.github, normalizeHandle)
-  addCustomLinks("naverBlog", data.naverBlog, normalizeNaverBlogHandle)
+  addHandleLinks('instagram', data.instagram, normalizeHandle)
+  addHandleLinks('twitter', data.twitter, normalizeHandle)
+  addHandleLinks('youtube', data.youtube, normalizeYoutubeHandle)
+  addCustomLinks('github', data.github, normalizeHandle)
+  addCustomLinks('naverBlog', data.naverBlog, normalizeNaverBlogHandle)
 
   return links
 }
@@ -196,44 +185,29 @@ export function ProfileEditForm({
   initialSocialLinks,
   securityOptions,
 }: ProfileEditFormProps) {
-  const t = useTranslations("settings")
-  const tErrors = useTranslations("errors")
-  const tSocial = useTranslations("social")
+  const t = useTranslations('settings')
+  const tErrors = useTranslations('errors')
+  const tSocial = useTranslations('social')
 
-  const initialLinks = useMemo(
-    () => parseInitialSocialLinks(initialSocialLinks),
-    [initialSocialLinks]
-  )
+  const initialLinks = useMemo(() => parseInitialSocialLinks(initialSocialLinks), [initialSocialLinks])
 
-  const [bio, setBio] = useState(initialBio || "")
-  const [instagramRows, setInstagramRows] = useState(
-    () => initialLinks.instagram
-  )
+  const [bio, setBio] = useState(initialBio || '')
+  const [instagramRows, setInstagramRows] = useState(() => initialLinks.instagram)
   const [twitterRows, setTwitterRows] = useState(() => initialLinks.twitter)
   const [youtubeRows, setYoutubeRows] = useState(() => initialLinks.youtube)
   const [githubRows, setGithubRows] = useState(() => initialLinks.github)
-  const [naverBlogRows, setNaverBlogRows] = useState(
-    () => initialLinks.naverBlog
-  )
-  const [securityLevel, setSecurityLevel] = useState(
-    initialQuestionSecurityLevel
-  )
+  const [naverBlogRows, setNaverBlogRows] = useState(() => initialLinks.naverBlog)
+  const [securityLevel, setSecurityLevel] = useState(initialQuestionSecurityLevel)
 
-  const lastSavedBio = useRef(initialBio || "")
-  const lastSavedSocialLinks = useRef(
-    serializeSocialLinks(buildSocialLinksPayload(initialLinks))
-  )
+  const lastSavedBio = useRef(initialBio || '')
+  const lastSavedSocialLinks = useRef(serializeSocialLinks(buildSocialLinksPayload(initialLinks)))
 
   const saveProfile = useCallback(
-    (data: {
-      bio?: string | null
-      socialLinks?: SocialLinks | null
-      questionSecurityLevel?: string
-    }) => {
+    (data: { bio?: string | null; socialLinks?: SocialLinks | null; questionSecurityLevel?: string }) => {
       toast.promise(updateProfile(data), {
-        loading: t("saving"),
-        success: t("profileUpdated"),
-        error: (err) => err?.message || tErrors("genericError"),
+        loading: t('saving'),
+        success: t('profileUpdated'),
+        error: (err) => err?.message || tErrors('genericError'),
       })
     },
     [t, tErrors]
@@ -261,14 +235,7 @@ export function ProfileEditForm({
       lastSavedSocialLinks.current = serialized
       saveProfile({ socialLinks: links.length ? links : null })
     }
-  }, [
-    githubRows,
-    instagramRows,
-    naverBlogRows,
-    twitterRows,
-    youtubeRows,
-    saveProfile,
-  ])
+  }, [githubRows, instagramRows, naverBlogRows, twitterRows, youtubeRows, saveProfile])
 
   const handleSecurityLevelChange = useCallback(
     (value: string) => {
@@ -278,26 +245,15 @@ export function ProfileEditForm({
     [saveProfile]
   )
 
-  const updateHandleAt = (
-    id: string,
-    value: string,
-    setState: React.Dispatch<React.SetStateAction<HandleRow[]>>
-  ) => {
-    setState((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, value } : item))
-    )
+  const updateHandleAt = (id: string, value: string, setState: React.Dispatch<React.SetStateAction<HandleRow[]>>) => {
+    setState((prev) => prev.map((item) => (item.id === id ? { ...item, value } : item)))
   }
 
-  const addHandleRow = (
-    setState: React.Dispatch<React.SetStateAction<HandleRow[]>>
-  ) => {
+  const addHandleRow = (setState: React.Dispatch<React.SetStateAction<HandleRow[]>>) => {
     setState((prev) => [...prev, createHandleRow()])
   }
 
-  const removeHandleRow = (
-    id: string,
-    setState: React.Dispatch<React.SetStateAction<HandleRow[]>>
-  ) => {
+  const removeHandleRow = (id: string, setState: React.Dispatch<React.SetStateAction<HandleRow[]>>) => {
     setState((prev) => {
       const next = prev.filter((item) => item.id !== id)
       return next.length ? next : [createHandleRow()]
@@ -306,25 +262,18 @@ export function ProfileEditForm({
 
   const updateCustomAt = (
     id: string,
-    field: "label" | "handle",
+    field: 'label' | 'handle',
     value: string,
     setState: React.Dispatch<React.SetStateAction<CustomLinkRow[]>>
   ) => {
-    setState((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item))
-    )
+    setState((prev) => prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)))
   }
 
-  const addCustomRow = (
-    setState: React.Dispatch<React.SetStateAction<CustomLinkRow[]>>
-  ) => {
+  const addCustomRow = (setState: React.Dispatch<React.SetStateAction<CustomLinkRow[]>>) => {
     setState((prev) => [...prev, createCustomRow()])
   }
 
-  const removeCustomRow = (
-    id: string,
-    setState: React.Dispatch<React.SetStateAction<CustomLinkRow[]>>
-  ) => {
+  const removeCustomRow = (id: string, setState: React.Dispatch<React.SetStateAction<CustomLinkRow[]>>) => {
     setState((prev) => {
       const next = prev.filter((item) => item.id !== id)
       return next.length ? next : [createCustomRow()]
@@ -340,11 +289,7 @@ export function ProfileEditForm({
       }
       const result = await fetchNaverBlogTitleAction(normalizedHandle)
       if (result.success && result.data) {
-        setNaverBlogRows((prev) =>
-          prev.map((row) =>
-            row.id === rowId ? { ...row, label: result.data } : row
-          )
-        )
+        setNaverBlogRows((prev) => prev.map((row) => (row.id === rowId ? { ...row, label: result.data } : row)))
       }
       handleSocialLinksBlur()
     },
@@ -359,17 +304,12 @@ export function ProfileEditForm({
             <div className="flex size-8 items-center justify-center rounded-full bg-emerald/10 text-emerald">
               <HugeiconsIcon className="size-4" icon={UserIcon} />
             </div>
-            <h3 className="font-semibold text-foreground text-sm">
-              {t("profileSettings")}
-            </h3>
+            <h3 className="font-semibold text-foreground text-sm">{t('profileSettings')}</h3>
           </div>
 
           <Field>
-            <FieldLabel
-              className="font-medium text-muted-foreground text-xs"
-              htmlFor="bio"
-            >
-              {t("bioLabel")}
+            <FieldLabel className="font-medium text-muted-foreground text-xs" htmlFor="bio">
+              {t('bioLabel')}
             </FieldLabel>
             <Textarea
               className="min-h-24 resize-none rounded-xl border border-border/50 bg-background transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
@@ -377,25 +317,21 @@ export function ProfileEditForm({
               name="bio"
               onBlur={handleBioBlur}
               onChange={(event) => setBio(event.target.value)}
-              placeholder={t("bioPlaceholder")}
+              placeholder={t('bioPlaceholder')}
               rows={3}
               value={bio}
             />
             <div className="flex justify-end">
-              <span className="font-medium text-muted-foreground text-xs">
-                {bio.length}
-              </span>
+              <span className="font-medium text-muted-foreground text-xs">{bio.length}</span>
             </div>
           </Field>
 
           <div className="border-border/30 border-t pt-4">
-            <p className="mb-3 font-medium text-muted-foreground text-xs">
-              {t("socialLinks")}
-            </p>
+            <p className="mb-3 font-medium text-muted-foreground text-xs">{t('socialLinks')}</p>
             <div className="space-y-5">
               <Field>
                 <FieldLabel className="font-medium text-muted-foreground text-xs">
-                  {tSocial("instagramPlaceholder")}
+                  {tSocial('instagramPlaceholder')}
                 </FieldLabel>
                 <div className="space-y-2">
                   {instagramRows.map((row) => (
@@ -413,23 +349,15 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) =>
-                            updateHandleAt(
-                              row.id,
-                              event.target.value,
-                              setInstagramRows
-                            )
-                          }
-                          placeholder={tSocial("instagramPlaceholder")}
+                          onChange={(event) => updateHandleAt(row.id, event.target.value, setInstagramRows)}
+                          placeholder={tSocial('instagramPlaceholder')}
                           value={row.value}
                         />
                       </div>
                       <Button
-                        aria-label={tSocial("remove")}
+                        aria-label={tSocial('remove')}
                         className="shrink-0"
-                        onClick={() =>
-                          removeHandleRow(row.id, setInstagramRows)
-                        }
+                        onClick={() => removeHandleRow(row.id, setInstagramRows)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -438,20 +366,15 @@ export function ProfileEditForm({
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    onClick={() => addHandleRow(setInstagramRows)}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    {tSocial("addInstagram")}
+                  <Button onClick={() => addHandleRow(setInstagramRows)} size="sm" type="button" variant="outline">
+                    {tSocial('addInstagram')}
                   </Button>
                 </div>
               </Field>
 
               <Field>
                 <FieldLabel className="font-medium text-muted-foreground text-xs">
-                  {tSocial("twitterPlaceholder")}
+                  {tSocial('twitterPlaceholder')}
                 </FieldLabel>
                 <div className="space-y-2">
                   {twitterRows.map((row) => (
@@ -469,19 +392,13 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) =>
-                            updateHandleAt(
-                              row.id,
-                              event.target.value,
-                              setTwitterRows
-                            )
-                          }
-                          placeholder={tSocial("twitterPlaceholder")}
+                          onChange={(event) => updateHandleAt(row.id, event.target.value, setTwitterRows)}
+                          placeholder={tSocial('twitterPlaceholder')}
                           value={row.value}
                         />
                       </div>
                       <Button
-                        aria-label={tSocial("remove")}
+                        aria-label={tSocial('remove')}
                         className="shrink-0"
                         onClick={() => removeHandleRow(row.id, setTwitterRows)}
                         size="icon-sm"
@@ -492,20 +409,15 @@ export function ProfileEditForm({
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    onClick={() => addHandleRow(setTwitterRows)}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    {tSocial("addTwitter")}
+                  <Button onClick={() => addHandleRow(setTwitterRows)} size="sm" type="button" variant="outline">
+                    {tSocial('addTwitter')}
                   </Button>
                 </div>
               </Field>
 
               <Field>
                 <FieldLabel className="font-medium text-muted-foreground text-xs">
-                  {tSocial("youtubePlaceholder")}
+                  {tSocial('youtubePlaceholder')}
                 </FieldLabel>
                 <div className="space-y-2">
                   {youtubeRows.map((row) => (
@@ -523,19 +435,13 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) =>
-                            updateHandleAt(
-                              row.id,
-                              event.target.value,
-                              setYoutubeRows
-                            )
-                          }
-                          placeholder={tSocial("youtubePlaceholder")}
+                          onChange={(event) => updateHandleAt(row.id, event.target.value, setYoutubeRows)}
+                          placeholder={tSocial('youtubePlaceholder')}
                           value={row.value}
                         />
                       </div>
                       <Button
-                        aria-label={tSocial("remove")}
+                        aria-label={tSocial('remove')}
                         className="shrink-0"
                         onClick={() => removeHandleRow(row.id, setYoutubeRows)}
                         size="icon-sm"
@@ -546,40 +452,25 @@ export function ProfileEditForm({
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    onClick={() => addHandleRow(setYoutubeRows)}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    {tSocial("addYoutube")}
+                  <Button onClick={() => addHandleRow(setYoutubeRows)} size="sm" type="button" variant="outline">
+                    {tSocial('addYoutube')}
                   </Button>
                 </div>
               </Field>
 
               <Field>
                 <FieldLabel className="font-medium text-muted-foreground text-xs">
-                  {tSocial("githubPlaceholder")}
+                  {tSocial('githubPlaceholder')}
                 </FieldLabel>
                 <div className="space-y-2">
                   {githubRows.map((row) => (
-                    <div
-                      className="flex flex-col gap-2 sm:flex-row sm:items-center"
-                      key={row.id}
-                    >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center" key={row.id}>
                       <Input
                         autoCapitalize="words"
                         className="min-h-11 rounded-xl border border-border/50 bg-background transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                         onBlur={handleSocialLinksBlur}
-                        onChange={(event) =>
-                          updateCustomAt(
-                            row.id,
-                            "label",
-                            event.target.value,
-                            setGithubRows
-                          )
-                        }
-                        placeholder={tSocial("labelPlaceholder")}
+                        onChange={(event) => updateCustomAt(row.id, 'label', event.target.value, setGithubRows)}
+                        placeholder={tSocial('labelPlaceholder')}
                         value={row.label}
                       />
                       <div className="relative flex-1">
@@ -595,20 +486,13 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) =>
-                            updateCustomAt(
-                              row.id,
-                              "handle",
-                              event.target.value,
-                              setGithubRows
-                            )
-                          }
-                          placeholder={tSocial("githubPlaceholder")}
+                          onChange={(event) => updateCustomAt(row.id, 'handle', event.target.value, setGithubRows)}
+                          placeholder={tSocial('githubPlaceholder')}
                           value={row.handle}
                         />
                       </div>
                       <Button
-                        aria-label={tSocial("remove")}
+                        aria-label={tSocial('remove')}
                         className="self-start sm:self-auto"
                         onClick={() => removeCustomRow(row.id, setGithubRows)}
                         size="icon-sm"
@@ -619,40 +503,25 @@ export function ProfileEditForm({
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    onClick={() => addCustomRow(setGithubRows)}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    {tSocial("addGithub")}
+                  <Button onClick={() => addCustomRow(setGithubRows)} size="sm" type="button" variant="outline">
+                    {tSocial('addGithub')}
                   </Button>
                 </div>
               </Field>
 
               <Field>
                 <FieldLabel className="font-medium text-muted-foreground text-xs">
-                  {tSocial("naverBlogPlaceholder")}
+                  {tSocial('naverBlogPlaceholder')}
                 </FieldLabel>
                 <div className="space-y-2">
                   {naverBlogRows.map((row) => (
-                    <div
-                      className="flex flex-col gap-2 sm:flex-row sm:items-center"
-                      key={row.id}
-                    >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center" key={row.id}>
                       <Input
                         autoCapitalize="words"
                         className="min-h-11 rounded-xl border border-border/50 bg-background transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                         onBlur={handleSocialLinksBlur}
-                        onChange={(event) =>
-                          updateCustomAt(
-                            row.id,
-                            "label",
-                            event.target.value,
-                            setNaverBlogRows
-                          )
-                        }
-                        placeholder={tSocial("labelPlaceholder")}
+                        onChange={(event) => updateCustomAt(row.id, 'label', event.target.value, setNaverBlogRows)}
+                        placeholder={tSocial('labelPlaceholder')}
                         value={row.label}
                       />
                       <div className="relative flex-1">
@@ -667,27 +536,16 @@ export function ProfileEditForm({
                           autoCapitalize="none"
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
-                          onBlur={() =>
-                            handleNaverBlogHandleBlur(row.id, row.handle)
-                          }
-                          onChange={(event) =>
-                            updateCustomAt(
-                              row.id,
-                              "handle",
-                              event.target.value,
-                              setNaverBlogRows
-                            )
-                          }
-                          placeholder={tSocial("naverBlogPlaceholder")}
+                          onBlur={() => handleNaverBlogHandleBlur(row.id, row.handle)}
+                          onChange={(event) => updateCustomAt(row.id, 'handle', event.target.value, setNaverBlogRows)}
+                          placeholder={tSocial('naverBlogPlaceholder')}
                           value={row.handle}
                         />
                       </div>
                       <Button
-                        aria-label={tSocial("remove")}
+                        aria-label={tSocial('remove')}
                         className="self-start sm:self-auto"
-                        onClick={() =>
-                          removeCustomRow(row.id, setNaverBlogRows)
-                        }
+                        onClick={() => removeCustomRow(row.id, setNaverBlogRows)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -696,13 +554,8 @@ export function ProfileEditForm({
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    onClick={() => addCustomRow(setNaverBlogRows)}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    {tSocial("addNaverBlog")}
+                  <Button onClick={() => addCustomRow(setNaverBlogRows)} size="sm" type="button" variant="outline">
+                    {tSocial('addNaverBlog')}
                   </Button>
                 </div>
               </Field>
@@ -717,16 +570,10 @@ export function ProfileEditForm({
             <div className="flex size-8 items-center justify-center rounded-full bg-emerald/10 text-emerald">
               <HugeiconsIcon className="size-4" icon={LockIcon} />
             </div>
-            <h3 className="font-semibold text-foreground text-sm">
-              {t("anonymousRestriction")}
-            </h3>
+            <h3 className="font-semibold text-foreground text-sm">{t('anonymousRestriction')}</h3>
           </div>
 
-          <RadioGroup
-            className="w-full space-y-2"
-            onValueChange={handleSecurityLevelChange}
-            value={securityLevel}
-          >
+          <RadioGroup className="w-full space-y-2" onValueChange={handleSecurityLevelChange} value={securityLevel}>
             {QUESTION_SECURITY_LEVELS.map((level) => {
               const option = securityOptions[level]
               const IconComponent = SECURITY_ICONS[level] || AnonymousIcon
@@ -744,11 +591,7 @@ export function ProfileEditForm({
                     value={level}
                   />
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-muted-foreground transition-colors group-has-data-checked:bg-emerald/20 group-has-data-checked:text-emerald">
-                    <HugeiconsIcon
-                      className="size-5"
-                      icon={IconComponent}
-                      strokeWidth={2}
-                    />
+                    <HugeiconsIcon className="size-5" icon={IconComponent} strokeWidth={2} />
                   </div>
                   <div className="flex flex-1 flex-col gap-0.5">
                     <p className="font-semibold text-foreground text-sm transition-colors group-has-data-checked:text-foreground">
@@ -771,16 +614,14 @@ export function ProfileEditForm({
             <div className="flex size-8 items-center justify-center rounded-full bg-emerald/10 text-emerald">
               <HugeiconsIcon className="size-4" icon={PaintBrushIcon} />
             </div>
-            <h3 className="font-semibold text-foreground text-sm">
-              {t("signatureColor")}
-            </h3>
+            <h3 className="font-semibold text-foreground text-sm">{t('signatureColor')}</h3>
           </div>
 
           <SignatureColorPicker
             currentColor={initialSignatureColor}
             labels={{
-              saving: t("saving"),
-              saved: t("signatureColorUpdated"),
+              saving: t('saving'),
+              saved: t('signatureColorUpdated'),
             }}
           />
         </CardContent>

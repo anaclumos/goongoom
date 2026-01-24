@@ -1,8 +1,8 @@
-"use server"
+'use server'
 
-import { auth } from "@clerk/nextjs/server"
-import { fetchMutation, fetchQuery } from "convex/nextjs"
-import { api } from "@/convex/_generated/api"
+import { auth } from '@clerk/nextjs/server'
+import { fetchMutation, fetchQuery } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
 
 export async function subscribeToPush(subscription: {
   endpoint: string
@@ -23,9 +23,7 @@ export async function subscribeToPush(subscription: {
   return { success: true }
 }
 
-export async function unsubscribeFromPush(
-  endpoint: string
-): Promise<{ success: boolean }> {
+export async function unsubscribeFromPush(endpoint: string): Promise<{ success: boolean }> {
   const { userId } = await auth()
   if (!userId) {
     return { success: false }
@@ -49,7 +47,7 @@ export async function sendTestPushNotification(): Promise<{
 }> {
   const { userId } = await auth()
   if (!userId) {
-    return { success: false, error: "Not authenticated" }
+    return { success: false, error: 'Not authenticated' }
   }
 
   const subscriptions = await fetchQuery(api.push.getByClerkId, {
@@ -57,10 +55,10 @@ export async function sendTestPushNotification(): Promise<{
   })
 
   if (subscriptions.length === 0) {
-    return { success: false, error: "No subscriptions found" }
+    return { success: false, error: 'No subscriptions found' }
   }
 
-  const { sendPushToMany } = await import("@/lib/push")
+  const { sendPushToMany } = await import('@/lib/push')
 
   await sendPushToMany(
     subscriptions.map((sub) => ({
@@ -69,9 +67,9 @@ export async function sendTestPushNotification(): Promise<{
       auth: sub.auth,
     })),
     {
-      title: "Test Notification",
-      body: "Push notifications are working!",
-      url: "/settings",
+      title: 'Test Notification',
+      body: 'Push notifications are working!',
+      url: '/settings',
     }
   )
 

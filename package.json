@@ -9,7 +9,6 @@
     "start": "next start",
     "lint": "eslint",
     "prepare": "lefthook install",
-
     "test": "bun test lib tests components",
     "test:watch": "bun test --watch lib tests components",
     "test:convex": "bun test tests/convex",

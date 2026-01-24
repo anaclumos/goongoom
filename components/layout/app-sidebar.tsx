@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { SignUpButton, useUser } from "@clerk/nextjs"
+import { SignUpButton, useUser } from '@clerk/nextjs'
 import {
   Agreement01Icon,
   CustomerService01Icon,
@@ -10,23 +10,20 @@ import {
   SecurityCheckIcon,
   Settings01Icon,
   UserGroupIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { formatDistanceToNow } from "date-fns"
-import { enUS, ko } from "date-fns/locale"
-import { usePathname } from "next/navigation"
-import { useLocale, useTranslations } from "next-intl"
-import type * as React from "react"
-import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
-import {
-  GUEST_TAB_ROUTES,
-  TAB_ROUTES,
-} from "@/components/navigation/navigation-routes"
-import { Ultralink } from "@/components/navigation/ultralink"
-import { usePrefetchRoutes } from "@/components/navigation/use-prefetch-routes"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Logo } from "@/components/ui/logo"
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { formatDistanceToNow } from 'date-fns'
+import { enUS, ko } from 'date-fns/locale'
+import { usePathname } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
+import type * as React from 'react'
+import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
+import { GUEST_TAB_ROUTES, TAB_ROUTES } from '@/components/navigation/navigation-routes'
+import { Ultralink } from '@/components/navigation/ultralink'
+import { usePrefetchRoutes } from '@/components/navigation/use-prefetch-routes'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/ui/logo'
 import {
   Sidebar,
   SidebarContent,
@@ -39,7 +36,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar'
 
 interface RecentQuestion {
   id: string
@@ -54,15 +51,11 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 const localeMap = { ko, en: enUS } as const
 
-export function AppSidebar({
-  recentQuestions = [],
-  onQuestionClick,
-  ...props
-}: AppSidebarProps) {
-  const t = useTranslations("nav")
-  const tCommon = useTranslations("common")
-  const tSidebar = useTranslations("sidebar")
-  const tFooter = useTranslations("footer")
+export function AppSidebar({ recentQuestions = [], onQuestionClick, ...props }: AppSidebarProps) {
+  const t = useTranslations('nav')
+  const tCommon = useTranslations('common')
+  const tSidebar = useTranslations('sidebar')
+  const tFooter = useTranslations('footer')
   const pathname = usePathname()
   const locale = useLocale()
   const { user } = useUser()
@@ -71,46 +64,46 @@ export function AppSidebar({
 
   const loggedInNavItems = [
     {
-      title: tSidebar("home"),
-      url: user?.username ? `/${user.username}` : "/",
+      title: tSidebar('home'),
+      url: user?.username ? `/${user.username}` : '/',
       icon: Home01Icon,
     },
     {
-      title: tSidebar("inbox"),
-      url: "/inbox",
+      title: tSidebar('inbox'),
+      url: '/inbox',
       icon: InboxIcon,
     },
     {
-      title: tSidebar("friends"),
-      url: "/friends",
+      title: tSidebar('friends'),
+      url: '/friends',
       icon: UserGroupIcon,
     },
     {
-      title: tSidebar("settings"),
-      url: "/settings",
+      title: tSidebar('settings'),
+      url: '/settings',
       icon: Settings01Icon,
     },
   ]
 
   const guestNavItems = [
     {
-      title: tSidebar("home"),
-      url: "/",
+      title: tSidebar('home'),
+      url: '/',
       icon: Home01Icon,
     },
     {
-      title: tFooter("terms"),
-      url: "/terms",
+      title: tFooter('terms'),
+      url: '/terms',
       icon: Agreement01Icon,
     },
     {
-      title: tFooter("privacy"),
-      url: "/privacy",
+      title: tFooter('privacy'),
+      url: '/privacy',
       icon: SecurityCheckIcon,
     },
     {
-      title: tFooter("contact"),
-      url: "/contact",
+      title: tFooter('contact'),
+      url: '/contact',
       icon: CustomerService01Icon,
     },
   ]
@@ -118,8 +111,8 @@ export function AppSidebar({
   const navItems = user ? loggedInNavItems : guestNavItems
 
   const isActive = (url: string) => {
-    if (url === "/") {
-      return pathname === "/"
+    if (url === '/') {
+      return pathname === '/'
     }
     return pathname.startsWith(url)
   }
@@ -131,30 +124,21 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              render={
-                user?.username ? (
-                  <Ultralink href={`/${user.username}`} />
-                ) : (
-                  <Ultralink href="/" />
-                )
-              }
+              render={user?.username ? <Ultralink href={`/${user.username}`} /> : <Ultralink href="/" />}
               size="lg"
             >
               {user ? (
                 <>
                   <Avatar className="size-8 rounded-lg">
-                    <AvatarImage
-                      alt={user.firstName || user.username || ""}
-                      src={user.imageUrl}
-                    />
+                    <AvatarImage alt={user.firstName || user.username || ''} src={user.imageUrl} />
                     <AvatarFallback className="rounded-lg bg-emerald text-emerald-foreground">
-                      {user.firstName?.[0] || user.username?.[0] || "U"}
+                      {user.firstName?.[0] || user.username?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {t("userAppName", {
-                        firstName: user.firstName || user.username || "",
+                      {t('userAppName', {
+                        firstName: user.firstName || user.username || '',
                       })}
                     </span>
                   </div>
@@ -163,9 +147,7 @@ export function AppSidebar({
                 <>
                   <Logo size="md" />
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {t("appName")}
-                    </span>
+                    <span className="truncate font-semibold">{t('appName')}</span>
                   </div>
                 </>
               )}
@@ -195,7 +177,7 @@ export function AppSidebar({
 
         {user && recentQuestions.length > 0 && (
           <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>{tSidebar("recentQuestions")}</SidebarGroupLabel>
+            <SidebarGroupLabel>{tSidebar('recentQuestions')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {recentQuestions.map((question) => (
@@ -205,15 +187,11 @@ export function AppSidebar({
                       onClick={() => onQuestionClick?.(question.id)}
                     >
                       <div className="flex flex-col gap-1 overflow-hidden">
-                        <span className="line-clamp-2 font-medium text-xs">
-                          {question.content}
-                        </span>
+                        <span className="line-clamp-2 font-medium text-xs">{question.content}</span>
                         <span className="text-[10px] text-muted-foreground">
                           {formatDistanceToNow(question.createdAt, {
                             addSuffix: true,
-                            locale:
-                              localeMap[locale as keyof typeof localeMap] ??
-                              enUS,
+                            locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
                           })}
                         </span>
                       </div>
@@ -231,16 +209,16 @@ export function AppSidebar({
           <SidebarMenu>
             <SidebarMenuItem>
               <PasskeySignInButton>
-                <SidebarMenuButton tooltip={tCommon("login")}>
+                <SidebarMenuButton tooltip={tCommon('login')}>
                   <HugeiconsIcon icon={Login01Icon} />
-                  <span>{tCommon("login")}</span>
+                  <span>{tCommon('login')}</span>
                 </SidebarMenuButton>
               </PasskeySignInButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SignUpButton mode="modal">
                 <Button className="w-full" size="sm">
-                  {tCommon("start")}
+                  {tCommon('start')}
                 </Button>
               </SignUpButton>
             </SidebarMenuItem>

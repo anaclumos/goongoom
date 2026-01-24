@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useRouter } from "next/navigation"
-import { useEffect, useRef } from "react"
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 
 const EDGE_THRESHOLD = 30
 const SWIPE_THRESHOLD = 100
@@ -32,20 +32,21 @@ export function useSwipeBack() {
       const deltaY = Math.abs(touch.clientY - startY.current)
 
       const isEdgeSwipe = startX.current < EDGE_THRESHOLD
-      const isHorizontalSwipe =
-        deltaX > SWIPE_THRESHOLD && deltaY < VERTICAL_THRESHOLD
+      const isHorizontalSwipe = deltaX > SWIPE_THRESHOLD && deltaY < VERTICAL_THRESHOLD
 
       if (isEdgeSwipe && isHorizontalSwipe) {
         router.back()
       }
     }
 
-    document.addEventListener("touchstart", handleTouchStart, { passive: true })
-    document.addEventListener("touchend", handleTouchEnd, { passive: true })
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: true,
+    })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
 
     return () => {
-      document.removeEventListener("touchstart", handleTouchStart)
-      document.removeEventListener("touchend", handleTouchEnd)
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchend', handleTouchEnd)
     }
   }, [router])
 }

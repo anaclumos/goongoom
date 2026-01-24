@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { SignUpButton } from "@clerk/nextjs"
+import { SignUpButton } from '@clerk/nextjs'
 import {
   Home01Icon,
   InboxIcon,
@@ -8,52 +8,49 @@ import {
   Settings01Icon,
   UserAdd01Icon,
   UserGroupIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { usePathname } from "next/navigation"
-import { useTranslations } from "next-intl"
-import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
-import {
-  GUEST_TAB_ROUTES,
-  TAB_ROUTES,
-} from "@/components/navigation/navigation-routes"
-import { Ultralink } from "@/components/navigation/ultralink"
-import { usePrefetchRoutes } from "@/components/navigation/use-prefetch-routes"
-import { cn } from "@/lib/utils"
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
+import { GUEST_TAB_ROUTES, TAB_ROUTES } from '@/components/navigation/navigation-routes'
+import { Ultralink } from '@/components/navigation/ultralink'
+import { usePrefetchRoutes } from '@/components/navigation/use-prefetch-routes'
+import { cn } from '@/lib/utils'
 
 const loggedInTabItems = [
   {
-    titleKey: "home" as const,
-    href: "/",
+    titleKey: 'home' as const,
+    href: '/',
     icon: Home01Icon,
-    namespace: "sidebar" as const,
+    namespace: 'sidebar' as const,
   },
   {
-    titleKey: "inbox" as const,
-    href: "/inbox",
+    titleKey: 'inbox' as const,
+    href: '/inbox',
     icon: InboxIcon,
-    namespace: "sidebar" as const,
+    namespace: 'sidebar' as const,
   },
   {
-    titleKey: "friends" as const,
-    href: "/friends",
+    titleKey: 'friends' as const,
+    href: '/friends',
     icon: UserGroupIcon,
-    namespace: "sidebar" as const,
+    namespace: 'sidebar' as const,
   },
   {
-    titleKey: "settings" as const,
-    href: "/settings",
+    titleKey: 'settings' as const,
+    href: '/settings',
     icon: Settings01Icon,
-    namespace: "sidebar" as const,
+    namespace: 'sidebar' as const,
   },
 ]
 
 const guestTabItems = [
   {
-    titleKey: "home" as const,
-    href: "/",
+    titleKey: 'home' as const,
+    href: '/',
     icon: Home01Icon,
-    namespace: "sidebar" as const,
+    namespace: 'sidebar' as const,
   },
 ]
 
@@ -63,27 +60,27 @@ interface MobileTabBarProps {
 
 export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
   const pathname = usePathname()
-  const tSidebar = useTranslations("sidebar")
-  const tCommon = useTranslations("common")
-  const tUi = useTranslations("ui")
+  const tSidebar = useTranslations('sidebar')
+  const tCommon = useTranslations('common')
+  const tUi = useTranslations('ui')
 
   const tabItems = isLoggedIn ? loggedInTabItems : guestTabItems
   usePrefetchRoutes(isLoggedIn ? TAB_ROUTES : GUEST_TAB_ROUTES)
 
   const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/"
+    if (href === '/') {
+      return pathname === '/'
     }
     return pathname.startsWith(href)
   }
 
   const tabButtonClass = cn(
-    "flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
+    'flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground'
   )
 
   return (
     <nav
-      aria-label={tUi("mobileNavigation")}
+      aria-label={tUi('mobileNavigation')}
       className="fixed inset-x-0 bottom-0 z-50 border-border border-t bg-background/95 pb-safe backdrop-blur-md md:hidden"
     >
       <div className="flex h-16 items-center justify-around">
@@ -92,22 +89,14 @@ export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
           return (
             <Ultralink
               className={cn(
-                "flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 transition-colors",
-                active
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                'flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 transition-colors',
+                active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               )}
               href={item.href}
               key={item.href}
             >
-              <HugeiconsIcon
-                icon={item.icon}
-                size={22}
-                strokeWidth={active ? 2.5 : 2}
-              />
-              <span className="font-medium text-xs">
-                {tSidebar(item.titleKey)}
-              </span>
+              <HugeiconsIcon icon={item.icon} size={22} strokeWidth={active ? 2.5 : 2} />
+              <span className="font-medium text-xs">{tSidebar(item.titleKey)}</span>
             </Ultralink>
           )
         })}
@@ -116,13 +105,13 @@ export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
             <PasskeySignInButton>
               <button className={tabButtonClass} type="button">
                 <HugeiconsIcon icon={Login01Icon} size={22} strokeWidth={2} />
-                <span className="font-medium text-xs">{tCommon("login")}</span>
+                <span className="font-medium text-xs">{tCommon('login')}</span>
               </button>
             </PasskeySignInButton>
             <SignUpButton mode="modal">
               <button className={tabButtonClass} type="button">
                 <HugeiconsIcon icon={UserAdd01Icon} size={22} strokeWidth={2} />
-                <span className="font-medium text-xs">{tCommon("start")}</span>
+                <span className="font-medium text-xs">{tCommon('start')}</span>
               </button>
             </SignUpButton>
           </>

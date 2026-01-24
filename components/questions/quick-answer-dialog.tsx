@@ -1,19 +1,15 @@
-"use client"
+'use client'
 
-import { Dialog } from "@base-ui/react/dialog"
-import {
-  AnonymousIcon,
-  Cancel01Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { useRouter } from "next/navigation"
-import { useTranslations } from "next-intl"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { createAnswer } from "@/lib/actions/answers"
-import { cn } from "@/lib/utils"
+import { Dialog } from '@base-ui/react/dialog'
+import { AnonymousIcon, Cancel01Icon, UserIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { createAnswer } from '@/lib/actions/answers'
+import { cn } from '@/lib/utils'
 
 interface QuickAnswerDialogProps {
   question: {
@@ -27,15 +23,11 @@ interface QuickAnswerDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function QuickAnswerDialog({
-  question,
-  open,
-  onOpenChange,
-}: QuickAnswerDialogProps) {
-  const t = useTranslations("answers")
-  const tCommon = useTranslations("common")
+export function QuickAnswerDialog({ question, open, onOpenChange }: QuickAnswerDialogProps) {
+  const t = useTranslations('answers')
+  const tCommon = useTranslations('common')
   const router = useRouter()
-  const [answer, setAnswer] = useState("")
+  const [answer, setAnswer] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   async function handleSubmit() {
@@ -51,7 +43,7 @@ export function QuickAnswerDialog({
       })
 
       if (result.success) {
-        setAnswer("")
+        setAnswer('')
         onOpenChange(false)
         router.refresh()
       }
@@ -61,7 +53,7 @@ export function QuickAnswerDialog({
   }
 
   function handleClose() {
-    setAnswer("")
+    setAnswer('')
     onOpenChange(false)
   }
 
@@ -70,31 +62,25 @@ export function QuickAnswerDialog({
       <Dialog.Portal>
         <Dialog.Backdrop
           className={cn(
-            "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
-            "data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
-            "transition-opacity duration-200"
+            'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm',
+            'data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
+            'transition-opacity duration-200'
           )}
         />
         <Dialog.Popup
           className={cn(
-            "fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2",
-            "rounded-2xl border border-border/50 bg-background p-6",
-            "data-[ending-style]:scale-95 data-[ending-style]:opacity-0",
-            "data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
-            "transition-all duration-200"
+            'fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
+            'rounded-2xl border border-border/50 bg-background p-6',
+            'data-[ending-style]:scale-95 data-[ending-style]:opacity-0',
+            'data-[starting-style]:scale-95 data-[starting-style]:opacity-0',
+            'transition-all duration-200'
           )}
         >
           <div className="flex items-start justify-between gap-4">
-            <Dialog.Title className="font-bold text-xl tracking-tight">
-              {t("answerDrawerTitle")}
-            </Dialog.Title>
-            <Dialog.Close
-              render={
-                <Button onClick={handleClose} size="icon-sm" variant="ghost" />
-              }
-            >
+            <Dialog.Title className="font-bold text-xl tracking-tight">{t('answerDrawerTitle')}</Dialog.Title>
+            <Dialog.Close render={<Button onClick={handleClose} size="icon-sm" variant="ghost" />}>
               <HugeiconsIcon icon={Cancel01Icon} size={18} />
-              <span className="sr-only">{tCommon("cancel")}</span>
+              <span className="sr-only">{tCommon('cancel')}</span>
             </Dialog.Close>
           </div>
 
@@ -104,8 +90,8 @@ export function QuickAnswerDialog({
                 <div
                   className={`flex size-6 items-center justify-center rounded-full ${
                     question.isAnonymous
-                      ? "bg-gradient-to-br from-emerald to-emerald/80"
-                      : "bg-gradient-to-br from-emerald to-emerald/80"
+                      ? 'bg-gradient-to-br from-emerald to-emerald/80'
+                      : 'bg-gradient-to-br from-emerald to-emerald/80'
                   }`}
                 >
                   <HugeiconsIcon
@@ -114,19 +100,11 @@ export function QuickAnswerDialog({
                     strokeWidth={2.5}
                   />
                 </div>
-                <span
-                  className={`font-semibold text-sm ${
-                    question.isAnonymous ? "text-emerald" : "text-emerald"
-                  }`}
-                >
-                  {question.isAnonymous
-                    ? tCommon("anonymous")
-                    : question.senderName || tCommon("user")}
+                <span className={`font-semibold text-sm ${question.isAnonymous ? 'text-emerald' : 'text-emerald'}`}>
+                  {question.isAnonymous ? tCommon('anonymous') : question.senderName || tCommon('user')}
                 </span>
               </div>
-              <Dialog.Description className="text-foreground leading-relaxed">
-                {question.content}
-              </Dialog.Description>
+              <Dialog.Description className="text-foreground leading-relaxed">{question.content}</Dialog.Description>
             </div>
           )}
 
@@ -134,13 +112,11 @@ export function QuickAnswerDialog({
             <Textarea
               className="min-h-28 resize-none rounded-2xl border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-emerald focus:bg-background focus:ring-2 focus:ring-emerald/20"
               onChange={(e) => setAnswer(e.target.value)}
-              placeholder={t("answerPlaceholder")}
+              placeholder={t('answerPlaceholder')}
               value={answer}
             />
             <div className="flex justify-end">
-              <span className="font-medium text-muted-foreground text-xs">
-                {answer.length}
-              </span>
+              <span className="font-medium text-muted-foreground text-xs">{answer.length}</span>
             </div>
           </div>
 
@@ -151,7 +127,7 @@ export function QuickAnswerDialog({
               type="button"
               variant="outline"
             >
-              {tCommon("cancel")}
+              {tCommon('cancel')}
             </Button>
             <Button
               className="h-14 flex-1 rounded-2xl bg-gradient-to-r from-emerald to-emerald/90 font-semibold text-base transition-all disabled:opacity-70"
@@ -159,7 +135,7 @@ export function QuickAnswerDialog({
               onClick={handleSubmit}
               type="button"
             >
-              {isSubmitting ? tCommon("submitting") : t("answerButton")}
+              {isSubmitting ? tCommon('submitting') : t('answerButton')}
             </Button>
           </div>
         </Dialog.Popup>

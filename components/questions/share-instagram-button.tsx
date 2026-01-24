@@ -1,15 +1,11 @@
-"use client"
+'use client'
 
-import {
-  InstagramIcon,
-  Loading03Icon,
-  MoreVerticalIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { useTranslations } from "next-intl"
-import { useTheme } from "next-themes"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { InstagramIcon, Loading03Icon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useTranslations } from 'next-intl'
+import { useTheme } from 'next-themes'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerContent,
@@ -17,21 +13,17 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from '@/components/ui/drawer'
 
 interface ShareInstagramButtonProps {
   shareUrl: string
-  mode?: "icon" | "button"
+  mode?: 'icon' | 'button'
   className?: string
 }
 
-export function ShareInstagramButton({
-  shareUrl,
-  mode = "icon",
-  className,
-}: ShareInstagramButtonProps) {
-  const t = useTranslations("share")
-  const tCommon = useTranslations("common")
+export function ShareInstagramButton({ shareUrl, mode = 'icon', className }: ShareInstagramButtonProps) {
+  const t = useTranslations('share')
+  const tCommon = useTranslations('common')
   const { resolvedTheme } = useTheme()
   const sharingRef = useRef(false)
   const fileRef = useRef<File | null>(null)
@@ -40,8 +32,8 @@ export function ShareInstagramButton({
 
   const themedShareUrl = useMemo(() => {
     const url = new URL(shareUrl, window.location.origin)
-    if (resolvedTheme === "dark") {
-      url.searchParams.set("dark", "1")
+    if (resolvedTheme === 'dark') {
+      url.searchParams.set('dark', '1')
     }
     return url.pathname + url.search
   }, [shareUrl, resolvedTheme])
@@ -53,9 +45,9 @@ export function ShareInstagramButton({
         return null
       }
       const blob = await response.blob()
-      return new File([blob], "goongoom-share.png", { type: "image/png" })
+      return new File([blob], 'goongoom-share.png', { type: 'image/png' })
     } catch (error) {
-      console.error("Failed to fetch Instagram share image:", error)
+      console.error('Failed to fetch Instagram share image:', error)
       return null
     }
   }, [themedShareUrl])
@@ -86,14 +78,14 @@ export function ShareInstagramButton({
       if (canShare) {
         await navigator.share({
           files: [file],
-          title: tCommon("appName"),
-          text: t("shareToInstagram"),
+          title: tCommon('appName'),
+          text: t('shareToInstagram'),
         })
       } else {
         const url = URL.createObjectURL(file)
-        const a = document.createElement("a")
+        const a = document.createElement('a')
         a.href = url
-        a.download = "goongoom-share.png"
+        a.download = 'goongoom-share.png'
         a.click()
         URL.revokeObjectURL(url)
       }
@@ -124,13 +116,12 @@ export function ShareInstagramButton({
 
       await shareOrDownload(file)
     } catch (error) {
-      const isUserCancelled =
-        error instanceof Error && error.name === "AbortError"
+      const isUserCancelled = error instanceof Error && error.name === 'AbortError'
       if (!isUserCancelled && fileRef.current) {
         const url = URL.createObjectURL(fileRef.current)
-        const a = document.createElement("a")
+        const a = document.createElement('a')
         a.href = url
-        a.download = "goongoom-share.png"
+        a.download = 'goongoom-share.png'
         a.click()
         URL.revokeObjectURL(url)
       }
@@ -140,20 +131,14 @@ export function ShareInstagramButton({
     }
   }
 
-  if (mode === "button") {
+  if (mode === 'button') {
     return (
-      <Button
-        className={className}
-        disabled={isLoading}
-        onClick={handleShare}
-        size="lg"
-        variant="default"
-      >
+      <Button className={className} disabled={isLoading} onClick={handleShare} size="lg" variant="default">
         <HugeiconsIcon
-          className={`mr-2 size-5 ${isLoading ? "animate-spin" : ""}`}
+          className={`mr-2 size-5 ${isLoading ? 'animate-spin' : ''}`}
           icon={isLoading ? Loading03Icon : InstagramIcon}
         />
-        {isLoading ? t("instagramImageShareLoading") : t("instagramImageShare")}
+        {isLoading ? t('instagramImageShareLoading') : t('instagramImageShare')}
       </Button>
     )
   }
@@ -161,19 +146,14 @@ export function ShareInstagramButton({
   return (
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerTrigger asChild>
-        <Button
-          aria-label={t("more")}
-          onClick={(e) => e.stopPropagation()}
-          size="icon-xs"
-          variant="ghost"
-        >
+        <Button aria-label={t('more')} onClick={(e) => e.stopPropagation()} size="icon-xs" variant="ghost">
           <HugeiconsIcon className="size-4" icon={MoreVerticalIcon} />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="pb-safe">
         <DrawerHeader>
-          <DrawerTitle>{t("title")}</DrawerTitle>
-          <DrawerDescription>{t("instagramDescription")}</DrawerDescription>
+          <DrawerTitle>{t('title')}</DrawerTitle>
+          <DrawerDescription>{t('instagramDescription')}</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-2 px-4 pb-4">
           <Button
@@ -185,15 +165,8 @@ export function ShareInstagramButton({
             }}
             size="lg"
           >
-            {isLoading && (
-              <HugeiconsIcon
-                className="mr-2 size-5 animate-spin"
-                icon={Loading03Icon}
-              />
-            )}
-            {isLoading
-              ? t("instagramImageShareLoading")
-              : t("instagramImageShare")}
+            {isLoading && <HugeiconsIcon className="mr-2 size-5 animate-spin" icon={Loading03Icon} />}
+            {isLoading ? t('instagramImageShareLoading') : t('instagramImageShare')}
           </Button>
         </div>
       </DrawerContent>

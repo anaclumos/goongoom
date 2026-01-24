@@ -1,10 +1,10 @@
-import { formatDistanceToNow } from "date-fns"
-import { enUS, ko } from "date-fns/locale"
-import { Ultralink } from "@/components/navigation/ultralink"
-import { ClampedAnswer } from "@/components/questions/clamped-answer"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
-import { getSignatureColor } from "@/lib/colors/signature-colors"
+import { formatDistanceToNow } from 'date-fns'
+import { enUS, ko } from 'date-fns/locale'
+import { Ultralink } from '@/components/navigation/ultralink'
+import { ClampedAnswer } from '@/components/questions/clamped-answer'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Card, CardContent } from '@/components/ui/card'
+import { getSignatureColor } from '@/lib/colors/signature-colors'
 
 const localeMap = { ko, en: enUS } as const
 
@@ -61,59 +61,41 @@ export function AnsweredQuestionCard({
   labels,
   signatureColor,
 }: AnsweredQuestionCardProps) {
-  const anonymityLabel = isAnonymous
-    ? labels.anonymous
-    : senderName || labels.identified
-  const fallbackInitial = displayName[0] || "?"
-  const questionerAvatarUrl = getQuestionerAvatarUrl(
-    isAnonymous,
-    anonymousAvatarSeed,
-    questionId,
-    senderAvatarUrl
-  )
-  const questionerFallback = isAnonymous ? "?" : senderName?.[0] || "?"
-  const imagesToPrefetch = [questionerAvatarUrl, avatarUrl].filter(
-    (url): url is string => Boolean(url)
-  )
+  const anonymityLabel = isAnonymous ? labels.anonymous : senderName || labels.identified
+  const fallbackInitial = displayName[0] || '?'
+  const questionerAvatarUrl = getQuestionerAvatarUrl(isAnonymous, anonymousAvatarSeed, questionId, senderAvatarUrl)
+  const questionerFallback = isAnonymous ? '?' : senderName?.[0] || '?'
+  const imagesToPrefetch = [questionerAvatarUrl, avatarUrl].filter((url): url is string => Boolean(url))
 
   const colors = signatureColor ? getSignatureColor(signatureColor) : null
   const answerCardStyle = colors
     ? ({
-        "--answer-color-light": colors.light.primary,
-        "--answer-color-dark": colors.dark.primary,
+        '--answer-color-light': colors.light.primary,
+        '--answer-color-dark': colors.dark.primary,
       } as React.CSSProperties)
     : undefined
 
   return (
-    <Ultralink
-      className="block"
-      href={`/${username}/q/${questionId}`}
-      prefetchImages={imagesToPrefetch}
-    >
+    <Ultralink className="block" href={`/${username}/q/${questionId}`} prefetchImages={imagesToPrefetch}>
       <Card className="group relative transition-colors hover:bg-muted/50">
         <CardContent className="flex flex-col gap-4">
           <div className="flex w-full items-start gap-3">
             <Avatar className="size-10 flex-shrink-0">
               {questionerAvatarUrl && (
-                <AvatarImage
-                  alt={isAnonymous ? "Anonymous" : senderName || "User"}
-                  src={questionerAvatarUrl}
-                />
+                <AvatarImage alt={isAnonymous ? 'Anonymous' : senderName || 'User'} src={questionerAvatarUrl} />
               )}
               <AvatarFallback>{questionerFallback}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <Card className="max-w-prose bg-muted/40 px-4 py-3">
-                <p className="text-foreground leading-relaxed">
-                  {questionContent}
-                </p>
+                <p className="text-foreground leading-relaxed">{questionContent}</p>
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
-                {anonymityLabel} ·{" "}
+                {anonymityLabel} ·{' '}
                 {formatDistanceToNow(questionCreatedAt, {
                   addSuffix: true,
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
-                })}{" "}
+                })}{' '}
                 {labels.question}
               </p>
             </div>
@@ -123,19 +105,19 @@ export function AnsweredQuestionCard({
               <Card
                 className={
                   signatureColor
-                    ? "max-w-prose border-none bg-[var(--answer-color-light)] px-4 py-3 text-white dark:bg-[var(--answer-color-dark)]"
-                    : "max-w-prose border-none bg-gradient-to-br from-emerald to-emerald px-4 py-3 text-white"
+                    ? 'max-w-prose border-none bg-[var(--answer-color-light)] px-4 py-3 text-white dark:bg-[var(--answer-color-dark)]'
+                    : 'max-w-prose border-none bg-gradient-to-br from-emerald to-emerald px-4 py-3 text-white'
                 }
                 style={answerCardStyle}
               >
                 <ClampedAnswer content={answerContent} />
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
-                {displayName} ·{" "}
+                {displayName} ·{' '}
                 {formatDistanceToNow(answerCreatedAt, {
                   addSuffix: true,
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
-                })}{" "}
+                })}{' '}
                 {labels.answer}
               </p>
             </div>

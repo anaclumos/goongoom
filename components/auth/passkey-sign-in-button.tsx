@@ -1,13 +1,7 @@
-"use client"
+'use client'
 
-import { useClerk, useSignIn } from "@clerk/nextjs"
-import {
-  cloneElement,
-  isValidElement,
-  useCallback,
-  useState,
-  type ReactElement,
-} from "react"
+import { useClerk, useSignIn } from '@clerk/nextjs'
+import { cloneElement, isValidElement, useCallback, useState, type ReactElement } from 'react'
 
 interface PasskeySignInButtonProps {
   children: ReactElement<{ onClick?: () => void }>
@@ -27,10 +21,10 @@ export function PasskeySignInButton({ children }: PasskeySignInButtonProps) {
 
     try {
       const result = await signIn.authenticateWithPasskey({
-        flow: "discoverable",
+        flow: 'discoverable',
       })
 
-      if (result.status === "complete") {
+      if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
         return
       }

@@ -1,18 +1,15 @@
-"use client"
+'use client'
 
-import { useUser } from "@clerk/nextjs"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect } from "react"
-import { AUTH_REQUIRED_ROUTES } from "./navigation-routes"
+import { useUser } from '@clerk/nextjs'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { AUTH_REQUIRED_ROUTES } from './navigation-routes'
 
 interface UsePrefetchRoutesOptions {
   enabled?: boolean
 }
 
-export function usePrefetchRoutes(
-  routes: readonly string[],
-  options: UsePrefetchRoutesOptions = {}
-) {
+export function usePrefetchRoutes(routes: readonly string[], options: UsePrefetchRoutesOptions = {}) {
   const { enabled = true } = options
   const router = useRouter()
   const pathname = usePathname()
@@ -52,14 +49,14 @@ export function usePrefetchRoutes(
     }
 
     if (
-      typeof navigator !== "undefined" &&
-      "connection" in navigator &&
+      typeof navigator !== 'undefined' &&
+      'connection' in navigator &&
       (navigator.connection as { saveData?: boolean })?.saveData
     ) {
       return
     }
 
-    if ("requestIdleCallback" in window) {
+    if ('requestIdleCallback' in window) {
       const id = requestIdleCallback(prefetchRoutes, { timeout: 2000 })
       return () => cancelIdleCallback(id)
     }

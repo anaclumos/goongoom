@@ -1,31 +1,20 @@
-"use client"
+'use client'
 
-import { CheckmarkCircle02Icon, Link01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { useTranslations } from "next-intl"
-import { useCallback, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { CheckmarkCircle02Icon, Link01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useTranslations } from 'next-intl'
+import { useCallback, useState } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface CopyLinkButtonProps {
   url: string
   fullWidth?: boolean
   className?: string
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link"
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
 }
 
-export function CopyLinkButton({
-  url,
-  fullWidth = false,
-  className,
-  variant = "ghost",
-}: CopyLinkButtonProps) {
-  const t = useTranslations("share")
+export function CopyLinkButton({ url, fullWidth = false, className, variant = 'ghost' }: CopyLinkButtonProps) {
+  const t = useTranslations('share')
   const [copied, setCopied] = useState(false)
 
   const handleCopy = useCallback(
@@ -38,13 +27,13 @@ export function CopyLinkButton({
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
       } catch {
-        const textArea = document.createElement("textarea")
+        const textArea = document.createElement('textarea')
         textArea.value = `${window.location.origin}${url}`
-        textArea.style.position = "fixed"
-        textArea.style.left = "-9999px"
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-9999px'
         document.body.appendChild(textArea)
         textArea.select()
-        document.execCommand("copy")
+        document.execCommand('copy')
         document.body.removeChild(textArea)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
@@ -55,17 +44,17 @@ export function CopyLinkButton({
 
   return (
     <Button
-      aria-label={copied ? t("linkCopied") : t("copyLink")}
+      aria-label={copied ? t('linkCopied') : t('copyLink')}
       className={className}
       onClick={handleCopy}
-      size={fullWidth ? "lg" : "icon-xs"}
+      size={fullWidth ? 'lg' : 'icon-xs'}
       variant={variant}
     >
       <HugeiconsIcon
-        className={fullWidth ? "mr-2 size-5" : "size-4"}
+        className={fullWidth ? 'mr-2 size-5' : 'size-4'}
         icon={copied ? CheckmarkCircle02Icon : Link01Icon}
       />
-      {fullWidth && (copied ? t("linkCopied") : t("copyLink"))}
+      {fullWidth && (copied ? t('linkCopied') : t('copyLink'))}
     </Button>
   )
 }

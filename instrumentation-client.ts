@@ -2,14 +2,10 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import {
-  captureRouterTransitionStart,
-  init,
-  replayIntegration,
-} from "@sentry/nextjs"
+import { captureRouterTransitionStart, init, replayIntegration } from '@sentry/nextjs'
 
 init({
-  dsn: "https://578acded260ea0d72c85b27e9506eee1@o4510759849099265.ingest.us.sentry.io/4510759850475520",
+  dsn: 'https://578acded260ea0d72c85b27e9506eee1@o4510759849099265.ingest.us.sentry.io/4510759850475520',
 
   integrations: [
     replayIntegration({

@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useRouter } from "next/navigation"
-import { useEffect, useRef } from "react"
-import { imageCache, markRouteSeen } from "./prefetch-cache"
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
+import { imageCache, markRouteSeen } from './prefetch-cache'
 
 interface UseUltralinkOptions {
   href: string
@@ -11,17 +11,12 @@ interface UseUltralinkOptions {
   debounceMs?: number
 }
 
-export function useUltralink({
-  href,
-  prefetch = true,
-  prefetchImages = [],
-  debounceMs = 300,
-}: UseUltralinkOptions) {
+export function useUltralink({ href, prefetch = true, prefetchImages = [], debounceMs = 300 }: UseUltralinkOptions) {
   const ref = useRef<HTMLAnchorElement>(null)
   const router = useRouter()
 
   useEffect(() => {
-    if (!prefetch || typeof href !== "string") {
+    if (!prefetch || typeof href !== 'string') {
       return
     }
 
@@ -49,7 +44,7 @@ export function useUltralink({
           timeoutId = null
         }
       },
-      { rootMargin: "100px" }
+      { rootMargin: '100px' }
     )
 
     observer.observe(element)

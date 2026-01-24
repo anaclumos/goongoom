@@ -1,11 +1,11 @@
-import { fetchMutation, fetchQuery } from "convex/nextjs"
-import { unstable_cache } from "next/cache"
-import { api } from "@/convex/_generated/api"
-import type { QuestionId, SocialLinks } from "@/convex/types"
-import { CACHE_TAGS } from "@/lib/cache/tags"
-import type { QuestionSecurityLevel } from "@/lib/question-security"
+import { fetchMutation, fetchQuery } from 'convex/nextjs'
+import { unstable_cache } from 'next/cache'
+import { api } from '@/convex/_generated/api'
+import type { QuestionId, SocialLinks } from '@/convex/types'
+import { CACHE_TAGS } from '@/lib/cache/tags'
+import type { QuestionSecurityLevel } from '@/lib/question-security'
 
-export type { SocialLinks } from "@/convex/types"
+export type { SocialLinks } from '@/convex/types'
 
 export async function getOrCreateUser(clerkId: string) {
   return await fetchMutation(api.users.getOrCreate, { clerkId })
@@ -47,10 +47,7 @@ export async function createQuestion(data: {
   return result ? [result] : []
 }
 
-export async function createAnswer(data: {
-  questionId: QuestionId
-  content: string
-}) {
+export async function createAnswer(data: { questionId: QuestionId; content: string }) {
   const result = await fetchMutation(api.answers.create, {
     questionId: data.questionId,
     content: data.content,
@@ -82,21 +79,14 @@ export async function getUnansweredQuestions(clerkId: string) {
   })
 }
 
-export function getRecentAnswersLimitPerUser(
-  totalLimit = 30,
-  perUserLimit = 2
-) {
+export function getRecentAnswersLimitPerUser(totalLimit = 30, perUserLimit = 2) {
   return unstable_cache(
     () =>
       fetchQuery(api.answers.getRecentLimitPerUser, {
         totalLimit,
         perUserLimit,
       }),
-    [
-      CACHE_TAGS.recentAnswers,
-      `total:${totalLimit}`,
-      `perUser:${perUserLimit}`,
-    ],
+    [CACHE_TAGS.recentAnswers, `total:${totalLimit}`, `perUser:${perUserLimit}`],
     {
       revalidate: 30,
       tags: [CACHE_TAGS.answers, CACHE_TAGS.recentAnswers],
@@ -104,20 +94,14 @@ export function getRecentAnswersLimitPerUser(
   )()
 }
 
-export async function getQuestionByIdAndRecipient(
-  questionId: QuestionId,
-  recipientClerkId: string
-) {
+export async function getQuestionByIdAndRecipient(questionId: QuestionId, recipientClerkId: string) {
   return await fetchQuery(api.questions.getByIdAndRecipient, {
     id: questionId,
     recipientClerkId,
   })
 }
 
-export async function getAnsweredQuestionNumber(
-  questionId: QuestionId,
-  recipientClerkId: string
-): Promise<number> {
+export async function getAnsweredQuestionNumber(questionId: QuestionId, recipientClerkId: string): Promise<number> {
   return await fetchQuery(api.questions.getAnsweredNumber, {
     questionId,
     recipientClerkId,
@@ -134,12 +118,8 @@ export async function getFriendsAnswers(clerkId: string, limit = 20) {
 }
 
 export function getAnswerCount() {
-  return unstable_cache(
-    () => fetchQuery(api.answers.count, {}),
-    [CACHE_TAGS.answerCount],
-    {
-      revalidate: 300,
-      tags: [CACHE_TAGS.answers, CACHE_TAGS.answerCount],
-    }
-  )()
+  return unstable_cache(() => fetchQuery(api.answers.count, {}), [CACHE_TAGS.answerCount], {
+    revalidate: 300,
+    tags: [CACHE_TAGS.answers, CACHE_TAGS.answerCount],
+  })()
 }

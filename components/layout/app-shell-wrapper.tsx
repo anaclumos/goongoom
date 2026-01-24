@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server"
-import { AppShell } from "@/components/layout/app-shell"
-import { getClerkUsersByIds } from "@/lib/clerk"
-import { getUnansweredQuestions } from "@/lib/db/queries"
+import { auth } from '@clerk/nextjs/server'
+import { AppShell } from '@/components/layout/app-shell'
+import { getClerkUsersByIds } from '@/lib/clerk'
+import { getUnansweredQuestions } from '@/lib/db/queries'
 
 interface AppShellWrapperProps {
   children: React.ReactNode
@@ -21,9 +21,7 @@ export async function AppShellWrapper({ children }: AppShellWrapperProps) {
 
   if (clerkId) {
     const questions = (await getUnansweredQuestions(clerkId)) ?? []
-    const recentFive = questions
-      .filter((q): q is NonNullable<typeof q> => q !== null)
-      .slice(0, 5)
+    const recentFive = questions.filter((q): q is NonNullable<typeof q> => q !== null).slice(0, 5)
 
     const senderIds = Array.from(
       new Set(
@@ -33,14 +31,10 @@ export async function AppShellWrapper({ children }: AppShellWrapperProps) {
       )
     )
 
-    const senderMap =
-      senderIds.length > 0 ? await getClerkUsersByIds(senderIds) : new Map()
+    const senderMap = senderIds.length > 0 ? await getClerkUsersByIds(senderIds) : new Map()
 
     recentQuestions = recentFive.map((q) => {
-      const sender =
-        !q.isAnonymous && q.senderClerkId
-          ? senderMap.get(q.senderClerkId)
-          : null
+      const sender = !q.isAnonymous && q.senderClerkId ? senderMap.get(q.senderClerkId) : null
 
       return {
         id: q._id,

@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import NextLink from "next/link"
-import { useRouter } from "next/navigation"
-import type { ComponentProps, MouseEvent } from "react"
-import { imageCache, prefetchImage } from "./prefetch-cache"
-import { useUltralink } from "./use-ultralink"
+import NextLink from 'next/link'
+import { useRouter } from 'next/navigation'
+import type { ComponentProps, MouseEvent } from 'react'
+import { imageCache, prefetchImage } from './prefetch-cache'
+import { useUltralink } from './use-ultralink'
 
 type NextLinkProps = ComponentProps<typeof NextLink>
 
@@ -60,10 +60,8 @@ export function Ultralink({
     onMouseDown?.(e)
   }
 
-  const handleNavigate = (
-    e: Parameters<NonNullable<NextLinkProps["onNavigate"]>>[0]
-  ) => {
-    document.documentElement.dataset.navDirection = "forward"
+  const handleNavigate = (e: Parameters<NonNullable<NextLinkProps['onNavigate']>>[0]) => {
+    document.documentElement.dataset.navDirection = 'forward'
     onNavigate?.(e)
   }
 

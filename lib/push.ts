@@ -1,5 +1,5 @@
-import webpush from "web-push"
-import { env } from "@/env"
+import webpush from 'web-push'
+import { env } from '@/env'
 
 const vapidPublicKey = env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 const vapidPrivateKey = env.VAPID_PRIVATE_KEY
@@ -22,10 +22,7 @@ export interface PushSubscriptionData {
   auth: string
 }
 
-export async function sendPushNotification(
-  subscription: PushSubscriptionData,
-  payload: PushPayload
-): Promise<boolean> {
+export async function sendPushNotification(subscription: PushSubscriptionData, payload: PushPayload): Promise<boolean> {
   if (!(vapidPublicKey && vapidPrivateKey)) {
     return false
   }
@@ -47,15 +44,10 @@ export async function sendPushNotification(
   }
 }
 
-export async function sendPushToMany(
-  subscriptions: PushSubscriptionData[],
-  payload: PushPayload
-): Promise<void> {
+export async function sendPushToMany(subscriptions: PushSubscriptionData[], payload: PushPayload): Promise<void> {
   if (!(vapidPublicKey && vapidPrivateKey)) {
     return
   }
 
-  await Promise.allSettled(
-    subscriptions.map((sub) => sendPushNotification(sub, payload))
-  )
+  await Promise.allSettled(subscriptions.map((sub) => sendPushNotification(sub, payload)))
 }

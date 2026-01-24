@@ -1,43 +1,31 @@
-"use client"
+'use client'
 
-import { useUser } from "@clerk/nextjs"
-import {
-  Cancel01Icon,
-  MoreHorizontalIcon,
-  Share08Icon,
-  SmartPhone01Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { useTranslations } from "next-intl"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer"
-import { cn } from "@/lib/utils"
+import { useUser } from '@clerk/nextjs'
+import { Cancel01Icon, MoreHorizontalIcon, Share08Icon, SmartPhone01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { cn } from '@/lib/utils'
 
-const STORAGE_KEY = "goongoom:a2hs-nudge-dismissed"
+const STORAGE_KEY = 'goongoom:a2hs-nudge-dismissed'
 const MOBILE_DEVICE_REGEX = /iphone|ipad|ipod|android/
 const IOS_DEVICE_REGEX = /iphone|ipad|ipod/
 
 function isStandalone(): boolean {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return false
   }
 
   return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    (window.navigator as Navigator & { standalone?: boolean }).standalone ===
-      true
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as Navigator & { standalone?: boolean }).standalone === true
   )
 }
 
 function isMobileDevice(): boolean {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return false
   }
 
@@ -46,7 +34,7 @@ function isMobileDevice(): boolean {
 }
 
 function isIOSDevice(): boolean {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return false
   }
 
@@ -55,10 +43,10 @@ function isIOSDevice(): boolean {
 }
 
 export function AddToHomeScreenNudge() {
-  const t = useTranslations("a2hs")
+  const t = useTranslations('a2hs')
   const { user, isLoaded } = useUser()
   const [open, setOpen] = useState(false)
-  const isIOS = typeof window !== "undefined" && isIOSDevice()
+  const isIOS = typeof window !== 'undefined' && isIOSDevice()
 
   useEffect(() => {
     if (!(isLoaded && user)) {
@@ -76,7 +64,7 @@ export function AddToHomeScreenNudge() {
   }, [isLoaded, user])
 
   const handleDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, "true")
+    localStorage.setItem(STORAGE_KEY, 'true')
     setOpen(false)
   }
 
@@ -88,15 +76,15 @@ export function AddToHomeScreenNudge() {
     <Drawer onOpenChange={(val) => !val && handleDismiss()} open={open}>
       <DrawerContent
         className={cn(
-          "overflow-hidden border-emerald/20 bg-emerald text-emerald-foreground",
-          "w-full max-w-md gap-0 p-0"
+          'overflow-hidden border-emerald/20 bg-emerald text-emerald-foreground',
+          'w-full max-w-md gap-0 p-0'
         )}
       >
         <div className="pointer-events-none absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 rounded-full bg-emerald-foreground/10 p-20 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 rounded-full bg-emerald/30 p-16 blur-2xl" />
 
         <button
-          aria-label={t("dismiss")}
+          aria-label={t('dismiss')}
           className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-emerald-foreground/10 text-emerald-foreground transition-colors hover:bg-emerald-foreground/20 focus-visible:ring-2 focus-visible:ring-emerald-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           onClick={handleDismiss}
           type="button"
@@ -112,18 +100,14 @@ export function AddToHomeScreenNudge() {
           </div>
 
           <DrawerHeader className="mb-6 items-center p-0">
-            <DrawerTitle className="mb-2 font-bold text-2xl text-emerald-foreground">
-              {t("title")}
-            </DrawerTitle>
+            <DrawerTitle className="mb-2 font-bold text-2xl text-emerald-foreground">{t('title')}</DrawerTitle>
             <DrawerDescription className="max-w-xs whitespace-pre-line text-base text-emerald-foreground/90">
-              {t("description")}
+              {t('description')}
             </DrawerDescription>
           </DrawerHeader>
 
           <div className="mb-8 w-full rounded-xl bg-emerald-foreground/10 p-4 backdrop-blur-sm">
-            <p className="mb-3 font-medium text-emerald-foreground/90 text-sm">
-              {t("howTo")}
-            </p>
+            <p className="mb-3 font-medium text-emerald-foreground/90 text-sm">{t('howTo')}</p>
             <div className="flex flex-col gap-2 text-left text-emerald-foreground/80 text-sm">
               {isIOS ? (
                 <>
@@ -132,18 +116,15 @@ export function AddToHomeScreenNudge() {
                       1
                     </span>
                     <span className="flex items-center gap-1">
-                      {t("iosStep1")}
-                      <HugeiconsIcon
-                        className="inline size-4"
-                        icon={Share08Icon}
-                      />
+                      {t('iosStep1')}
+                      <HugeiconsIcon className="inline size-4" icon={Share08Icon} />
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-foreground/20 font-medium text-emerald-foreground text-xs">
                       2
                     </span>
-                    <span>{t("iosStep2")}</span>
+                    <span>{t('iosStep2')}</span>
                   </div>
                 </>
               ) : (
@@ -153,18 +134,15 @@ export function AddToHomeScreenNudge() {
                       1
                     </span>
                     <span className="flex items-center gap-1">
-                      {t("androidStep1")}
-                      <HugeiconsIcon
-                        className="inline size-4"
-                        icon={MoreHorizontalIcon}
-                      />
+                      {t('androidStep1')}
+                      <HugeiconsIcon className="inline size-4" icon={MoreHorizontalIcon} />
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-foreground/20 font-medium text-emerald-foreground text-xs">
                       2
                     </span>
-                    <span>{t("androidStep2")}</span>
+                    <span>{t('androidStep2')}</span>
                   </div>
                 </>
               )}
@@ -178,7 +156,7 @@ export function AddToHomeScreenNudge() {
               size="lg"
               variant="ghost"
             >
-              {t("dismiss")}
+              {t('dismiss')}
             </Button>
           </div>
         </div>

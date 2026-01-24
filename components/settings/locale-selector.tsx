@@ -1,19 +1,17 @@
-"use client"
+'use client'
 
-import { useLocale, useTranslations } from "next-intl"
-import { useState, useTransition } from "react"
-import { type Locale, localeNames, locales } from "@/i18n/config"
-import { setUserLocale } from "@/lib/actions/locale"
-import { Label } from "../ui/label"
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
+import { useLocale, useTranslations } from 'next-intl'
+import { useState, useTransition } from 'react'
+import { type Locale, localeNames, locales } from '@/i18n/config'
+import { setUserLocale } from '@/lib/actions/locale'
+import { Label } from '../ui/label'
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 
 export function LocaleSelector() {
-  const t = useTranslations("settings")
+  const t = useTranslations('settings')
   const currentLocale = useLocale()
   const [isPending, startTransition] = useTransition()
-  const [selectedLocale, setSelectedLocale] = useState<Locale>(
-    currentLocale as Locale
-  )
+  const [selectedLocale, setSelectedLocale] = useState<Locale>(currentLocale as Locale)
 
   function handleLocaleChange(value: string) {
     const locale = value as Locale
@@ -26,12 +24,8 @@ export function LocaleSelector() {
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <h3 className="font-semibold text-foreground">
-          {t("languageSettings")}
-        </h3>
-        <p className="text-muted-foreground text-sm">
-          {t("languageSettingsDescription")}
-        </p>
+        <h3 className="font-semibold text-foreground">{t('languageSettings')}</h3>
+        <p className="text-muted-foreground text-sm">{t('languageSettingsDescription')}</p>
       </div>
 
       <RadioGroup

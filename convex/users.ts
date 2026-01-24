@@ -1,5 +1,5 @@
-import { v } from "convex/values"
-import { internalMutation, mutation, query } from "./_generated/server"
+import { v } from 'convex/values'
+import { internalMutation, mutation, query } from './_generated/server'
 
 // NOTE: Convex doesn't provide a native count() operation, so this implementation
 // fetches all user documents to count them. This is the recommended Convex pattern
@@ -9,7 +9,7 @@ import { internalMutation, mutation, query } from "./_generated/server"
 export const count = query({
   args: {},
   handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect()
+    const users = await ctx.db.query('users').collect()
     return users.length
   },
 })
@@ -18,8 +18,8 @@ export const getByClerkId = query({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
   },
 })
@@ -28,17 +28,17 @@ export const getOrCreate = mutation({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     const existing = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
 
     if (existing) {
       return existing
     }
 
-    const id = await ctx.db.insert("users", {
+    const id = await ctx.db.insert('users', {
       clerkId: args.clerkId,
-      questionSecurityLevel: "anyone",
+      questionSecurityLevel: 'anyone',
       updatedAt: Date.now(),
     })
 
@@ -55,11 +55,11 @@ export const updateProfile = mutation({
         v.array(
           v.object({
             platform: v.union(
-              v.literal("instagram"),
-              v.literal("twitter"),
-              v.literal("youtube"),
-              v.literal("github"),
-              v.literal("naverBlog")
+              v.literal('instagram'),
+              v.literal('twitter'),
+              v.literal('youtube'),
+              v.literal('github'),
+              v.literal('naverBlog')
             ),
             content: v.union(
               v.string(),
@@ -68,7 +68,7 @@ export const updateProfile = mutation({
                 label: v.string(),
               })
             ),
-            labelType: v.union(v.literal("handle"), v.literal("custom")),
+            labelType: v.union(v.literal('handle'), v.literal('custom')),
           })
         ),
         v.null()
@@ -79,20 +79,20 @@ export const updateProfile = mutation({
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
 
     if (!user) {
-      throw new Error("User not found")
+      throw new Error('User not found')
     }
 
     const updateData: {
       bio?: string
       socialLinks?: {
-        platform: "instagram" | "twitter" | "youtube" | "github" | "naverBlog"
+        platform: 'instagram' | 'twitter' | 'youtube' | 'github' | 'naverBlog'
         content: string | { handle: string; label: string }
-        labelType: "handle" | "custom"
+        labelType: 'handle' | 'custom'
       }[]
 
       questionSecurityLevel?: string
@@ -124,8 +124,8 @@ export const deleteByClerkId = mutation({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
 
     if (user) {
@@ -141,14 +141,14 @@ export const updateLocale = mutation({
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
 
     if (!user) {
-      return await ctx.db.insert("users", {
+      return await ctx.db.insert('users', {
         clerkId: args.clerkId,
-        questionSecurityLevel: "anyone",
+        questionSecurityLevel: 'anyone',
         locale: args.locale,
         updatedAt: Date.now(),
       })
@@ -166,17 +166,17 @@ export const createFromWebhook = internalMutation({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     const existing = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
 
     if (existing) {
       return existing._id
     }
 
-    return await ctx.db.insert("users", {
+    return await ctx.db.insert('users', {
       clerkId: args.clerkId,
-      questionSecurityLevel: "anyone",
+      questionSecurityLevel: 'anyone',
       updatedAt: Date.now(),
     })
   },
@@ -186,8 +186,8 @@ export const deleteFromWebhook = internalMutation({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', args.clerkId))
       .first()
 
     if (user) {
@@ -202,7 +202,7 @@ export const deleteFromWebhook = internalMutation({
 export const migrateSocialLinks = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect()
+    const users = await ctx.db.query('users').collect()
     let migratedCount = 0
 
     for (const user of users) {
@@ -214,20 +214,14 @@ export const migrateSocialLinks = internalMutation({
       }
 
       // Convert old object format to new array format
-      if (typeof socialLinks === "object") {
+      if (typeof socialLinks === 'object') {
         const oldFormat = socialLinks as Record<string, string>
-        const platforms = [
-          "instagram",
-          "twitter",
-          "youtube",
-          "github",
-          "naverBlog",
-        ] as const
+        const platforms = ['instagram', 'twitter', 'youtube', 'github', 'naverBlog'] as const
 
         const newFormat: {
           platform: (typeof platforms)[number]
           content: string
-          labelType: "handle"
+          labelType: 'handle'
         }[] = []
 
         for (const platform of platforms) {
@@ -235,7 +229,7 @@ export const migrateSocialLinks = internalMutation({
             newFormat.push({
               platform,
               content: oldFormat[platform],
-              labelType: "handle",
+              labelType: 'handle',
             })
           }
         }

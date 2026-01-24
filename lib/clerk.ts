@@ -1,8 +1,8 @@
-import type { User } from "@clerk/nextjs/server"
-import { clerkClient } from "@clerk/nextjs/server"
-import { unstable_cache } from "next/cache"
-import { cache } from "react"
-import { CACHE_TAGS } from "./cache/tags"
+import type { User } from '@clerk/nextjs/server'
+import { clerkClient } from '@clerk/nextjs/server'
+import { unstable_cache } from 'next/cache'
+import { cache } from 'react'
+import { CACHE_TAGS } from './cache/tags'
 
 export interface ClerkUserInfo {
   clerkId: string
@@ -12,9 +12,7 @@ export interface ClerkUserInfo {
   email: string | null
 }
 
-async function fetchClerkUserByUsername(
-  username: string
-): Promise<ClerkUserInfo | null> {
+async function fetchClerkUserByUsername(username: string): Promise<ClerkUserInfo | null> {
   try {
     const client = await clerkClient()
     const { data: users } = await client.users.getUserList({
@@ -29,41 +27,33 @@ async function fetchClerkUserByUsername(
 
     return clerkUserToInfo(user)
   } catch (error) {
-    console.error("Error fetching Clerk user by username:", error)
+    console.error('Error fetching Clerk user by username:', error)
     return null
   }
 }
 
 export const getClerkUserByUsername = cache(fetchClerkUserByUsername)
 
-async function fetchClerkUserById(
-  clerkId: string
-): Promise<ClerkUserInfo | null> {
+async function fetchClerkUserById(clerkId: string): Promise<ClerkUserInfo | null> {
   try {
     const client = await clerkClient()
     const user = await client.users.getUser(clerkId)
     return clerkUserToInfo(user)
   } catch (error) {
-    console.error("Error fetching Clerk user by ID:", clerkId, error)
+    console.error('Error fetching Clerk user by ID:', clerkId, error)
     return null
   }
 }
 
 const getCachedClerkUser = (clerkId: string) =>
-  unstable_cache(
-    () => fetchClerkUserById(clerkId),
-    [CACHE_TAGS.clerkUser(clerkId)],
-    {
-      revalidate: 300,
-      tags: [CACHE_TAGS.clerkUsers, CACHE_TAGS.clerkUser(clerkId)],
-    }
-  )()
+  unstable_cache(() => fetchClerkUserById(clerkId), [CACHE_TAGS.clerkUser(clerkId)], {
+    revalidate: 300,
+    tags: [CACHE_TAGS.clerkUsers, CACHE_TAGS.clerkUser(clerkId)],
+  })()
 
 export const getClerkUserById = cache(getCachedClerkUser)
 
-export async function getClerkUsersByIds(
-  clerkIds: string[]
-): Promise<Map<string, ClerkUserInfo>> {
+export async function getClerkUsersByIds(clerkIds: string[]): Promise<Map<string, ClerkUserInfo>> {
   if (clerkIds.length === 0) {
     return new Map()
   }
@@ -81,14 +71,9 @@ export async function getClerkUsersByIds(
     }
     return map
   } catch (batchError) {
-    console.error(
-      "Batch fetch failed, falling back to individual lookups:",
-      batchError
-    )
+    console.error('Batch fetch failed, falling back to individual lookups:', batchError)
     const map = new Map<string, ClerkUserInfo>()
-    const results = await Promise.all(
-      clerkIds.map((id) => getClerkUserById(id).then((user) => ({ id, user })))
-    )
+    const results = await Promise.all(clerkIds.map((id) => getClerkUserById(id).then((user) => ({ id, user }))))
     for (const { id, user } of results) {
       if (user) {
         map.set(id, user)

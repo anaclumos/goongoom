@@ -1,82 +1,62 @@
-import Link from "next/link";
-import { getLocale, getTranslations } from "next-intl/server";
-import { AnsweredQuestionCard } from "@/components/questions/answered-question-card";
+import Link from 'next/link'
+import { getLocale, getTranslations } from 'next-intl/server'
+import { AnsweredQuestionCard } from '@/components/questions/answered-question-card'
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
-} from "@/components/ui/empty";
-import { getClerkUsersByIds } from "@/lib/clerk";
-import { getAnswerCount, getRecentAnswersLimitPerUser } from "@/lib/db/queries";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
+import { getClerkUsersByIds } from '@/lib/clerk'
+import { getAnswerCount, getRecentAnswersLimitPerUser } from '@/lib/db/queries'
 
 export default async function Home() {
-  const [recentAnswers, answerCount, t, tCommon, tAnswers, locale] =
-    await Promise.all([
-      getRecentAnswersLimitPerUser(30, 2),
-      getAnswerCount(),
-      getTranslations("home"),
-      getTranslations("common"),
-      getTranslations("answers"),
-      getLocale(),
-    ]);
+  const [recentAnswers, answerCount, t, tCommon, tAnswers, locale] = await Promise.all([
+    getRecentAnswersLimitPerUser(30, 2),
+    getAnswerCount(),
+    getTranslations('home'),
+    getTranslations('common'),
+    getTranslations('answers'),
+    getLocale(),
+  ])
 
-  const recipientIds = [
-    ...new Set(recentAnswers.map((qa) => qa.recipientClerkId)),
-  ];
+  const recipientIds = [...new Set(recentAnswers.map((qa) => qa.recipientClerkId))]
   const senderIds = [
     ...new Set(
       recentAnswers
         .filter((qa) => !qa.question.isAnonymous && qa.question.senderClerkId)
         .map((qa) => qa.question.senderClerkId)
-        .filter((id): id is string => Boolean(id)),
+        .filter((id): id is string => Boolean(id))
     ),
-  ];
+  ]
 
-  const [recipientMap, senderMap] = await Promise.all([
-    getClerkUsersByIds(recipientIds),
-    getClerkUsersByIds(senderIds),
-  ]);
+  const [recipientMap, senderMap] = await Promise.all([getClerkUsersByIds(recipientIds), getClerkUsersByIds(senderIds)])
 
   const cardLabels = {
-    anonymous: tCommon("anonymous"),
-    identified: tCommon("identified"),
-    question: t("questionLabel"),
-    answer: tAnswers("answer"),
-  };
+    anonymous: tCommon('anonymous'),
+    identified: tCommon('identified'),
+    question: t('questionLabel'),
+    answer: tAnswers('answer'),
+  }
 
   const questionsWithInfo = recentAnswers
     .map((qa) => {
-      const recipient = recipientMap.get(qa.recipientClerkId);
+      const recipient = recipientMap.get(qa.recipientClerkId)
       if (!recipient?.username) {
-        return null;
+        return null
       }
 
       const sender =
-        !qa.question.isAnonymous && qa.question.senderClerkId
-          ? senderMap.get(qa.question.senderClerkId)
-          : null;
+        !qa.question.isAnonymous && qa.question.senderClerkId ? senderMap.get(qa.question.senderClerkId) : null
 
       return {
         ...qa,
         recipientUsername: recipient.username,
-        recipientDisplayName:
-          recipient.displayName || recipient.username || "User",
+        recipientDisplayName: recipient.displayName || recipient.username || 'User',
         recipientAvatarUrl: recipient.avatarUrl,
         recipientSignatureColor: qa.recipientSignatureColor,
         senderName: sender?.displayName || sender?.username || null,
         senderAvatarUrl: sender?.avatarUrl || null,
-      };
+      }
     })
-    .filter((qa) => qa !== null);
+    .filter((qa) => qa !== null)
 
   return (
     <div className="flex min-h-screen flex-col bg-background selection:bg-primary/10">
@@ -88,7 +68,7 @@ export default async function Home() {
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              {t("feedTitle")}
+              {t('feedTitle')}
             </h1>
           </div>
 
@@ -96,10 +76,8 @@ export default async function Home() {
             <div className="mx-auto max-w-md rounded-3xl border border-border/50 bg-background/50 p-12 text-center backdrop-blur-sm">
               <Empty>
                 <EmptyHeader>
-                  <EmptyTitle>{t("feedEmptyTitle")}</EmptyTitle>
-                  <EmptyDescription>
-                    {t("feedEmptyDescription")}
-                  </EmptyDescription>
+                  <EmptyTitle>{t('feedEmptyTitle')}</EmptyTitle>
+                  <EmptyDescription>{t('feedEmptyDescription')}</EmptyDescription>
                 </EmptyHeader>
               </Empty>
             </div>
@@ -108,16 +86,13 @@ export default async function Home() {
               <Carousel
                 className="w-full"
                 opts={{
-                  align: "start",
+                  align: 'start',
                   loop: true,
                 }}
               >
                 <CarouselContent className="-ml-4 py-4">
                   {questionsWithInfo.map((qa) => (
-                    <CarouselItem
-                      className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-                      key={qa.question._id}
-                    >
+                    <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4" key={qa.question._id}>
                       <div className="h-full transform rounded-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
                         <AnsweredQuestionCard
                           anonymousAvatarSeed={qa.question.anonymousAvatarSeed}
@@ -149,15 +124,13 @@ export default async function Home() {
           )}
 
           <div className="mt-16 flex flex-col items-center gap-6">
-            <p className="text-center text-lg text-muted-foreground">
-              {t("trustIndicator", { count: answerCount })}
-            </p>
+            <p className="text-center text-lg text-muted-foreground">{t('trustIndicator', { count: answerCount })}</p>
 
             <Link
               className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-full bg-primary px-10 text-lg font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               href="/login"
             >
-              <span className="mr-2">{tCommon("start")}</span>
+              <span className="mr-2">{tCommon('start')}</span>
               <svg
                 className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
                 fill="none"
@@ -165,17 +138,12 @@ export default async function Home() {
                 stroke="currentColor"
                 aria-hidden="true"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
           </div>
         </div>
       </section>
     </div>
-  );
+  )
 }

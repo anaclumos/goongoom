@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useUser } from "@clerk/nextjs"
-import { useEffect, useRef } from "react"
-import { subscribeToPush } from "@/lib/actions/push"
+import { useUser } from '@clerk/nextjs'
+import { useEffect, useRef } from 'react'
+import { subscribeToPush } from '@/lib/actions/push'
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/")
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
   const rawData = window.atob(base64)
   const outputArray = new Uint8Array(rawData.length)
   for (let i = 0; i < rawData.length; ++i) {
@@ -18,35 +18,30 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (!("serviceWorker" in navigator)) {
+  if (!('serviceWorker' in navigator)) {
     return null
   }
   try {
-    return await navigator.serviceWorker.register("/sw.js")
+    return await navigator.serviceWorker.register('/sw.js')
   } catch {
     return null
   }
 }
 
-async function subscribeToPushNotifications(
-  registration: ServiceWorkerRegistration
-): Promise<PushSubscription | null> {
+async function subscribeToPushNotifications(registration: ServiceWorkerRegistration): Promise<PushSubscription | null> {
   if (!VAPID_PUBLIC_KEY) {
     return null
   }
 
   try {
-    const existingSubscription =
-      await registration.pushManager.getSubscription()
+    const existingSubscription = await registration.pushManager.getSubscription()
     if (existingSubscription) {
       return existingSubscription
     }
 
     return await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        VAPID_PUBLIC_KEY
-      ) as BufferSource,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
     })
   } catch {
     return null
@@ -62,18 +57,18 @@ export function PushNotificationProvider() {
       return
     }
 
-    if (!("Notification" in window && "PushManager" in window)) {
+    if (!('Notification' in window && 'PushManager' in window)) {
       return
     }
 
-    if (Notification.permission === "denied") {
+    if (Notification.permission === 'denied') {
       return
     }
 
     const setupPush = async () => {
-      if (Notification.permission === "default") {
+      if (Notification.permission === 'default') {
         const permission = await Notification.requestPermission()
-        if (permission !== "granted") {
+        if (permission !== 'granted') {
           return
         }
       }
@@ -94,8 +89,8 @@ export function PushNotificationProvider() {
         await subscribeToPush({
           endpoint: subscriptionJson.endpoint,
           keys: {
-            p256dh: subscriptionJson.keys.p256dh ?? "",
-            auth: subscriptionJson.keys.auth ?? "",
+            p256dh: subscriptionJson.keys.p256dh ?? '',
+            auth: subscriptionJson.keys.auth ?? '',
           },
         })
       }

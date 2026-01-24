@@ -1,27 +1,22 @@
-import type { Doc, Id } from "./_generated/dataModel"
+import type { Doc, Id } from './_generated/dataModel'
 
-export type { Doc, Id } from "./_generated/dataModel"
+export type { Doc, Id } from './_generated/dataModel'
 
-export type User = Doc<"users">
-export type Question = Doc<"questions">
-export type Answer = Doc<"answers">
-export type PushSubscription = Doc<"pushSubscriptions">
-export type Log = Doc<"logs">
+export type User = Doc<'users'>
+export type Question = Doc<'questions'>
+export type Answer = Doc<'answers'>
+export type PushSubscription = Doc<'pushSubscriptions'>
+export type Log = Doc<'logs'>
 
-export type UserId = Id<"users">
-export type QuestionId = Id<"questions">
-export type AnswerId = Id<"answers">
-export type PushSubscriptionId = Id<"pushSubscriptions">
-export type LogId = Id<"logs">
+export type UserId = Id<'users'>
+export type QuestionId = Id<'questions'>
+export type AnswerId = Id<'answers'>
+export type PushSubscriptionId = Id<'pushSubscriptions'>
+export type LogId = Id<'logs'>
 
-export type SocialLinkPlatform =
-  | "instagram"
-  | "twitter"
-  | "youtube"
-  | "github"
-  | "naverBlog"
+export type SocialLinkPlatform = 'instagram' | 'twitter' | 'youtube' | 'github' | 'naverBlog'
 
-export type SocialLinkLabelType = "handle" | "custom"
+export type SocialLinkLabelType = 'handle' | 'custom'
 
 export type SocialLinkContent = string | { handle: string; label: string }
 

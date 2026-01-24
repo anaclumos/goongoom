@@ -1,11 +1,5 @@
-import {
-  BloggerIcon,
-  GithubIcon,
-  InstagramIcon,
-  NewTwitterIcon,
-  YoutubeIcon,
-} from "@hugeicons/core-free-icons"
-import type { SocialLinkEntry, SocialLinks } from "@/lib/types"
+import { BloggerIcon, GithubIcon, InstagramIcon, NewTwitterIcon, YoutubeIcon } from '@hugeicons/core-free-icons'
+import type { SocialLinkEntry, SocialLinks } from '@/lib/types'
 
 export const HTTPS_PROTOCOL_REGEX = /^https?:\/\//i
 export const LEADING_SLASHES_REGEX = /^\/+/
@@ -14,8 +8,8 @@ export const URL_PATTERN_REGEX =
   /:\/\/|\/|instagram\.com|twitter\.com|x\.com|youtube\.com|youtu\.be|github\.com|blog\.naver\.com|naver\.com|www\./i
 export const HTML_TITLE_REGEX = /<title[^>]*>([^<]+)<\/title>/i
 
-const HANDLE_PLATFORMS = new Set(["instagram", "twitter", "youtube"])
-const CUSTOM_LABEL_PLATFORMS = new Set(["github", "naverBlog"])
+const HANDLE_PLATFORMS = new Set(['instagram', 'twitter', 'youtube'])
+const CUSTOM_LABEL_PLATFORMS = new Set(['github', 'naverBlog'])
 
 export function toProfileUrl(value: string | undefined, domain: string) {
   if (!value) {
@@ -29,9 +23,9 @@ export function toProfileUrl(value: string | undefined, domain: string) {
     return trimmed
   }
   if (trimmed.includes(domain)) {
-    return `https://${trimmed.replace(LEADING_SLASHES_REGEX, "")}`
+    return `https://${trimmed.replace(LEADING_SLASHES_REGEX, '')}`
   }
-  const handle = trimmed.split("/")[0]?.replace(HANDLE_PREFIX_REGEX, "")
+  const handle = trimmed.split('/')[0]?.replace(HANDLE_PREFIX_REGEX, '')
   return handle ? `https://${domain}/${handle}` : null
 }
 
@@ -39,17 +33,17 @@ function toYoutubeUrl(value: string | undefined) {
   if (!value) {
     return null
   }
-  const trimmed = value.trim().replace(HANDLE_PREFIX_REGEX, "")
+  const trimmed = value.trim().replace(HANDLE_PREFIX_REGEX, '')
   if (!trimmed) {
     return null
   }
   if (HTTPS_PROTOCOL_REGEX.test(trimmed)) {
     return trimmed
   }
-  if (trimmed.includes("youtube.com") || trimmed.includes("youtu.be")) {
-    return `https://${trimmed.replace(LEADING_SLASHES_REGEX, "")}`
+  if (trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
+    return `https://${trimmed.replace(LEADING_SLASHES_REGEX, '')}`
   }
-  if (trimmed.startsWith("UC") && trimmed.length >= 24) {
+  if (trimmed.startsWith('UC') && trimmed.length >= 24) {
     return `https://www.youtube.com/channel/${trimmed}`
   }
   return `https://www.youtube.com/@${trimmed}`
@@ -58,148 +52,118 @@ function toYoutubeUrl(value: string | undefined) {
 export function normalizeHandle(value: string) {
   const trimmed = value.trim()
   if (!trimmed) {
-    return ""
+    return ''
   }
-  const normalized = trimmed.replace(HANDLE_PREFIX_REGEX, "")
+  const normalized = trimmed.replace(HANDLE_PREFIX_REGEX, '')
   if (!URL_PATTERN_REGEX.test(normalized)) {
     return normalized
   }
   try {
-    const url = new URL(
-      normalized.startsWith("http") ? normalized : `https://${normalized}`
-    )
-    const parts = url.pathname.split("/").filter(Boolean)
-    const firstPart = parts[0] || ""
-    return firstPart.replace(HANDLE_PREFIX_REGEX, "")
+    const url = new URL(normalized.startsWith('http') ? normalized : `https://${normalized}`)
+    const parts = url.pathname.split('/').filter(Boolean)
+    const firstPart = parts[0] || ''
+    return firstPart.replace(HANDLE_PREFIX_REGEX, '')
   } catch {
-    return (
-      normalized
-        .split("/")
-        .filter(Boolean)[0]
-        ?.replace(HANDLE_PREFIX_REGEX, "") || ""
-    )
+    return normalized.split('/').filter(Boolean)[0]?.replace(HANDLE_PREFIX_REGEX, '') || ''
   }
 }
 
 export function normalizeYoutubeHandle(value: string) {
   const trimmed = value.trim()
   if (!trimmed) {
-    return ""
+    return ''
   }
-  const normalized = trimmed.replace(HANDLE_PREFIX_REGEX, "")
+  const normalized = trimmed.replace(HANDLE_PREFIX_REGEX, '')
   if (!URL_PATTERN_REGEX.test(normalized)) {
     return normalized
   }
   try {
-    const url = new URL(
-      normalized.startsWith("http") ? normalized : `https://${normalized}`
-    )
-    const parts = url.pathname.split("/").filter(Boolean)
-    if (parts[0] === "channel" && parts[1]) {
+    const url = new URL(normalized.startsWith('http') ? normalized : `https://${normalized}`)
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts[0] === 'channel' && parts[1]) {
       return parts[1]
     }
-    const firstPart = parts[0] || ""
-    return firstPart.replace(HANDLE_PREFIX_REGEX, "")
+    const firstPart = parts[0] || ''
+    return firstPart.replace(HANDLE_PREFIX_REGEX, '')
   } catch {
-    const parts = normalized.split("/").filter(Boolean)
-    if (parts[0] === "channel" && parts[1]) {
+    const parts = normalized.split('/').filter(Boolean)
+    if (parts[0] === 'channel' && parts[1]) {
       return parts[1]
     }
-    return parts[0]?.replace(HANDLE_PREFIX_REGEX, "") || ""
+    return parts[0]?.replace(HANDLE_PREFIX_REGEX, '') || ''
   }
 }
 
 export function normalizeNaverBlogHandle(value: string) {
   const trimmed = value.trim()
   if (!trimmed) {
-    return ""
+    return ''
   }
-  const normalized = trimmed.replace(HANDLE_PREFIX_REGEX, "")
+  const normalized = trimmed.replace(HANDLE_PREFIX_REGEX, '')
   if (!URL_PATTERN_REGEX.test(normalized)) {
     return normalized
   }
   try {
-    const url = new URL(
-      normalized.startsWith("http") ? normalized : `https://${normalized}`
-    )
-    const blogId = url.searchParams.get("blogId")
+    const url = new URL(normalized.startsWith('http') ? normalized : `https://${normalized}`)
+    const blogId = url.searchParams.get('blogId')
     if (blogId) {
       return blogId
     }
-    const parts = url.pathname.split("/").filter(Boolean)
-    return parts[0] || ""
+    const parts = url.pathname.split('/').filter(Boolean)
+    return parts[0] || ''
   } catch {
-    return normalized.split("/").filter(Boolean)[0] || ""
+    return normalized.split('/').filter(Boolean)[0] || ''
   }
 }
 
 function formatHandleLabel(handle: string) {
   if (!handle) {
-    return ""
+    return ''
   }
-  if (handle.startsWith("UC") && handle.length >= 24) {
+  if (handle.startsWith('UC') && handle.length >= 24) {
     return handle
   }
-  return handle.replace(HANDLE_PREFIX_REGEX, "")
+  return handle.replace(HANDLE_PREFIX_REGEX, '')
 }
 
-function normalizeHandleEntry(
-  entry: SocialLinkEntry,
-  normalize: (value: string) => string
-): SocialLinkEntry | null {
-  const rawHandle =
-    typeof entry.content === "string" ? entry.content : entry.content.handle
-  const handle = normalize(rawHandle || "")
+function normalizeHandleEntry(entry: SocialLinkEntry, normalize: (value: string) => string): SocialLinkEntry | null {
+  const rawHandle = typeof entry.content === 'string' ? entry.content : entry.content.handle
+  const handle = normalize(rawHandle || '')
   if (!handle) {
     return null
   }
-  return { platform: entry.platform, content: handle, labelType: "handle" }
+  return { platform: entry.platform, content: handle, labelType: 'handle' }
 }
 
-function normalizeCustomEntry(
-  entry: SocialLinkEntry,
-  normalize: (value: string) => string
-): SocialLinkEntry | null {
-  const rawHandle =
-    typeof entry.content === "string" ? entry.content : entry.content.handle
-  const handle = normalize(rawHandle || "")
+function normalizeCustomEntry(entry: SocialLinkEntry, normalize: (value: string) => string): SocialLinkEntry | null {
+  const rawHandle = typeof entry.content === 'string' ? entry.content : entry.content.handle
+  const handle = normalize(rawHandle || '')
   if (!handle) {
     return null
   }
-  const label =
-    typeof entry.content === "string"
-      ? handle
-      : entry.content.label.trim() || handle
+  const label = typeof entry.content === 'string' ? handle : entry.content.label.trim() || handle
   return {
     platform: entry.platform,
     content: { handle, label },
-    labelType: "custom",
+    labelType: 'custom',
   }
 }
 
-function normalizeSocialLinkEntry(
-  entry: SocialLinkEntry
-): SocialLinkEntry | null {
+function normalizeSocialLinkEntry(entry: SocialLinkEntry): SocialLinkEntry | null {
   if (HANDLE_PLATFORMS.has(entry.platform)) {
-    const normalize =
-      entry.platform === "youtube" ? normalizeYoutubeHandle : normalizeHandle
+    const normalize = entry.platform === 'youtube' ? normalizeYoutubeHandle : normalizeHandle
     return normalizeHandleEntry(entry, normalize)
   }
 
   if (CUSTOM_LABEL_PLATFORMS.has(entry.platform)) {
-    const normalize =
-      entry.platform === "naverBlog"
-        ? normalizeNaverBlogHandle
-        : normalizeHandle
+    const normalize = entry.platform === 'naverBlog' ? normalizeNaverBlogHandle : normalizeHandle
     return normalizeCustomEntry(entry, normalize)
   }
 
   return null
 }
 
-export function normalizeSocialLinks(
-  socialLinks: SocialLinks | null | undefined
-) {
+export function normalizeSocialLinks(socialLinks: SocialLinks | null | undefined) {
   if (!Array.isArray(socialLinks)) {
     return []
   }
@@ -225,14 +189,14 @@ export interface SocialLabels {
 }
 
 const DEFAULT_LABELS: SocialLabels = {
-  instagram: "Instagram",
-  twitter: "X",
-  youtube: "YouTube",
-  github: "GitHub",
-  naverBlog: "Naver Blog",
+  instagram: 'Instagram',
+  twitter: 'X',
+  youtube: 'YouTube',
+  github: 'GitHub',
+  naverBlog: 'Naver Blog',
 }
 
-const NAVER_BLOG_TITLE_SUFFIX = ": 네이버 블로그"
+const NAVER_BLOG_TITLE_SUFFIX = ': 네이버 블로그'
 
 export async function fetchNaverBlogTitle(handle: string): Promise<string> {
   if (!handle) {
@@ -270,25 +234,25 @@ export function buildSocialLinks(
 
   return normalized
     .map((entry, index) => {
-      if (entry.platform === "instagram" && typeof entry.content === "string") {
+      if (entry.platform === 'instagram' && typeof entry.content === 'string') {
         return {
           key: `instagram-${entry.content}-${index}`,
           label: resolvedLabels.instagram,
           icon: InstagramIcon,
-          href: toProfileUrl(entry.content, "instagram.com"),
+          href: toProfileUrl(entry.content, 'instagram.com'),
           text: formatHandleLabel(entry.content),
         }
       }
-      if (entry.platform === "twitter" && typeof entry.content === "string") {
+      if (entry.platform === 'twitter' && typeof entry.content === 'string') {
         return {
           key: `twitter-${entry.content}-${index}`,
           label: resolvedLabels.twitter,
           icon: NewTwitterIcon,
-          href: toProfileUrl(entry.content, "x.com"),
+          href: toProfileUrl(entry.content, 'x.com'),
           text: formatHandleLabel(entry.content),
         }
       }
-      if (entry.platform === "youtube" && typeof entry.content === "string") {
+      if (entry.platform === 'youtube' && typeof entry.content === 'string') {
         return {
           key: `youtube-${entry.content}-${index}`,
           label: resolvedLabels.youtube,
@@ -297,21 +261,21 @@ export function buildSocialLinks(
           text: formatHandleLabel(entry.content),
         }
       }
-      if (entry.platform === "github" && typeof entry.content !== "string") {
+      if (entry.platform === 'github' && typeof entry.content !== 'string') {
         return {
           key: `github-${entry.content.handle}-${index}`,
           label: resolvedLabels.github,
           icon: GithubIcon,
-          href: toProfileUrl(entry.content.handle, "github.com"),
+          href: toProfileUrl(entry.content.handle, 'github.com'),
           text: entry.content.handle,
         }
       }
-      if (entry.platform === "naverBlog" && typeof entry.content !== "string") {
+      if (entry.platform === 'naverBlog' && typeof entry.content !== 'string') {
         return {
           key: `naver-${entry.content.handle}-${index}`,
           label: resolvedLabels.naverBlog,
           icon: BloggerIcon,
-          href: toProfileUrl(entry.content.handle, "blog.naver.com"),
+          href: toProfileUrl(entry.content.handle, 'blog.naver.com'),
           text: entry.content.label || entry.content.handle,
         }
       }
@@ -320,12 +284,9 @@ export function buildSocialLinks(
     .filter((link): link is SocialLinkItem => Boolean(link?.href))
 }
 
-export function canAskAnonymousQuestion(
-  securityLevel: string,
-  viewerIsVerified: boolean
-) {
-  if (securityLevel === "public_only") {
+export function canAskAnonymousQuestion(securityLevel: string, viewerIsVerified: boolean) {
+  if (securityLevel === 'public_only') {
     return false
   }
-  return securityLevel === "anyone" || viewerIsVerified
+  return securityLevel === 'anyone' || viewerIsVerified
 }

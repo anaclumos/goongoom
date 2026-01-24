@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { AppSidebar } from "@/components/layout/app-sidebar"
-import { MobileTabBar } from "@/components/layout/mobile-tab-bar"
-import { QuickAnswerDialog } from "@/components/questions/quick-answer-dialog"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { useState } from 'react'
+import { AppSidebar } from '@/components/layout/app-sidebar'
+import { MobileTabBar } from '@/components/layout/mobile-tab-bar'
+import { QuickAnswerDialog } from '@/components/questions/quick-answer-dialog'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
 interface RecentQuestion {
   id: string
@@ -21,13 +21,8 @@ interface AppShellProps {
   isLoggedIn?: boolean
 }
 
-export function AppShell({
-  children,
-  recentQuestions = [],
-  isLoggedIn = false,
-}: AppShellProps) {
-  const [selectedQuestion, setSelectedQuestion] =
-    useState<RecentQuestion | null>(null)
+export function AppShell({ children, recentQuestions = [], isLoggedIn = false }: AppShellProps) {
+  const [selectedQuestion, setSelectedQuestion] = useState<RecentQuestion | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   function handleQuestionClick(id: string) {
@@ -53,17 +48,10 @@ export function AppShell({
 
   return (
     <SidebarProvider defaultOpen>
-      <AppSidebar
-        onQuestionClick={handleQuestionClick}
-        recentQuestions={sidebarQuestions}
-      />
+      <AppSidebar onQuestionClick={handleQuestionClick} recentQuestions={sidebarQuestions} />
       <SidebarInset className="pb-24 md:pb-0">{children}</SidebarInset>
       <MobileTabBar isLoggedIn={isLoggedIn} />
-      <QuickAnswerDialog
-        onOpenChange={handleDialogChange}
-        open={dialogOpen}
-        question={selectedQuestion}
-      />
+      <QuickAnswerDialog onOpenChange={handleDialogChange} open={dialogOpen} question={selectedQuestion} />
     </SidebarProvider>
   )
 }

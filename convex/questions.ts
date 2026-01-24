@@ -1,6 +1,6 @@
-import { v } from "convex/values"
-import type { Doc, Id } from "./_generated/dataModel"
-import { mutation, type QueryCtx, query } from "./_generated/server"
+import { v } from 'convex/values'
+import type { Doc, Id } from './_generated/dataModel'
+import { mutation, type QueryCtx, query } from './_generated/server'
 
 /**
  * Fetches answers for a list of questions and returns a map for efficient lookup.
@@ -8,16 +8,12 @@ import { mutation, type QueryCtx, query } from "./_generated/server"
  */
 async function fetchAnswersMap(
   ctx: QueryCtx,
-  questions: Array<{ answerId?: Id<"answers"> }>
-): Promise<Map<Id<"answers">, Doc<"answers">>> {
-  const answerIds = questions
-    .map((q) => q.answerId)
-    .filter((id): id is Id<"answers"> => id !== undefined)
+  questions: Array<{ answerId?: Id<'answers'> }>
+): Promise<Map<Id<'answers'>, Doc<'answers'>>> {
+  const answerIds = questions.map((q) => q.answerId).filter((id): id is Id<'answers'> => id !== undefined)
 
   const answers = await Promise.all(answerIds.map((id) => ctx.db.get(id)))
-  const validAnswers = answers.filter(
-    (a): a is Doc<"answers"> => a !== null && !a.deletedAt
-  )
+  const validAnswers = answers.filter((a): a is Doc<'answers'> => a !== null && !a.deletedAt)
 
   return new Map(validAnswers.map((a) => [a._id, a]))
 }
@@ -31,7 +27,7 @@ export const create = mutation({
     anonymousAvatarSeed: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("questions", {
+    const id = await ctx.db.insert('questions', {
       recipientClerkId: args.recipientClerkId,
       senderClerkId: args.senderClerkId,
       content: args.content,
@@ -44,16 +40,16 @@ export const create = mutation({
 
 export const softDelete = mutation({
   args: {
-    id: v.id("questions"),
+    id: v.id('questions'),
     recipientClerkId: v.string(),
   },
   handler: async (ctx, args) => {
     const question = await ctx.db.get(args.id)
     if (!question) {
-      throw new Error("Question not found")
+      throw new Error('Question not found')
     }
     if (question.recipientClerkId !== args.recipientClerkId) {
-      throw new Error("Not authorized to delete this question")
+      throw new Error('Not authorized to delete this question')
     }
     if (question.deletedAt) {
       return { success: true }
@@ -65,19 +61,19 @@ export const softDelete = mutation({
 
 export const clearAnswerId = mutation({
   args: {
-    id: v.id("questions"),
+    id: v.id('questions'),
     recipientClerkId: v.string(),
   },
   handler: async (ctx, args) => {
     const question = await ctx.db.get(args.id)
     if (!question) {
-      throw new Error("Question not found")
+      throw new Error('Question not found')
     }
     if (question.recipientClerkId !== args.recipientClerkId) {
-      throw new Error("Not authorized to update this question")
+      throw new Error('Not authorized to update this question')
     }
     if (question.deletedAt) {
-      throw new Error("Question deleted")
+      throw new Error('Question deleted')
     }
     await ctx.db.patch(args.id, { answerId: undefined })
     return { success: true }
@@ -85,7 +81,7 @@ export const clearAnswerId = mutation({
 })
 
 export const getById = query({
-  args: { id: v.id("questions") },
+  args: { id: v.id('questions') },
   handler: async (ctx, args) => {
     const question = await ctx.db.get(args.id)
     if (!question || question.deletedAt) {
@@ -97,22 +93,16 @@ export const getById = query({
 
 export const getByIdAndRecipient = query({
   args: {
-    id: v.id("questions"),
+    id: v.id('questions'),
     recipientClerkId: v.string(),
   },
   handler: async (ctx, args) => {
     const question = await ctx.db.get(args.id)
-    if (
-      !question ||
-      question.deletedAt ||
-      question.recipientClerkId !== args.recipientClerkId
-    ) {
+    if (!question || question.deletedAt || question.recipientClerkId !== args.recipientClerkId) {
       return null
     }
 
-    const answer = question.answerId
-      ? await ctx.db.get(question.answerId)
-      : null
+    const answer = question.answerId ? await ctx.db.get(question.answerId) : null
 
     return {
       ...question,
@@ -128,21 +118,17 @@ export const getByRecipient = query({
   },
   handler: async (ctx, args) => {
     const questions = await ctx.db
-      .query("questions")
-      .withIndex("by_recipient", (q) =>
-        q.eq("recipientClerkId", args.recipientClerkId)
-      )
-      .filter((q) => q.eq(q.field("deletedAt"), undefined))
-      .order("desc")
+      .query('questions')
+      .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.recipientClerkId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .order('desc')
       .take(args.limit ?? 100)
 
     const answerMap = await fetchAnswersMap(ctx, questions)
 
     return questions.map((question) => ({
       ...question,
-      answer: question.answerId
-        ? (answerMap.get(question.answerId) ?? null)
-        : null,
+      answer: question.answerId ? (answerMap.get(question.answerId) ?? null) : null,
     }))
   },
 })
@@ -151,17 +137,10 @@ export const getUnanswered = query({
   args: { recipientClerkId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("questions")
-      .withIndex("by_recipient", (q) =>
-        q.eq("recipientClerkId", args.recipientClerkId)
-      )
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("answerId"), undefined),
-          q.eq(q.field("deletedAt"), undefined)
-        )
-      )
-      .order("desc")
+      .query('questions')
+      .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.recipientClerkId))
+      .filter((q) => q.and(q.eq(q.field('answerId'), undefined), q.eq(q.field('deletedAt'), undefined)))
+      .order('desc')
       .collect()
   },
 })
@@ -170,25 +149,16 @@ export const getAnsweredByRecipient = query({
   args: { recipientClerkId: v.string() },
   handler: async (ctx, args) => {
     const questions = await ctx.db
-      .query("questions")
-      .withIndex("by_recipient", (q) =>
-        q.eq("recipientClerkId", args.recipientClerkId)
-      )
-      .filter((q) =>
-        q.and(
-          q.neq(q.field("answerId"), undefined),
-          q.eq(q.field("deletedAt"), undefined)
-        )
-      )
+      .query('questions')
+      .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.recipientClerkId))
+      .filter((q) => q.and(q.neq(q.field('answerId'), undefined), q.eq(q.field('deletedAt'), undefined)))
       .collect()
 
     const answerMap = await fetchAnswersMap(ctx, questions)
 
     const questionsWithAnswers = questions.map((question) => ({
       ...question,
-      answer: question.answerId
-        ? (answerMap.get(question.answerId) ?? null)
-        : null,
+      answer: question.answerId ? (answerMap.get(question.answerId) ?? null) : null,
     }))
 
     return questionsWithAnswers.sort((a, b) => {
@@ -206,26 +176,24 @@ export const getSentByUser = query({
   },
   handler: async (ctx, args) => {
     const questions = await ctx.db
-      .query("questions")
-      .withIndex("by_sender", (q) => q.eq("senderClerkId", args.senderClerkId))
-      .filter((q) => q.eq(q.field("deletedAt"), undefined))
-      .order("desc")
+      .query('questions')
+      .withIndex('by_sender', (q) => q.eq('senderClerkId', args.senderClerkId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .order('desc')
       .take(args.limit ?? 100)
 
     const answerMap = await fetchAnswersMap(ctx, questions)
 
     return questions.map((question) => ({
       ...question,
-      answer: question.answerId
-        ? (answerMap.get(question.answerId) ?? null)
-        : null,
+      answer: question.answerId ? (answerMap.get(question.answerId) ?? null) : null,
     }))
   },
 })
 
 export const getAnsweredNumber = query({
   args: {
-    questionId: v.id("questions"),
+    questionId: v.id('questions'),
     recipientClerkId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -243,11 +211,9 @@ export const getAnsweredNumber = query({
     // and count only those up to and including our target question
     let count = 0
     const queryIter = ctx.db
-      .query("questions")
-      .withIndex("by_recipient", (q) =>
-        q.eq("recipientClerkId", args.recipientClerkId)
-      )
-      .order("asc")
+      .query('questions')
+      .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.recipientClerkId))
+      .order('asc')
 
     for await (const q of queryIter) {
       if (q.deletedAt) {
@@ -281,14 +247,14 @@ export const getFriends = query({
     >()
 
     const receivedQuestions = await ctx.db
-      .query("questions")
-      .withIndex("by_recipient", (q) => q.eq("recipientClerkId", args.clerkId))
+      .query('questions')
+      .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.clerkId))
       .filter((q) =>
         q.and(
-          q.eq(q.field("isAnonymous"), false),
-          q.neq(q.field("answerId"), undefined),
-          q.neq(q.field("senderClerkId"), undefined),
-          q.eq(q.field("deletedAt"), undefined)
+          q.eq(q.field('isAnonymous'), false),
+          q.neq(q.field('answerId'), undefined),
+          q.neq(q.field('senderClerkId'), undefined),
+          q.eq(q.field('deletedAt'), undefined)
         )
       )
       .collect()
@@ -302,10 +268,7 @@ export const getFriends = query({
       const existing = friendsMap.get(senderId)
       if (existing) {
         existing.questionsReceived++
-        existing.lastInteractionTime = Math.max(
-          existing.lastInteractionTime,
-          question._creationTime
-        )
+        existing.lastInteractionTime = Math.max(existing.lastInteractionTime, question._creationTime)
       } else {
         friendsMap.set(senderId, {
           clerkId: senderId,
@@ -317,13 +280,13 @@ export const getFriends = query({
     }
 
     const sentQuestions = await ctx.db
-      .query("questions")
-      .withIndex("by_sender", (q) => q.eq("senderClerkId", args.clerkId))
+      .query('questions')
+      .withIndex('by_sender', (q) => q.eq('senderClerkId', args.clerkId))
       .filter((q) =>
         q.and(
-          q.eq(q.field("isAnonymous"), false),
-          q.neq(q.field("answerId"), undefined),
-          q.eq(q.field("deletedAt"), undefined)
+          q.eq(q.field('isAnonymous'), false),
+          q.neq(q.field('answerId'), undefined),
+          q.eq(q.field('deletedAt'), undefined)
         )
       )
       .collect()
@@ -337,10 +300,7 @@ export const getFriends = query({
       const existing = friendsMap.get(recipientId)
       if (existing) {
         existing.questionsSent++
-        existing.lastInteractionTime = Math.max(
-          existing.lastInteractionTime,
-          question._creationTime
-        )
+        existing.lastInteractionTime = Math.max(existing.lastInteractionTime, question._creationTime)
       } else {
         friendsMap.set(recipientId, {
           clerkId: recipientId,
@@ -351,8 +311,6 @@ export const getFriends = query({
       }
     }
 
-    return Array.from(friendsMap.values()).sort(
-      (a, b) => b.lastInteractionTime - a.lastInteractionTime
-    )
+    return Array.from(friendsMap.values()).sort((a, b) => b.lastInteractionTime - a.lastInteractionTime)
   },
 })

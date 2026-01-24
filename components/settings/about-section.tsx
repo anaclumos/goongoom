@@ -1,17 +1,12 @@
-import {
-  ArrowUpRight01Icon,
-  Bug02Icon,
-  Idea01Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { getTranslations } from "next-intl/server"
-import { Card, CardContent } from "@/components/ui/card"
+import { ArrowUpRight01Icon, Bug02Icon, Idea01Icon, UserIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { getTranslations } from 'next-intl/server'
+import { Card, CardContent } from '@/components/ui/card'
 
-const ANACLUMOS_URL = "https://goongoom.com/anaclumos"
+const ANACLUMOS_URL = 'https://goongoom.com/anaclumos'
 
 export async function AboutSection() {
-  const t = await getTranslations("settings")
+  const t = await getTranslations('settings')
 
   return (
     <Card>
@@ -31,7 +26,7 @@ export async function AboutSection() {
               />
             </div>
             <span className="flex-1 font-medium text-muted-foreground text-sm transition-colors group-hover:text-foreground">
-              {t("madeBy")}
+              {t('madeBy')}
             </span>
             <HugeiconsIcon
               className="size-4 text-muted-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-emerald"
@@ -54,7 +49,7 @@ export async function AboutSection() {
               />
             </div>
             <span className="flex-1 font-medium text-muted-foreground text-sm transition-colors group-hover:text-foreground">
-              {t("reportBug")}
+              {t('reportBug')}
             </span>
             <HugeiconsIcon
               className="size-4 text-muted-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-rose-500"
@@ -77,7 +72,7 @@ export async function AboutSection() {
               />
             </div>
             <span className="flex-1 font-medium text-muted-foreground text-sm transition-colors group-hover:text-foreground">
-              {t("suggestFeature")}
+              {t('suggestFeature')}
             </span>
             <HugeiconsIcon
               className="size-4 text-muted-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-500"
