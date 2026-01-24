@@ -36,8 +36,6 @@ export default async function FriendsPage() {
   const cardLabels = {
     anonymous: tCommon('anonymous'),
     identified: tCommon('identified'),
-    question: t('questionLabel'),
-    answer: tAnswers('answer'),
   }
 
   const questionsWithInfo = friendsAnswers

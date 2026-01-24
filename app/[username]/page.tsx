@@ -124,8 +124,6 @@ export default async function UserProfilePage({ params, searchParams }: UserProf
   const cardLabels = {
     anonymous: tCommon('anonymous'),
     identified: tCommon('identified'),
-    question: t('questionLabel'),
-    answer: tAnswers('answer'),
   }
 
   return (
