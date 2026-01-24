@@ -17,6 +17,21 @@ function getDicebearUrl(seed: string) {
   return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&backgroundColor=10b981,059669,047857,34d399,6ee7b7&backgroundType=gradientLinear`
 }
 
+async function fetchImageAsBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    const base64 = Buffer.from(arrayBuffer).toString("base64")
+    const contentType = response.headers.get("content-type") || "image/png"
+    return `data:${contentType};base64,${base64}`
+  } catch {
+    return getDicebearUrl("fallback")
+  }
+}
+
 const fontRegularPromise = readFile(
   join(process.cwd(), "public/fonts/Pretendard-Regular.otf")
 )
@@ -42,15 +57,23 @@ export async function GET(request: Request) {
   )
   const name = pickText(searchParams.get("name"), "사용자", 40)
 
-  const askerAvatarUrl =
+  const askerAvatarSrc =
     searchParams.get("askerAvatar") || getDicebearUrl("anonymous")
-  const answererAvatarUrl =
+  const answererAvatarSrc =
     searchParams.get("answererAvatar") || getDicebearUrl(name)
 
-  const [fontRegular, fontSemiBold, fontBold] = await Promise.all([
+  const [
+    fontRegular,
+    fontSemiBold,
+    fontBold,
+    askerAvatarUrl,
+    answererAvatarUrl,
+  ] = await Promise.all([
     fontRegularPromise,
     fontSemiBoldPromise,
     fontBoldPromise,
+    fetchImageAsBase64(askerAvatarSrc),
+    fetchImageAsBase64(answererAvatarSrc),
   ])
 
   return new ImageResponse(

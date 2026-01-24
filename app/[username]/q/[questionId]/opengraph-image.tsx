@@ -9,6 +9,21 @@ function getDicebearUrl(seed: string) {
   return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&backgroundColor=10b981,059669,047857,34d399,6ee7b7&backgroundType=gradientLinear`
 }
 
+async function fetchImageAsBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    const base64 = Buffer.from(arrayBuffer).toString("base64")
+    const contentType = response.headers.get("content-type") || "image/png"
+    return `data:${contentType};base64,${base64}`
+  } catch {
+    return getDicebearUrl("fallback")
+  }
+}
+
 export const runtime = "nodejs"
 export const alt = "Question & Answer"
 export const size = { width: 1200, height: 630 }
@@ -94,18 +109,23 @@ export default async function Image({ params }: PageProps) {
   const question = clamp(qa.content, 80)
   const answer = clamp(qa.answer.content, 100)
 
-  let askerAvatarUrl: string
+  let askerAvatarSrc: string
   if (qa.isAnonymous) {
-    askerAvatarUrl = getDicebearUrl(qa.anonymousAvatarSeed || qa._id)
+    askerAvatarSrc = getDicebearUrl(qa.anonymousAvatarSeed || qa._id)
   } else if (qa.senderClerkId) {
     const sender = await getClerkUserById(qa.senderClerkId)
-    askerAvatarUrl = sender?.avatarUrl || getDicebearUrl(qa.senderClerkId)
+    askerAvatarSrc = sender?.avatarUrl || getDicebearUrl(qa.senderClerkId)
   } else {
-    askerAvatarUrl = getDicebearUrl(qa._id)
+    askerAvatarSrc = getDicebearUrl(qa._id)
   }
 
-  const answererAvatarUrl =
+  const answererAvatarSrc =
     clerkUser.avatarUrl || getDicebearUrl(clerkUser.clerkId)
+
+  const [askerAvatarUrl, answererAvatarUrl] = await Promise.all([
+    fetchImageAsBase64(askerAvatarSrc),
+    fetchImageAsBase64(answererAvatarSrc),
+  ])
 
   return new ImageResponse(
     <div
