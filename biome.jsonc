@@ -2,11 +2,31 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/biome/core", "ultracite/biome/next"],
   "files": {
-    "includes": ["!**/components/ui"]
+    "includes": [
+      "!**/components/ui",
+      "!playwright-report",
+      "!test-results",
+      "!e2e/.auth"
+    ]
   },
   "javascript": {
     "formatter": {
       "semicolons": "asNeeded"
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["e2e/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useHookAtTopLevel": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off"
+          }
+        }
+      }
+    }
+  ]
 }

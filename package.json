@@ -9,7 +9,13 @@
     "lint": "eslint",
     "prepare": "lefthook install",
     "format": "bun x ultracite fix",
-    "test": "bun test",
+    "test": "bun test lib convex components",
+    "test:watch": "bun test --watch lib convex components",
+    "test:convex": "bun test convex",
+    "test:e2e": "bunx playwright test",
+    "test:e2e:ui": "bunx playwright test --ui",
+    "test:e2e:install": "bunx playwright install",
+    "test:all": "bun run test && bun run test:e2e",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
