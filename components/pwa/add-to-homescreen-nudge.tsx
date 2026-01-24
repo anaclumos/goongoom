@@ -92,12 +92,12 @@ export function AddToHomeScreenNudge() {
           "w-full max-w-md gap-0 p-0"
         )}
       >
-        <div className="pointer-events-none absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 rounded-full bg-white/10 p-20 blur-3xl" />
+        <div className="pointer-events-none absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 rounded-full bg-emerald-foreground/10 p-20 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 rounded-full bg-emerald/30 p-16 blur-2xl" />
 
         <button
           aria-label={t("dismiss")}
-          className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-emerald-foreground/10 text-emerald-foreground transition-colors hover:bg-emerald-foreground/20 focus-visible:ring-2 focus-visible:ring-emerald-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           onClick={handleDismiss}
           type="button"
         >
@@ -106,13 +106,13 @@ export function AddToHomeScreenNudge() {
 
         <div className="relative z-10 flex flex-col items-center p-8 pt-12 text-center">
           <div className="relative mb-6">
-            <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-white/20 text-white backdrop-blur-md">
+            <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-emerald-foreground/20 text-emerald-foreground backdrop-blur-md">
               <HugeiconsIcon className="size-10" icon={SmartPhone01Icon} />
             </div>
           </div>
 
           <DrawerHeader className="mb-6 items-center p-0">
-            <DrawerTitle className="mb-2 font-bold text-2xl text-white">
+            <DrawerTitle className="mb-2 font-bold text-2xl text-emerald-foreground">
               {t("title")}
             </DrawerTitle>
             <DrawerDescription className="max-w-xs whitespace-pre-line text-base text-emerald-foreground/90">
@@ -120,15 +120,15 @@ export function AddToHomeScreenNudge() {
             </DrawerDescription>
           </DrawerHeader>
 
-          <div className="mb-8 w-full rounded-xl bg-white/10 p-4 backdrop-blur-sm">
-            <p className="mb-3 font-medium text-sm text-white/90">
+          <div className="mb-8 w-full rounded-xl bg-emerald-foreground/10 p-4 backdrop-blur-sm">
+            <p className="mb-3 font-medium text-emerald-foreground/90 text-sm">
               {t("howTo")}
             </p>
-            <div className="flex flex-col gap-2 text-left text-sm text-white/80">
+            <div className="flex flex-col gap-2 text-left text-emerald-foreground/80 text-sm">
               {isIOS ? (
                 <>
                   <div className="flex items-center gap-2">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/20 font-medium text-white text-xs">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-foreground/20 font-medium text-emerald-foreground text-xs">
                       1
                     </span>
                     <span className="flex items-center gap-1">
@@ -140,7 +140,7 @@ export function AddToHomeScreenNudge() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/20 font-medium text-white text-xs">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-foreground/20 font-medium text-emerald-foreground text-xs">
                       2
                     </span>
                     <span>{t("iosStep2")}</span>
@@ -149,7 +149,7 @@ export function AddToHomeScreenNudge() {
               ) : (
                 <>
                   <div className="flex items-center gap-2">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/20 font-medium text-white text-xs">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-foreground/20 font-medium text-emerald-foreground text-xs">
                       1
                     </span>
                     <span className="flex items-center gap-1">
@@ -161,7 +161,7 @@ export function AddToHomeScreenNudge() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/20 font-medium text-white text-xs">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-foreground/20 font-medium text-emerald-foreground text-xs">
                       2
                     </span>
                     <span>{t("androidStep2")}</span>
@@ -173,7 +173,7 @@ export function AddToHomeScreenNudge() {
 
           <div className="w-full">
             <Button
-              className="w-full rounded-xl font-medium text-white/70 hover:bg-white/10 hover:text-white"
+              className="w-full rounded-xl font-medium text-emerald-foreground/70 hover:bg-emerald-foreground/10 hover:text-emerald-foreground"
               onClick={handleDismiss}
               size="lg"
               variant="ghost"

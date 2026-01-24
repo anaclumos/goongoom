@@ -26,7 +26,6 @@ const fontSemiBoldPromise = readFile(
 const fontBoldPromise = readFile(
   join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
-const logoPromise = readFile(join(process.cwd(), "assets/logo.png"))
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -48,13 +47,11 @@ export async function GET(request: Request) {
   const answererAvatarUrl =
     searchParams.get("answererAvatar") || getDicebearUrl(name)
 
-  const [fontRegular, fontSemiBold, fontBold, logoData] = await Promise.all([
+  const [fontRegular, fontSemiBold, fontBold] = await Promise.all([
     fontRegularPromise,
     fontSemiBoldPromise,
     fontBoldPromise,
-    logoPromise,
   ])
-  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`
 
   return new ImageResponse(
     <div
@@ -63,6 +60,7 @@ export async function GET(request: Request) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        justifyContent: "center",
         padding: "80px",
         backgroundColor: "#ecfdf5",
         fontFamily: "Pretendard",
@@ -74,55 +72,8 @@ export async function GET(request: Request) {
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
-          <img
-            alt="궁금닷컴"
-            height={80}
-            src={logoBase64}
-            style={{ borderRadius: "20px" }}
-            width={80}
-          />
-          <div style={{ fontSize: "56px", fontWeight: 700 }}>궁금닷컴</div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
-          <img
-            alt={name}
-            height={64}
-            src={answererAvatarUrl}
-            style={{ borderRadius: "32px" }}
-            width={64}
-          />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <div style={{ fontSize: "36px", fontWeight: 600 }}>
-              {clamp(name, 12)}
-            </div>
-            <div style={{ fontSize: "28px", color: "#9CA3AF" }}>
-              goongoom.com
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
           gap: "48px",
-          marginTop: "40px",
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-end", gap: "20px" }}>
@@ -183,19 +134,6 @@ export async function GET(request: Request) {
             width={80}
           />
         </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "36px",
-          color: "#9CA3AF",
-          marginTop: "auto",
-        }}
-      >
-        무엇이든 물어보세요
       </div>
     </div>,
     {

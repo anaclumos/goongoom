@@ -145,7 +145,7 @@ export function InboxList({ questions }: InboxListProps) {
                 </div>
               </div>
 
-              <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground transition-all group-hover:bg-emerald group-hover:text-white">
+              <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground transition-all group-hover:bg-emerald group-hover:text-emerald-foreground">
                 <HugeiconsIcon
                   className="size-5"
                   icon={ArrowRight01Icon}

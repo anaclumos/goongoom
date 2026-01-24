@@ -77,13 +77,13 @@ export function PasskeySetupModal() {
           "w-full max-w-md gap-0 p-0"
         )}
       >
-        <div className="pointer-events-none absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 rounded-full bg-white/10 p-20 blur-3xl" />
+        <div className="pointer-events-none absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 rounded-full bg-primary-foreground/10 p-20 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 rounded-full bg-emerald/30 p-16 blur-2xl" />
 
         {!success && (
           <button
             aria-label={t("later")}
-            className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground transition-colors hover:bg-primary-foreground/20 focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             onClick={handleDismiss}
             type="button"
           >
@@ -94,30 +94,32 @@ export function PasskeySetupModal() {
         <div className="relative z-10 flex flex-col items-center p-8 pt-12 text-center">
           {success ? (
             <div className="flex flex-col items-center">
-              <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
+              <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-primary-foreground/20 text-primary-foreground backdrop-blur-md">
                 <HugeiconsIcon
                   className="size-10"
                   icon={CheckmarkCircle02Icon}
                 />
               </div>
-              <h2 className="mb-2 font-bold text-2xl text-white">
+              <h2 className="mb-2 font-bold text-2xl text-primary-foreground">
                 {t("setupComplete")}
               </h2>
-              <p className="text-white/90">{t("setupCompleteDescription")}</p>
+              <p className="text-primary-foreground/90">
+                {t("setupCompleteDescription")}
+              </p>
             </div>
           ) : (
             <>
               <div className="relative mb-6">
-                <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-white/20 text-white backdrop-blur-md">
+                <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-primary-foreground/20 text-primary-foreground backdrop-blur-md">
                   <HugeiconsIcon className="size-10" icon={FingerPrintIcon} />
                 </div>
-                <div className="absolute -top-2 -right-2 flex size-8 items-center justify-center rounded-full bg-white/30 text-white">
+                <div className="absolute -top-2 -right-2 flex size-8 items-center justify-center rounded-full bg-primary-foreground/30 text-primary-foreground">
                   <HugeiconsIcon className="size-4" icon={SecurityCheckIcon} />
                 </div>
               </div>
 
               <DrawerHeader className="mb-8 items-center p-0">
-                <DrawerTitle className="mb-2 font-bold text-2xl text-white">
+                <DrawerTitle className="mb-2 font-bold text-2xl text-primary-foreground">
                   {t("fasterTitle")}
                 </DrawerTitle>
                 <DrawerDescription className="max-w-xs whitespace-pre-line text-base text-primary-foreground/90">
@@ -126,8 +128,8 @@ export function PasskeySetupModal() {
               </DrawerHeader>
 
               {error && (
-                <div className="mb-6 flex w-full items-center gap-2 rounded-lg border border-red-200/20 bg-red-500/20 p-3 text-sm text-white backdrop-blur-sm">
-                  <div className="size-1.5 rounded-full bg-red-400" />
+                <div className="mb-6 flex w-full items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/20 p-3 text-primary-foreground text-sm backdrop-blur-sm">
+                  <div className="size-1.5 rounded-full bg-destructive" />
                   {error}
                 </div>
               )}
@@ -150,7 +152,7 @@ export function PasskeySetupModal() {
                 </Button>
 
                 <Button
-                  className="w-full rounded-xl font-medium text-white/70 hover:bg-white/10 hover:text-white"
+                  className="w-full rounded-xl font-medium text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                   onClick={handleDismiss}
                   size="lg"
                   variant="ghost"

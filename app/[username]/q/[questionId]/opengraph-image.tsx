@@ -23,7 +23,6 @@ const fontSemiBoldPromise = readFile(
 const fontBoldPromise = readFile(
   join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
-const logoPromise = readFile(join(process.cwd(), "assets/logo.png"))
 
 const clamp = (value: string, max: number) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value
@@ -35,13 +34,11 @@ interface PageProps {
 export default async function Image({ params }: PageProps) {
   const { username, questionId: questionIdParam } = await params
   const questionId = questionIdParam as QuestionId
-  const [fontRegular, fontSemiBold, fontBold, logoData] = await Promise.all([
+  const [fontRegular, fontSemiBold, fontBold] = await Promise.all([
     fontRegularPromise,
     fontSemiBoldPromise,
     fontBoldPromise,
-    logoPromise,
   ])
-  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`
 
   const clerkUser = await getClerkUserByUsername(username)
   if (!clerkUser) {
@@ -117,6 +114,7 @@ export default async function Image({ params }: PageProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        justifyContent: "center",
         padding: "56px",
         backgroundColor: "#ecfdf5",
         fontFamily: "Pretendard",
@@ -126,65 +124,8 @@ export default async function Image({ params }: PageProps) {
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          {/* biome-ignore lint/performance/noImgElement: OG images require native img */}
-          <img
-            alt="궁금닷컴"
-            height={64}
-            src={logoBase64}
-            style={{ borderRadius: "18px" }}
-            width={64}
-          />
-          <div style={{ display: "flex", fontSize: "36px", fontWeight: 700 }}>
-            궁금닷컴
-          </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          {clerkUser.avatarUrl ? (
-            // biome-ignore lint/performance/noImgElement: OG images require native img
-            <img
-              alt={displayName}
-              height={56}
-              src={clerkUser.avatarUrl}
-              style={{ borderRadius: "28px" }}
-              width={56}
-            />
-          ) : (
-            <div
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "28px",
-                backgroundColor: "#d1fae5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "24px",
-                fontWeight: 700,
-                color: "#10b981",
-              }}
-            >
-              {displayName[0] || "?"}
-            </div>
-          )}
-          <div style={{ display: "flex", fontSize: "30px", fontWeight: 600 }}>
-            {clamp(displayName, 16)}
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
           gap: "28px",
-          marginTop: "20px",
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-end", gap: "14px" }}>
@@ -243,21 +184,6 @@ export default async function Image({ params }: PageProps) {
             style={{ borderRadius: "30px" }}
             width={60}
           />
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          fontSize: "24px",
-          color: "#9CA3AF",
-        }}
-      >
-        <div style={{ display: "flex" }}>무엇이든 물어보세요</div>
-        <div style={{ display: "flex" }}>
-          goongoom.com/{clamp(clerkUser.username || username, 16)}
         </div>
       </div>
     </div>,

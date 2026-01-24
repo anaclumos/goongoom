@@ -57,10 +57,10 @@ export function PasskeyNudge() {
             <HugeiconsIcon className="size-6" icon={CheckmarkCircle02Icon} />
           </div>
           <div className="space-y-1">
-            <h3 className="font-semibold text-emerald-700 text-lg dark:text-emerald-400">
+            <h3 className="font-semibold text-lg text-success-foreground">
               {t("setupComplete")}
             </h3>
-            <p className="text-emerald-600/80 text-sm dark:text-emerald-300/80">
+            <p className="text-sm text-success-foreground/80">
               {t("setupCompleteDescription")}
             </p>
           </div>
