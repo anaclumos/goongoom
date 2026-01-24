@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import type * as React from "react"
 import { TAB_ROUTES } from "@/components/navigation/navigation-routes"
-import { TransitionLink } from "@/components/navigation/transition-link"
+import { Ultralink } from "@/components/navigation/ultralink"
 import { usePrefetchRoutes } from "@/components/navigation/use-prefetch-routes"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -92,7 +92,7 @@ export function AppSidebar({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               render={
                 user?.username ? (
-                  <TransitionLink href={`/${user.username}`} />
+                  <Ultralink href={`/${user.username}`} />
                 ) : undefined
               }
               size="lg"
@@ -140,7 +140,7 @@ export function AppSidebar({
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     isActive={isActive(item.url)}
-                    render={<TransitionLink href={item.url} />}
+                    render={<Ultralink href={item.url} />}
                     tooltip={item.title}
                   >
                     <HugeiconsIcon icon={item.icon} />

@@ -147,7 +147,26 @@
     "reportBug": "Report a Bug",
     "suggestFeature": "Suggest a Feature",
     "signatureColor": "Signature Color",
-    "signatureColorUpdated": "Signature color updated!"
+    "signatureColorUpdated": "Signature color updated!",
+    "notificationSettings": {
+      "title": "Notifications",
+      "description": "Manage push notification settings.",
+      "enableLabel": "Push notifications",
+      "enableDescription": "Get notified when you receive new questions.",
+      "unsupported": "Push notifications are not supported in this browser.",
+      "blocked": "Notifications are blocked. Please enable them in your browser settings.",
+      "permissionDenied": "Permission was denied. Please try again.",
+      "permissionBlocked": "Notifications are blocked in your browser settings.",
+      "configError": "Notification configuration error. Please try again later.",
+      "subscribeSuccess": "Push notifications enabled!",
+      "subscribeError": "Failed to enable notifications. Please try again.",
+      "unsubscribeSuccess": "Push notifications disabled.",
+      "unsubscribeError": "Failed to disable notifications. Please try again.",
+      "testButton": "Send test notification",
+      "testSending": "Sending…",
+      "testSuccess": "Test notification sent!",
+      "testError": "Failed to send test notification."
+    }
   },
 
   "home": {

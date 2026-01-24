@@ -116,6 +116,27 @@ export const getFriendsAnswers = query({
     )
     const questionMap = new Map(validQuestions.map((q) => [q._id, q]))
 
+    const recipientClerkIds = [
+      ...new Set(
+        answers
+          .map((a) => questionMap.get(a.questionId)?.recipientClerkId)
+          .filter((id): id is string => id !== undefined && friendIds.has(id))
+      ),
+    ]
+    const users = await Promise.all(
+      recipientClerkIds.map((clerkId) =>
+        ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+          .first()
+      )
+    )
+    const userMap = new Map(
+      users
+        .filter((u): u is NonNullable<typeof u> => u !== null)
+        .map((u) => [u.clerkId, u])
+    )
+
     return answers
       .map((answer) => {
         const question = questionMap.get(answer.questionId)
@@ -125,10 +146,12 @@ export const getFriendsAnswers = query({
         if (!friendIds.has(question.recipientClerkId)) {
           return null
         }
+        const user = userMap.get(question.recipientClerkId)
         return {
           question,
           answer,
           recipientClerkId: question.recipientClerkId,
+          recipientSignatureColor: user?.signatureColor,
         }
       })
       .filter((item): item is NonNullable<typeof item> => item !== null)

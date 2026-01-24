@@ -4,9 +4,10 @@ import { SignUpButton, useUser } from "@clerk/nextjs"
 import { LockIcon, SentIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
-import { useFormStatus } from "react-dom"
+import { useRef, useState } from "react"
+import { toast } from "sonner"
 import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
 import { QuestionInputTrigger } from "@/components/questions/question-input-trigger"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -30,18 +31,23 @@ function getAvatarUrl(seed: string) {
   return `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}&flip=true`
 }
 
+interface SubmitResult {
+  success: boolean
+  error?: string
+}
+
 interface QuestionDrawerProps {
   recipientName: string
   recipientClerkId: string
   canAskAnonymously: boolean
   canAskPublic: boolean
-  submitAction: (formData: FormData) => Promise<void>
+  submitAction: (formData: FormData) => Promise<SubmitResult>
+  successMessage: string
   requiresSignIn?: boolean
 }
 
-function SubmitButton() {
+function SubmitButton({ pending }: { pending: boolean }) {
   const t = useTranslations("questions")
-  const { pending } = useFormStatus()
   return (
     <Button
       className="h-14 w-full rounded-2xl bg-gradient-to-r from-emerald to-emerald/90 font-semibold text-base transition-all disabled:opacity-70"
@@ -219,14 +225,20 @@ export function QuestionDrawer({
   canAskAnonymously,
   canAskPublic,
   submitAction,
+  successMessage,
   requiresSignIn = false,
 }: QuestionDrawerProps) {
   const t = useTranslations("questions")
+  const router = useRouter()
+  const formRef = useRef<HTMLFormElement>(null)
+
   const [open, setOpen] = useState(false)
   const [questionType, setQuestionType] = useState<"anonymous" | "public">(
     canAskAnonymously ? "anonymous" : "public"
   )
   const [avatarSeed, setAvatarSeed] = useState(generateAvatarSeed)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [shouldRefreshOnClose, setShouldRefreshOnClose] = useState(false)
 
   const handleAnonymousClick = () => {
     if (questionType === "anonymous") {
@@ -240,10 +252,49 @@ export function QuestionDrawer({
     setQuestionType("public")
   }
 
+  function handleAnimationEnd(isOpen: boolean) {
+    if (!isOpen) {
+      formRef.current?.reset()
+      setAvatarSeed(generateAvatarSeed())
+      if (shouldRefreshOnClose) {
+        setShouldRefreshOnClose(false)
+        router.refresh()
+      }
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (isSubmitting) {
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const formData = new FormData(e.currentTarget)
+      const result = await submitAction(formData)
+
+      if (result.success) {
+        toast.success(successMessage)
+        setShouldRefreshOnClose(true)
+        setOpen(false)
+      } else {
+        toast.error(result.error)
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const isAnonymous = questionType === "anonymous"
 
   return (
-    <Drawer onOpenChange={setOpen} open={open} repositionInputs={false}>
+    <Drawer
+      onAnimationEnd={handleAnimationEnd}
+      onOpenChange={setOpen}
+      open={open}
+      repositionInputs={false}
+    >
       <QuestionInputTrigger onClick={() => setOpen(true)} />
       <DrawerContent className="pb-safe">
         <div className="mx-auto w-full max-w-lg">
@@ -266,7 +317,11 @@ export function QuestionDrawer({
             {requiresSignIn ? (
               <SignInPrompt />
             ) : (
-              <form action={submitAction} className="space-y-6 py-2">
+              <form
+                className="space-y-6 py-2"
+                onSubmit={handleSubmit}
+                ref={formRef}
+              >
                 <div>
                   <Textarea
                     className="min-h-28 resize-none rounded-2xl border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-emerald focus:bg-background focus:ring-2 focus:ring-emerald/20"
@@ -300,7 +355,7 @@ export function QuestionDrawer({
                 )}
 
                 <div className="space-y-3 pt-2">
-                  <SubmitButton />
+                  <SubmitButton pending={isSubmitting} />
                   <p className="text-balance text-center text-muted-foreground text-xs leading-relaxed">
                     {t.rich("termsAgreement", {
                       link: (chunks) => (

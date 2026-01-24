@@ -1,6 +1,6 @@
 import { Message01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import Link from "next/link"
+import { Ultralink } from "@/components/navigation/ultralink"
 
 interface LandingFooterProps {
   tNav: (key: string) => string
@@ -20,24 +20,24 @@ export function LandingFooter({ tNav, tFooter }: LandingFooterProps) {
           </span>
         </div>
         <div className="flex gap-6 text-muted-foreground text-sm">
-          <Link
+          <Ultralink
             className="inline-flex min-h-11 items-center rounded transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             href="/terms"
           >
             {tFooter("terms")}
-          </Link>
-          <Link
+          </Ultralink>
+          <Ultralink
             className="inline-flex min-h-11 items-center rounded transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             href="/privacy"
           >
             {tFooter("privacy")}
-          </Link>
-          <Link
+          </Ultralink>
+          <Ultralink
             className="inline-flex min-h-11 items-center rounded transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             href="/contact"
           >
             {tFooter("contact")}
-          </Link>
+          </Ultralink>
         </div>
         <div className="text-muted-foreground text-sm">
           © 2026 궁금닷컴. 모든 권리 보유.

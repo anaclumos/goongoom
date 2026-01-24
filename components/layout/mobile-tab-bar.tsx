@@ -10,7 +10,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { TAB_ROUTES } from "@/components/navigation/navigation-routes"
-import { TransitionLink } from "@/components/navigation/transition-link"
+import { Ultralink } from "@/components/navigation/ultralink"
 import { usePrefetchRoutes } from "@/components/navigation/use-prefetch-routes"
 import { cn } from "@/lib/utils"
 
@@ -44,7 +44,7 @@ export function MobileTabBar() {
         {tabItems.map((item) => {
           const active = isActive(item.href)
           return (
-            <TransitionLink
+            <Ultralink
               className={cn(
                 "flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 transition-colors",
                 active
@@ -53,7 +53,6 @@ export function MobileTabBar() {
               )}
               href={item.href}
               key={item.href}
-              prefetch={false}
             >
               <HugeiconsIcon
                 icon={item.icon}
@@ -61,7 +60,7 @@ export function MobileTabBar() {
                 strokeWidth={active ? 2.5 : 2}
               />
               <span className="font-medium text-xs">{t(item.titleKey)}</span>
-            </TransitionLink>
+            </Ultralink>
           )
         })}
       </div>

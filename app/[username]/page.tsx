@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { revalidatePath } from "next/cache"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { MainContent } from "@/components/layout/main-content"
 import { EditProfileButton } from "@/components/profile/edit-profile-button"
@@ -21,7 +21,6 @@ import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security"
 import {
   buildSocialLinks,
   canAskAnonymousQuestion,
-  getPageStatus,
 } from "@/lib/utils/social-links"
 
 interface UserProfilePageProps {
@@ -70,7 +69,7 @@ export default async function UserProfilePage({
 
   const error =
     typeof query?.error === "string" ? decodeURIComponent(query.error) : null
-  const status = getPageStatus(error, query?.sent === "1", t("questionSent"))
+  const status = error ? { type: "error" as const, message: error } : null
 
   const socialLinks = buildSocialLinks(dbUser?.socialLinks)
 
@@ -91,9 +90,7 @@ export default async function UserProfilePage({
     const avatarSeed = String(formData.get("avatarSeed") || "")
 
     if (!content) {
-      redirect(
-        `/${recipientUsername}?error=${encodeURIComponent(tErrors("pleaseEnterQuestion"))}`
-      )
+      return { success: false, error: tErrors("pleaseEnterQuestion") }
     }
 
     const isAnonymous = questionType !== "public"
@@ -105,13 +102,11 @@ export default async function UserProfilePage({
     })
 
     if (!result.success) {
-      redirect(
-        `/${recipientUsername}?error=${encodeURIComponent(result.error)}`
-      )
+      return { success: false, error: result.error }
     }
 
     revalidatePath(`/${recipientUsername}`)
-    redirect(`/${recipientUsername}?sent=1`)
+    return { success: true }
   }
 
   const senderIds = Array.from(
@@ -251,6 +246,7 @@ export default async function UserProfilePage({
         recipientName={displayName}
         requiresSignIn={requiresSignIn}
         submitAction={submitQuestion}
+        successMessage={t("questionSent")}
       />
     </MainContent>
   )

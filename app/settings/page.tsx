@@ -7,6 +7,7 @@ import { AboutSection } from "@/components/settings/about-section"
 import { AccountSettingsButton } from "@/components/settings/account-settings-button"
 import { LocaleSelector } from "@/components/settings/locale-selector"
 import { LogoutButton } from "@/components/settings/logout-button"
+import { NotificationSettings } from "@/components/settings/notification-settings"
 import { ThemeSelector } from "@/components/settings/theme-selector"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -81,6 +82,12 @@ export default async function SettingsPage({
         <Card>
           <CardContent>
             <LocaleSelector />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <NotificationSettings clerkId={clerkId} />
           </CardContent>
         </Card>
 

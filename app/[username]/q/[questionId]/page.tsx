@@ -3,10 +3,10 @@ import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { formatDistanceToNow } from "date-fns"
 import { enUS, ko } from "date-fns/locale"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { MainContent } from "@/components/layout/main-content"
+import { Ultralink } from "@/components/navigation/ultralink"
 import { CopyLinkButton } from "@/components/questions/copy-link-button"
 import { InstagramSharePrefetch } from "@/components/questions/instagram-share-prefetch"
 import { ShareInstagramButton } from "@/components/questions/share-instagram-button"
@@ -174,7 +174,7 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
         <Button
           className="gap-2 pl-2"
           nativeButton={false}
-          render={<Link href={`/${username}`} />}
+          render={<Ultralink href={`/${username}`} />}
           size="lg"
           variant="ghost"
         >
@@ -251,7 +251,7 @@ export default async function QADetailPage({ params }: QADetailPageProps) {
           <Button
             className="h-14 w-full rounded-xl font-semibold"
             nativeButton={false}
-            render={<Link href={`/${username}`} />}
+            render={<Ultralink href={`/${username}`} />}
             size="lg"
           >
             {tQuestions("askAnotherQuestion", { displayName })}

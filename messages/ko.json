@@ -147,7 +147,26 @@
     "reportBug": "버그 제보",
     "suggestFeature": "기능 제안",
     "signatureColor": "상징색",
-    "signatureColorUpdated": "상징색이 변경됐어요!"
+    "signatureColorUpdated": "상징색이 변경됐어요!",
+    "notificationSettings": {
+      "title": "알림 설정",
+      "description": "푸시 알림을 관리해요.",
+      "enableLabel": "푸시 알림",
+      "enableDescription": "새 질문이 오면 알림을 받아요.",
+      "unsupported": "이 브라우저에서는 푸시 알림을 지원하지 않아요.",
+      "blocked": "알림이 차단되어 있어요. 브라우저 설정에서 허용해 주세요.",
+      "permissionDenied": "권한이 거부됐어요. 다시 시도해 주세요.",
+      "permissionBlocked": "브라우저 설정에서 알림이 차단되어 있어요.",
+      "configError": "알림 설정 오류가 발생했어요. 나중에 다시 시도해 주세요.",
+      "subscribeSuccess": "푸시 알림이 켜졌어요!",
+      "subscribeError": "알림을 켜지 못했어요. 다시 시도해 주세요.",
+      "unsubscribeSuccess": "푸시 알림이 꺼졌어요.",
+      "unsubscribeError": "알림을 끄지 못했어요. 다시 시도해 주세요.",
+      "testButton": "테스트 알림 보내기",
+      "testSending": "보내는 중…",
+      "testSuccess": "테스트 알림을 보냈어요!",
+      "testError": "테스트 알림을 보내지 못했어요."
+    }
   },
 
   "home": {

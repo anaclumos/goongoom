@@ -26,7 +26,7 @@ import {
   getUserWithAnsweredQuestions,
 } from "@/lib/db/queries"
 import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security"
-import { buildSocialLinks, getPageStatus } from "@/lib/utils/social-links"
+import { buildSocialLinks } from "@/lib/utils/social-links"
 
 interface HomePageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -98,9 +98,7 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
 
   const error =
     typeof query?.error === "string" ? decodeURIComponent(query.error) : null
-  const sent = query?.sent === "1"
-
-  const status = getPageStatus(error, sent, t("questionSent"))
+  const status = error ? { type: "error" as const, message: error } : null
   const socialLinks = buildSocialLinks(dbUser?.socialLinks)
 
   const securityLevel =
@@ -126,7 +124,7 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
     const questionType = String(formData.get("questionType") || "anonymous")
 
     if (!content) {
-      redirect(`/?error=${encodeURIComponent(tErrors("pleaseEnterQuestion"))}`)
+      return { success: false, error: tErrors("pleaseEnterQuestion") }
     }
 
     const result = await createQuestion({
@@ -136,11 +134,11 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
     })
 
     if (!result.success) {
-      redirect(`/?error=${encodeURIComponent(result.error)}`)
+      return { success: false, error: result.error }
     }
 
     revalidatePath("/")
-    redirect("/?sent=1")
+    return { success: true }
   }
 
   return (
@@ -237,6 +235,7 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
         recipientName={displayName}
         requiresSignIn={false}
         submitAction={submitQuestion}
+        successMessage={t("questionSent")}
       />
     </MainContent>
   )

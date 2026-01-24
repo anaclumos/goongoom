@@ -1,9 +1,10 @@
 import { formatDistanceToNow } from "date-fns"
 import { enUS, ko } from "date-fns/locale"
-import Link from "next/link"
+import { Ultralink } from "@/components/navigation/ultralink"
 import { ClampedAnswer } from "@/components/questions/clamped-answer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
+import { getSignatureColor } from "@/lib/colors/signature-colors"
 
 const localeMap = { ko, en: enUS } as const
 
@@ -27,6 +28,7 @@ interface AnsweredQuestionCardProps {
     question: string
     answer: string
   }
+  signatureColor?: string | null
 }
 
 function getQuestionerAvatarUrl(
@@ -57,6 +59,7 @@ export function AnsweredQuestionCard({
   avatarUrl,
   locale,
   labels,
+  signatureColor,
 }: AnsweredQuestionCardProps) {
   const anonymityLabel = isAnonymous
     ? labels.anonymous
@@ -69,12 +72,23 @@ export function AnsweredQuestionCard({
     senderAvatarUrl
   )
   const questionerFallback = isAnonymous ? "?" : senderName?.[0] || "?"
+  const imagesToPrefetch = [questionerAvatarUrl, avatarUrl].filter(
+    (url): url is string => Boolean(url)
+  )
+
+  const colors = signatureColor ? getSignatureColor(signatureColor) : null
+  const answerCardStyle = colors
+    ? ({
+        "--answer-color-light": colors.light.primary,
+        "--answer-color-dark": colors.dark.primary,
+      } as React.CSSProperties)
+    : undefined
 
   return (
-    <Link
+    <Ultralink
       className="block"
       href={`/${username}/q/${questionId}`}
-      prefetch={false}
+      prefetchImages={imagesToPrefetch}
     >
       <Card className="group relative transition-colors hover:bg-muted/50">
         <CardContent className="flex flex-col gap-4">
@@ -106,7 +120,14 @@ export function AnsweredQuestionCard({
           </div>
           <div className="flex w-full items-start justify-end gap-3">
             <div className="flex flex-1 flex-col items-end">
-              <Card className="max-w-prose border-none bg-gradient-to-br from-emerald to-emerald px-4 py-3 text-white">
+              <Card
+                className={
+                  signatureColor
+                    ? "max-w-prose border-none bg-[var(--answer-color-light)] px-4 py-3 text-white dark:bg-[var(--answer-color-dark)]"
+                    : "max-w-prose border-none bg-gradient-to-br from-emerald to-emerald px-4 py-3 text-white"
+                }
+                style={answerCardStyle}
+              >
                 <ClampedAnswer content={answerContent} />
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
@@ -125,6 +146,6 @@ export function AnsweredQuestionCard({
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </Ultralink>
   )
 }

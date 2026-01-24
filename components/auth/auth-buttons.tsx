@@ -11,9 +11,9 @@ import {
 } from "@clerk/nextjs"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
+import { Ultralink } from "@/components/navigation/ultralink"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -76,7 +76,7 @@ export function HeroAuthButtons() {
           <Button
             className="w-full sm:w-auto"
             nativeButton={false}
-            render={<Link href={profileHref} />}
+            render={<Ultralink href={profileHref} />}
             size="lg"
           >
             {t("viewProfile")}
@@ -111,7 +111,7 @@ export function BottomCTAButton() {
         <SignedIn>
           <Button
             nativeButton={false}
-            render={<Link href={profileHref} />}
+            render={<Ultralink href={profileHref} />}
             size="lg"
           >
             {t("viewProfile")}

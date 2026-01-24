@@ -42,3 +42,38 @@ export async function unsubscribeFromPush(
 export async function getPushSubscriptions(clerkId: string) {
   return await fetchQuery(api.push.getByClerkId, { clerkId })
 }
+
+export async function sendTestPushNotification(): Promise<{
+  success: boolean
+  error?: string
+}> {
+  const { userId } = await auth()
+  if (!userId) {
+    return { success: false, error: "Not authenticated" }
+  }
+
+  const subscriptions = await fetchQuery(api.push.getByClerkId, {
+    clerkId: userId,
+  })
+
+  if (subscriptions.length === 0) {
+    return { success: false, error: "No subscriptions found" }
+  }
+
+  const { sendPushToMany } = await import("@/lib/push")
+
+  await sendPushToMany(
+    subscriptions.map((sub) => ({
+      endpoint: sub.endpoint,
+      p256dh: sub.p256dh,
+      auth: sub.auth,
+    })),
+    {
+      title: "Test Notification",
+      body: "Push notifications are working!",
+      url: "/settings",
+    }
+  )
+
+  return { success: true }
+}

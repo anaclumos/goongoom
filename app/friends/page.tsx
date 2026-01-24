@@ -68,6 +68,7 @@ export default async function FriendsPage() {
         recipientDisplayName:
           recipient.displayName || recipient.username || "User",
         recipientAvatarUrl: recipient.avatarUrl,
+        recipientSignatureColor: qa.recipientSignatureColor,
         senderName: sender?.displayName || sender?.username || null,
         senderAvatarUrl: sender?.avatarUrl || null,
       }
@@ -106,6 +107,7 @@ export default async function FriendsPage() {
               questionId={qa.question._id}
               senderAvatarUrl={qa.senderAvatarUrl}
               senderName={qa.senderName || undefined}
+              signatureColor={qa.recipientSignatureColor}
               username={qa.recipientUsername}
             />
           ))}
