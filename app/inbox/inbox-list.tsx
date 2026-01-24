@@ -200,7 +200,16 @@ export function InboxList({ questions }: InboxListProps) {
                         : selectedQuestion.senderName}
                     </span>
                   </div>
-                  <p className="leading-relaxed">{selectedQuestion.content}</p>
+                  <p className="leading-relaxed">
+                    {selectedQuestion.content.length > 100
+                      ? `${selectedQuestion.content.slice(0, 100)}...`
+                      : selectedQuestion.content}
+                  </p>
+                  <div className="mt-2 flex justify-end">
+                    <span className="font-medium text-muted-foreground text-xs">
+                      {Math.min(selectedQuestion.content.length, 100)}/100
+                    </span>
+                  </div>
                 </DrawerDescription>
               )}
             </DrawerHeader>
