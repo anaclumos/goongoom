@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "bun:test"
-import { api } from "../_generated/api"
+import { api } from "../../convex/_generated/api"
 import { createTestContext, TEST_CLERK_ID, TEST_CLERK_ID_2 } from "./helpers"
 
 describe("users", () => {

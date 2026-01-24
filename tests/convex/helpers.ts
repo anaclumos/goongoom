@@ -1,11 +1,11 @@
 import path from "node:path"
 import { Glob } from "bun"
 import { convexTest } from "convex-test"
-import schema from "../schema"
+import schema from "../../convex/schema"
 
 async function buildConvexModules() {
   const modules: Record<string, () => Promise<unknown>> = {}
-  const convexDir = path.resolve(import.meta.dir, "..")
+  const convexDir = path.resolve(import.meta.dir, "../../convex")
   const glob = new Glob("**/*.{ts,js}")
 
   for await (const file of glob.scan({ cwd: convexDir })) {
