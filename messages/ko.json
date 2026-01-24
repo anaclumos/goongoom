@@ -181,7 +181,8 @@
     "feedTitle": "궁금닷컴에서 오간 이야기",
     "feedEmptyTitle": "아직 이야기가 없어요",
     "feedEmptyDescription": "첫 번째 질문을 남겨 보세요!",
-    "questionLabel": "질문"
+    "questionLabel": "질문",
+    "trustIndicator": "{count}개의 솔직한 대화가 오갔어요"
   },
   "footer": {
     "terms": "이용약관",

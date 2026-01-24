@@ -181,7 +181,8 @@
     "feedTitle": "Stories on Goongoom",
     "feedEmptyTitle": "No stories yet",
     "feedEmptyDescription": "Be the first to ask a question!",
-    "questionLabel": "Question"
+    "questionLabel": "Question",
+    "trustIndicator": "{count} honest conversations shared"
   },
   "footer": {
     "terms": "Terms of Service",

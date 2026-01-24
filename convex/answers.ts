@@ -155,6 +155,17 @@ export const getRecentLimitPerUser = query({
   },
 })
 
+export const count = query({
+  args: {},
+  handler: async (ctx) => {
+    const answers = await ctx.db
+      .query("answers")
+      .filter((q) => q.eq(q.field("deletedAt"), undefined))
+      .collect()
+    return answers.length
+  },
+})
+
 export const getFriendsAnswers = query({
   args: {
     clerkId: v.string(),

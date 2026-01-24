@@ -3,6 +3,7 @@ export const CACHE_TAGS = {
   clerkUsers: "clerk:users",
   answers: "convex:answers",
   recentAnswers: "convex:answers:recent",
+  answerCount: "convex:answers:count",
   questions: "convex:questions",
   users: "convex:users",
   userCount: "convex:users:count",

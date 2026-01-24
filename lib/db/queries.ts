@@ -208,3 +208,14 @@ export async function getFriends(clerkId: string) {
 export async function getFriendsAnswers(clerkId: string, limit = 20) {
   return await fetchQuery(api.answers.getFriendsAnswers, { clerkId, limit })
 }
+
+export function getAnswerCount() {
+  return unstable_cache(
+    () => fetchQuery(api.answers.count, {}),
+    [CACHE_TAGS.answerCount],
+    {
+      revalidate: 300,
+      tags: [CACHE_TAGS.answers, CACHE_TAGS.answerCount],
+    }
+  )()
+}
