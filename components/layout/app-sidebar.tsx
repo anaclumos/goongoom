@@ -1,11 +1,12 @@
 "use client"
 
-import { useUser } from "@clerk/nextjs"
+import { SignUpButton, useUser } from "@clerk/nextjs"
 import {
   Agreement01Icon,
   CustomerService01Icon,
   Home01Icon,
   InboxIcon,
+  Login01Icon,
   SecurityCheckIcon,
   Settings01Icon,
   UserGroupIcon,
@@ -16,6 +17,7 @@ import { enUS, ko } from "date-fns/locale"
 import { usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import type * as React from "react"
+import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
 import {
   GUEST_TAB_ROUTES,
   TAB_ROUTES,
@@ -23,10 +25,12 @@ import {
 import { Ultralink } from "@/components/navigation/ultralink"
 import { usePrefetchRoutes } from "@/components/navigation/use-prefetch-routes"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -56,6 +60,7 @@ export function AppSidebar({
   ...props
 }: AppSidebarProps) {
   const t = useTranslations("nav")
+  const tCommon = useTranslations("common")
   const tSidebar = useTranslations("sidebar")
   const tFooter = useTranslations("footer")
   const pathname = usePathname()
@@ -221,6 +226,27 @@ export function AppSidebar({
         )}
       </SidebarContent>
       <SidebarRail />
+      {!user && (
+        <SidebarFooter className="group-data-[collapsible=icon]:hidden">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <PasskeySignInButton>
+                <SidebarMenuButton tooltip={tCommon("login")}>
+                  <HugeiconsIcon icon={Login01Icon} />
+                  <span>{tCommon("login")}</span>
+                </SidebarMenuButton>
+              </PasskeySignInButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SignUpButton mode="modal">
+                <Button className="w-full" size="sm">
+                  {tCommon("start")}
+                </Button>
+              </SignUpButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
     </Sidebar>
   )
 }

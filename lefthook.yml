@@ -1,16 +1,5 @@
 pre-commit:
   jobs:
-    - name: ultracite
-      run: bun x ultracite fix
-      glob: 
-        - "*.js"
-        - "*.jsx"
-        - "*.ts"
-        - "*.tsx"
-        - "*.json"
-        - "*.jsonc"
-        - "*.css"
-      stage_fixed: true
     - name: eslint
       run: bun eslint --fix {staged_files}
       glob:

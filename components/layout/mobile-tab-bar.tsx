@@ -1,17 +1,18 @@
 "use client"
 
+import { SignUpButton } from "@clerk/nextjs"
 import {
-  Agreement01Icon,
-  CustomerService01Icon,
   Home01Icon,
   InboxIcon,
-  SecurityCheckIcon,
+  Login01Icon,
   Settings01Icon,
+  UserAdd01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
 import {
   GUEST_TAB_ROUTES,
   TAB_ROUTES,
@@ -54,24 +55,6 @@ const guestTabItems = [
     icon: Home01Icon,
     namespace: "sidebar" as const,
   },
-  {
-    titleKey: "terms" as const,
-    href: "/terms",
-    icon: Agreement01Icon,
-    namespace: "footer" as const,
-  },
-  {
-    titleKey: "privacy" as const,
-    href: "/privacy",
-    icon: SecurityCheckIcon,
-    namespace: "footer" as const,
-  },
-  {
-    titleKey: "contact" as const,
-    href: "/contact",
-    icon: CustomerService01Icon,
-    namespace: "footer" as const,
-  },
 ]
 
 interface MobileTabBarProps {
@@ -81,7 +64,7 @@ interface MobileTabBarProps {
 export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
   const pathname = usePathname()
   const tSidebar = useTranslations("sidebar")
-  const tFooter = useTranslations("footer")
+  const tCommon = useTranslations("common")
   const tUi = useTranslations("ui")
 
   const tabItems = isLoggedIn ? loggedInTabItems : guestTabItems
@@ -94,12 +77,9 @@ export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
     return pathname.startsWith(href)
   }
 
-  const getLabel = (item: (typeof tabItems)[number]) => {
-    if (item.namespace === "footer") {
-      return tFooter(item.titleKey)
-    }
-    return tSidebar(item.titleKey)
-  }
+  const tabButtonClass = cn(
+    "flex min-h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
+  )
 
   return (
     <nav
@@ -125,10 +105,28 @@ export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
                 size={22}
                 strokeWidth={active ? 2.5 : 2}
               />
-              <span className="font-medium text-xs">{getLabel(item)}</span>
+              <span className="font-medium text-xs">
+                {tSidebar(item.titleKey)}
+              </span>
             </Ultralink>
           )
         })}
+        {!isLoggedIn && (
+          <>
+            <PasskeySignInButton>
+              <button className={tabButtonClass} type="button">
+                <HugeiconsIcon icon={Login01Icon} size={22} strokeWidth={2} />
+                <span className="font-medium text-xs">{tCommon("login")}</span>
+              </button>
+            </PasskeySignInButton>
+            <SignUpButton mode="modal">
+              <button className={tabButtonClass} type="button">
+                <HugeiconsIcon icon={UserAdd01Icon} size={22} strokeWidth={2} />
+                <span className="font-medium text-xs">{tCommon("start")}</span>
+              </button>
+            </SignUpButton>
+          </>
+        )}
       </div>
     </nav>
   )
