@@ -3,6 +3,7 @@ export type {
   AnswerId,
   Doc,
   Id,
+  LegacySocialLinks,
   Log,
   LogId,
   PushSubscription,
@@ -13,6 +14,7 @@ export type {
   QuestionWithAnswer,
   SocialLinkEntry,
   SocialLinks,
+  SocialLinksWithLegacy,
   User,
   UserId,
 } from "@/convex/types"
@@ -26,7 +28,7 @@ export interface UserProfile {
   displayName: string | null
   avatarUrl: string | null
   bio: string | null
-  socialLinks: import("@/convex/types").SocialLinks | null
+  socialLinks: import("@/convex/types").SocialLinksWithLegacy | null
   questionSecurityLevel: import("@/lib/question-security").QuestionSecurityLevel
 }
 

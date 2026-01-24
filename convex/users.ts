@@ -195,3 +195,59 @@ export const deleteFromWebhook = internalMutation({
     }
   },
 })
+
+// One-time migration: Convert old socialLinks object format to new array format
+// Old format: { instagram: "handle", twitter: "handle" }
+// New format: [{ platform: "instagram", content: "handle", labelType: "handle" }, ...]
+export const migrateSocialLinks = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect()
+    let migratedCount = 0
+
+    for (const user of users) {
+      const socialLinks = user.socialLinks as unknown
+
+      // Skip if already in new format (array) or undefined
+      if (!socialLinks || Array.isArray(socialLinks)) {
+        continue
+      }
+
+      // Convert old object format to new array format
+      if (typeof socialLinks === "object") {
+        const oldFormat = socialLinks as Record<string, string>
+        const platforms = [
+          "instagram",
+          "twitter",
+          "youtube",
+          "github",
+          "naverBlog",
+        ] as const
+
+        const newFormat: {
+          platform: (typeof platforms)[number]
+          content: string
+          labelType: "handle"
+        }[] = []
+
+        for (const platform of platforms) {
+          if (oldFormat[platform]) {
+            newFormat.push({
+              platform,
+              content: oldFormat[platform],
+              labelType: "handle",
+            })
+          }
+        }
+
+        await ctx.db.patch(user._id, {
+          socialLinks: newFormat,
+          updatedAt: Date.now(),
+        })
+        migratedCount++
+      }
+    }
+
+    return { migratedCount, totalUsers: users.length }
+  },
+})

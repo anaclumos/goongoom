@@ -5,7 +5,11 @@ import {
   NewTwitterIcon,
   YoutubeIcon,
 } from "@hugeicons/core-free-icons"
-import type { SocialLinkEntry, SocialLinks } from "@/lib/types"
+import type {
+  LegacySocialLinks,
+  SocialLinkEntry,
+  SocialLinksWithLegacy,
+} from "@/lib/types"
 
 export const HTTPS_PROTOCOL_REGEX = /^https?:\/\//i
 export const LEADING_SLASHES_REGEX = /^\/+/
@@ -196,13 +200,42 @@ function normalizeSocialLinkEntry(
   return null
 }
 
+function convertLegacyToArray(legacy: LegacySocialLinks): SocialLinkEntry[] {
+  const entries: SocialLinkEntry[] = []
+  const platforms = [
+    "instagram",
+    "twitter",
+    "youtube",
+    "github",
+    "naverBlog",
+  ] as const
+
+  for (const platform of platforms) {
+    const value = legacy[platform]
+    if (value) {
+      entries.push({
+        platform,
+        content: CUSTOM_LABEL_PLATFORMS.has(platform)
+          ? { handle: value, label: value }
+          : value,
+        labelType: CUSTOM_LABEL_PLATFORMS.has(platform) ? "custom" : "handle",
+      })
+    }
+  }
+
+  return entries
+}
+
 export function normalizeSocialLinks(
-  socialLinks: SocialLinks | null | undefined
+  socialLinks: SocialLinksWithLegacy | null | undefined
 ) {
-  if (!Array.isArray(socialLinks)) {
+  if (!socialLinks) {
     return []
   }
-  return socialLinks
+  const entries = Array.isArray(socialLinks)
+    ? socialLinks
+    : convertLegacyToArray(socialLinks)
+  return entries
     .map((entry) => normalizeSocialLinkEntry(entry))
     .filter((entry): entry is SocialLinkEntry => Boolean(entry))
 }
@@ -216,7 +249,7 @@ interface SocialLinkItem {
 }
 
 export function buildSocialLinks(
-  socialLinks: SocialLinks | null | undefined
+  socialLinks: SocialLinksWithLegacy | null | undefined
 ): SocialLinkItem[] {
   const normalized = normalizeSocialLinks(socialLinks)
 
