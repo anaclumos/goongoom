@@ -55,9 +55,9 @@ export default async function RootLayout({
   const dbUser = userId ? await getOrCreateUser(userId) : null
 
   return (
-    <html className={inter.variable} lang={locale} suppressHydrationWarning>
-      <body className="bg-background font-sans antialiased">
-        <ClerkProvider localization={clerkLocalization}>
+    <ClerkProvider localization={clerkLocalization}>
+      <html className={inter.variable} lang={locale} suppressHydrationWarning>
+        <body className="bg-background font-sans antialiased">
           <NextIntlClientProvider messages={messages}>
             <ThemeProvider
               attribute="class"
@@ -77,10 +77,10 @@ export default async function RootLayout({
               <Toaster />
             </ThemeProvider>
           </NextIntlClientProvider>
-        </ClerkProvider>
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
+          <Analytics />
+          <SpeedInsights />
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
