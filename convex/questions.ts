@@ -114,17 +114,22 @@ export const getAnsweredByRecipient = query({
         q.eq("recipientClerkId", args.recipientClerkId)
       )
       .filter((q) => q.neq(q.field("answerId"), undefined))
-      .order("desc")
       .collect()
 
     const answerMap = await fetchAnswersMap(ctx, questions)
 
-    return questions.map((question) => ({
+    const questionsWithAnswers = questions.map((question) => ({
       ...question,
       answer: question.answerId
         ? (answerMap.get(question.answerId) ?? null)
         : null,
     }))
+
+    return questionsWithAnswers.sort((a, b) => {
+      const aTime = a.answer?._creationTime ?? 0
+      const bTime = b.answer?._creationTime ?? 0
+      return bTime - aTime
+    })
   },
 })
 
