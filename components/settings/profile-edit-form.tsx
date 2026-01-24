@@ -5,6 +5,7 @@ import {
   InstagramIcon,
   LockIcon,
   NewTwitterIcon,
+  PaintBrushIcon,
   UserIcon,
   UserMultipleIcon,
 } from "@hugeicons/core-free-icons"
@@ -20,9 +21,11 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { updateProfile } from "@/lib/actions/profile"
+import type { SignatureColor } from "@/lib/colors/signature-colors"
 import { QUESTION_SECURITY_LEVELS } from "@/lib/question-security"
 import type { SocialLinks } from "@/lib/types"
 import { normalizeHandle } from "@/lib/utils/social-links"
+import { SignatureColorPicker } from "./signature-color-picker"
 
 const SECURITY_ICONS: Record<string, typeof AnonymousIcon> = {
   public: UserMultipleIcon,
@@ -35,6 +38,7 @@ interface ProfileEditFormProps {
   initialInstagramHandle: string
   initialTwitterHandle: string
   initialQuestionSecurityLevel: string
+  initialSignatureColor: SignatureColor
   securityOptions: Record<string, { label: string; description: string }>
 }
 
@@ -43,6 +47,7 @@ export function ProfileEditForm({
   initialInstagramHandle,
   initialTwitterHandle,
   initialQuestionSecurityLevel,
+  initialSignatureColor,
   securityOptions,
 }: ProfileEditFormProps) {
   const t = useTranslations("settings")
@@ -247,6 +252,27 @@ export function ProfileEditForm({
               )
             })}
           </RadioGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="flex size-8 items-center justify-center rounded-full bg-emerald/10 text-emerald">
+              <HugeiconsIcon className="size-4" icon={PaintBrushIcon} />
+            </div>
+            <h3 className="font-semibold text-foreground text-sm">
+              {t("signatureColor")}
+            </h3>
+          </div>
+
+          <SignatureColorPicker
+            currentColor={initialSignatureColor}
+            labels={{
+              saving: t("saving"),
+              saved: t("signatureColorUpdated"),
+            }}
+          />
         </CardContent>
       </Card>
     </div>

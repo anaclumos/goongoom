@@ -62,6 +62,7 @@ export const updateProfile = mutation({
       )
     ),
     questionSecurityLevel: v.optional(v.string()),
+    signatureColor: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
@@ -82,6 +83,7 @@ export const updateProfile = mutation({
         twitter?: string
       }
       questionSecurityLevel?: string
+      signatureColor?: string
       updatedAt: number
     } = {
       updatedAt: Date.now(),
@@ -95,6 +97,9 @@ export const updateProfile = mutation({
     }
     if (args.questionSecurityLevel) {
       updateData.questionSecurityLevel = args.questionSecurityLevel
+    }
+    if (args.signatureColor !== undefined) {
+      updateData.signatureColor = args.signatureColor
     }
 
     await ctx.db.patch(user._id, updateData)

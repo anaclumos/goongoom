@@ -3,6 +3,7 @@
 import { SignUpButton, useUser } from "@clerk/nextjs"
 import { LockIcon, SentIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { useFormStatus } from "react-dom"
@@ -301,7 +302,16 @@ export function QuestionDrawer({
                 <div className="space-y-3 pt-2">
                   <SubmitButton />
                   <p className="text-balance text-center text-muted-foreground text-xs leading-relaxed">
-                    {t("termsAgreement")}
+                    {t.rich("termsAgreement", {
+                      link: (chunks) => (
+                        <Link
+                          className="underline hover:text-foreground"
+                          href="/terms"
+                        >
+                          {chunks}
+                        </Link>
+                      ),
+                    })}
                   </p>
                 </div>
               </form>

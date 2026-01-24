@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ImageResponse } from "next/og"
 import { getClerkUserByUsername } from "@/lib/clerk"
+import { getSignatureColor } from "@/lib/colors/signature-colors"
 import { getOrCreateUser } from "@/lib/db/queries"
 
 export const runtime = "nodejs"
@@ -35,6 +36,7 @@ export default async function Image({ params }: PageProps) {
 
   const clerkUser = await getClerkUserByUsername(username)
   if (!clerkUser) {
+    const defaultColors = getSignatureColor(null)
     return new ImageResponse(
       <div
         style={{
@@ -43,7 +45,7 @@ export default async function Image({ params }: PageProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ecfdf5",
+          backgroundColor: defaultColors.light.bg,
           fontFamily: "Pretendard",
           fontSize: 48,
           color: "#6B7280",
@@ -59,6 +61,7 @@ export default async function Image({ params }: PageProps) {
   }
 
   const dbUser = await getOrCreateUser(clerkUser.clerkId)
+  const colors = getSignatureColor(dbUser?.signatureColor)
   const displayName = clerkUser.displayName || clerkUser.username || username
   const bio = dbUser?.bio ? clamp(dbUser.bio, 120) : null
 
@@ -70,7 +73,7 @@ export default async function Image({ params }: PageProps) {
         display: "flex",
         flexDirection: "column",
         padding: "72px",
-        backgroundColor: "#ecfdf5",
+        backgroundColor: colors.light.bg,
         fontFamily: "Pretendard",
         color: "#111827",
       }}
@@ -112,7 +115,7 @@ export default async function Image({ params }: PageProps) {
             src={clerkUser.avatarUrl}
             style={{
               borderRadius: "110px",
-              border: "6px solid rgba(16, 185, 129, 0.3)",
+              border: `6px solid ${colors.light.border}`,
             }}
             width={220}
           />
@@ -122,13 +125,13 @@ export default async function Image({ params }: PageProps) {
               width: "220px",
               height: "220px",
               borderRadius: "110px",
-              backgroundColor: "#d1fae5",
+              backgroundColor: colors.light.bg,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "88px",
               fontWeight: 700,
-              color: "#10b981",
+              color: colors.light.primary,
             }}
           >
             {displayName[0] || "?"}

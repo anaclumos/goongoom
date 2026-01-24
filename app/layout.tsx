@@ -1,5 +1,6 @@
 import { enUS, koKR } from "@clerk/localizations"
 import { ClerkProvider } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { EscapeInAppBrowser } from "eiab/react"
@@ -12,7 +13,9 @@ import { AppShellWrapper } from "@/components/layout/app-shell-wrapper"
 import { NavigationProvider } from "@/components/navigation/navigation-provider"
 import { PushNotificationProvider } from "@/components/notifications/push-provider"
 import { AddToHomeScreenNudge } from "@/components/pwa/add-to-homescreen-nudge"
+import { SignatureColorProvider } from "@/components/theme/signature-color-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { getOrCreateUser } from "@/lib/db/queries"
 import "./globals.css"
 import { Inter } from "next/font/google"
 
@@ -41,10 +44,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const locale = await getLocale()
-  const messages = await getMessages()
+  const [locale, messages, { userId }] = await Promise.all([
+    getLocale(),
+    getMessages(),
+    auth(),
+  ])
   const clerkLocalization =
     clerkLocalizations[locale as keyof typeof clerkLocalizations] || koKR
+
+  const dbUser = userId ? await getOrCreateUser(userId) : null
 
   return (
     <html className={inter.variable} lang={locale} suppressHydrationWarning>
@@ -57,6 +65,7 @@ export default async function RootLayout({
               disableTransitionOnChange
               enableSystem
             >
+              <SignatureColorProvider signatureColor={dbUser?.signatureColor} />
               <NavigationProvider />
               <EscapeInAppBrowser />
               <AppShellWrapper>

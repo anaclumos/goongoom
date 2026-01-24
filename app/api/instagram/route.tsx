@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ImageResponse } from "next/og"
+import { getSignatureColor } from "@/lib/colors/signature-colors"
 
 const clamp = (value: string, max: number) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value
@@ -13,11 +14,19 @@ const pickText = (value: string | null, fallback: string, max: number) => {
   return clamp(trimmed, max)
 }
 
-function getDicebearUrl(seed: string) {
-  return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&backgroundColor=10b981,059669,047857,34d399,6ee7b7&backgroundType=gradientLinear`
+function getDicebearUrl(
+  seed: string,
+  gradientColors: readonly [string, string]
+) {
+  const color1 = gradientColors[0].replace("#", "")
+  const color2 = gradientColors[1].replace("#", "")
+  return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${color1},${color2}&backgroundType=gradientLinear`
 }
 
-async function fetchImageAsBase64(url: string): Promise<string> {
+async function fetchImageAsBase64(
+  url: string,
+  gradientColors: readonly [string, string]
+): Promise<string> {
   try {
     const response = await fetch(url)
     if (!response.ok) {
@@ -28,7 +37,7 @@ async function fetchImageAsBase64(url: string): Promise<string> {
     const contentType = response.headers.get("content-type") || "image/png"
     return `data:${contentType};base64,${base64}`
   } catch {
-    return getDicebearUrl("fallback")
+    return getDicebearUrl("fallback", gradientColors)
   }
 }
 
@@ -56,11 +65,14 @@ export async function GET(request: Request) {
     260
   )
   const name = pickText(searchParams.get("name"), "사용자", 40)
+  const colorKey = searchParams.get("color")
+  const colors = getSignatureColor(colorKey)
 
   const askerAvatarSrc =
-    searchParams.get("askerAvatar") || getDicebearUrl("anonymous")
+    searchParams.get("askerAvatar") ||
+    getDicebearUrl("anonymous", colors.gradient)
   const answererAvatarSrc =
-    searchParams.get("answererAvatar") || getDicebearUrl(name)
+    searchParams.get("answererAvatar") || getDicebearUrl(name, colors.gradient)
 
   const [
     fontRegular,
@@ -72,8 +84,8 @@ export async function GET(request: Request) {
     fontRegularPromise,
     fontSemiBoldPromise,
     fontBoldPromise,
-    fetchImageAsBase64(askerAvatarSrc),
-    fetchImageAsBase64(answererAvatarSrc),
+    fetchImageAsBase64(askerAvatarSrc, colors.gradient),
+    fetchImageAsBase64(answererAvatarSrc, colors.gradient),
   ])
 
   return new ImageResponse(
@@ -85,7 +97,7 @@ export async function GET(request: Request) {
         flexDirection: "column",
         justifyContent: "center",
         padding: "80px",
-        backgroundColor: "#ecfdf5",
+        backgroundColor: colors.light.bg,
         fontFamily: "Pretendard",
         color: "#111827",
         wordWrap: "break-word",
@@ -137,7 +149,7 @@ export async function GET(request: Request) {
             style={{
               display: "flex",
               maxWidth: "85%",
-              background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
+              background: `linear-gradient(135deg, ${colors.gradient[0]} 0%, ${colors.gradient[1]} 100%)`,
               borderRadius: "48px",
               padding: "48px 56px",
               fontSize: "56px",

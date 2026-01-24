@@ -10,6 +10,10 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { getClerkUserById } from "@/lib/clerk"
+import {
+  DEFAULT_SIGNATURE_COLOR,
+  isValidSignatureColor,
+} from "@/lib/colors/signature-colors"
 import { getOrCreateUser } from "@/lib/db/queries"
 import { getQuestionSecurityOptions } from "@/lib/question-security"
 
@@ -47,6 +51,10 @@ export default async function ProfileSettingsPage() {
   const instagramHandle = dbUser?.socialLinks?.instagram || ""
   const twitterHandle = dbUser?.socialLinks?.twitter || ""
   const securityLevel = dbUser?.questionSecurityLevel || "public"
+  const signatureColor =
+    dbUser?.signatureColor && isValidSignatureColor(dbUser.signatureColor)
+      ? dbUser.signatureColor
+      : DEFAULT_SIGNATURE_COLOR
 
   return (
     <MainContent>
@@ -63,6 +71,7 @@ export default async function ProfileSettingsPage() {
         initialBio={dbUser?.bio || null}
         initialInstagramHandle={instagramHandle}
         initialQuestionSecurityLevel={securityLevel}
+        initialSignatureColor={signatureColor}
         initialTwitterHandle={twitterHandle}
         securityOptions={securityOptions}
       />

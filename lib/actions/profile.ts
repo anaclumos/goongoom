@@ -61,6 +61,7 @@ export async function updateProfile(data: {
   bio?: string | null
   socialLinks?: SocialLinks | null
   questionSecurityLevel?: string | null
+  signatureColor?: string | null
 }): Promise<ProfileActionResult<UserProfile>> {
   return await withAudit(
     { action: "updateProfile", payload: data },
@@ -92,6 +93,7 @@ export async function updateProfile(data: {
           bio: data.bio,
           socialLinks: data.socialLinks,
           questionSecurityLevel: validatedSecurityLevel,
+          signatureColor: data.signatureColor,
         })
 
         const clerkUser = await getClerkUserById(clerkId)

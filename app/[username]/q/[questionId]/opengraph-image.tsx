@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ImageResponse } from "next/og"
 import { getClerkUserById, getClerkUserByUsername } from "@/lib/clerk"
-import { getQuestionByIdAndRecipient } from "@/lib/db/queries"
+import { getSignatureColor } from "@/lib/colors/signature-colors"
+import { getOrCreateUser, getQuestionByIdAndRecipient } from "@/lib/db/queries"
 import type { QuestionId } from "@/lib/types"
 
 function getDicebearUrl(seed: string) {
@@ -57,6 +58,7 @@ export default async function Image({ params }: PageProps) {
 
   const clerkUser = await getClerkUserByUsername(username)
   if (!clerkUser) {
+    const defaultColors = getSignatureColor(null)
     return new ImageResponse(
       <div
         style={{
@@ -65,7 +67,7 @@ export default async function Image({ params }: PageProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ecfdf5",
+          backgroundColor: defaultColors.light.bg,
           fontFamily: "Pretendard",
           fontSize: 48,
           color: "#6B7280",
@@ -82,6 +84,7 @@ export default async function Image({ params }: PageProps) {
 
   const qa = await getQuestionByIdAndRecipient(questionId, clerkUser.clerkId)
   if (!qa?.answer) {
+    const defaultColors = getSignatureColor(null)
     return new ImageResponse(
       <div
         style={{
@@ -90,7 +93,7 @@ export default async function Image({ params }: PageProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ecfdf5",
+          backgroundColor: defaultColors.light.bg,
           fontFamily: "Pretendard",
           fontSize: 48,
           color: "#6B7280",
@@ -105,9 +108,11 @@ export default async function Image({ params }: PageProps) {
     )
   }
 
+  const dbUser = await getOrCreateUser(clerkUser.clerkId)
   const displayName = clerkUser.displayName || clerkUser.username || username
   const question = clamp(qa.content, 80)
   const answer = clamp(qa.answer.content, 100)
+  const colors = getSignatureColor(dbUser?.signatureColor)
 
   let askerAvatarSrc: string
   if (qa.isAnonymous) {
@@ -136,7 +141,7 @@ export default async function Image({ params }: PageProps) {
         flexDirection: "column",
         justifyContent: "center",
         padding: "56px",
-        backgroundColor: "#ecfdf5",
+        backgroundColor: colors.light.bg,
         fontFamily: "Pretendard",
         color: "#111827",
       }}
@@ -185,7 +190,7 @@ export default async function Image({ params }: PageProps) {
             style={{
               display: "flex",
               maxWidth: "80%",
-              background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
+              background: `linear-gradient(135deg, ${colors.gradient[0]} 0%, ${colors.gradient[1]} 100%)`,
               borderRadius: "32px",
               padding: "32px 40px",
               fontSize: "40px",

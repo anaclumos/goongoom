@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { PasskeyNudge } from "@/components/auth/passkey-nudge"
 import { MainContent } from "@/components/layout/main-content"
+import { AboutSection } from "@/components/settings/about-section"
 import { AccountSettingsButton } from "@/components/settings/account-settings-button"
 import { LocaleSelector } from "@/components/settings/locale-selector"
 import { LogoutButton } from "@/components/settings/logout-button"
@@ -88,6 +89,8 @@ export default async function SettingsPage({
             <LogoutButton />
           </CardContent>
         </Card>
+
+        <AboutSection />
       </div>
     </MainContent>
   )

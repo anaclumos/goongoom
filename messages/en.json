@@ -85,7 +85,7 @@
     "identifiedOption": "Identified",
     "identifiedDescription": "Ask with your name",
     "shuffleAvatar": "Shuffle",
-    "termsAgreement": "By asking, you agree to our terms of service",
+    "termsAgreement": "By asking, you agree to our <link>terms of service</link>",
     "questionSent": "Your question has been sent!",
     "questionLabel": "Question",
     "defaultQuestion": "Your question will appear here.",
@@ -141,7 +141,11 @@
     "socialLinks": "Social Usernames",
     "accountSettings": "Account settings",
     "accountSettingsDescription": "Manage your username, phone, and security",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "about": "About",
+    "madeBy": "Made by",
+    "reportBug": "Report a Bug",
+    "suggestFeature": "Suggest a Feature"
   },
 
   "home": {

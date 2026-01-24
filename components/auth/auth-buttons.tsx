@@ -57,31 +57,38 @@ export function HeroAuthButtons() {
       <ClerkLoaded>
         <SignedOut>
           <SignUpButton mode="modal">
-            <Button className="w-full sm:w-auto" size="lg">
+            <Button
+              className="hover-lift tap-scale w-full bg-gradient-to-r from-emerald-600 via-sky-600 to-violet-600 text-white transition-all duration-200 hover:from-emerald-500 hover:via-sky-500 hover:to-violet-500 sm:w-auto dark:from-emerald-500 dark:via-sky-500 dark:to-violet-500"
+              size="lg"
+            >
               {t("createProfile")}
               <HugeiconsIcon
-                className="transition-transform"
+                className="transition-transform group-hover/button:translate-x-0.5"
                 icon={ArrowRight01Icon}
                 size={20}
               />
             </Button>
           </SignUpButton>
           <PasskeySignInButton>
-            <Button className="w-full sm:w-auto" size="lg" variant="outline">
+            <Button
+              className="hover-lift w-full transition-all duration-200 sm:w-auto"
+              size="lg"
+              variant="outline"
+            >
               {t("login")}
             </Button>
           </PasskeySignInButton>
         </SignedOut>
         <SignedIn>
           <Button
-            className="w-full sm:w-auto"
+            className="hover-lift tap-scale w-full bg-gradient-to-r from-emerald-600 via-sky-600 to-violet-600 text-white transition-all duration-200 hover:from-emerald-500 hover:via-sky-500 hover:to-violet-500 sm:w-auto dark:from-emerald-500 dark:via-sky-500 dark:to-violet-500"
             nativeButton={false}
             render={<Link href={profileHref} />}
             size="lg"
           >
             {t("viewProfile")}
             <HugeiconsIcon
-              className="transition-transform"
+              className="transition-transform group-hover/button:translate-x-0.5"
               icon={ArrowRight01Icon}
               size={20}
             />
@@ -105,11 +112,17 @@ export function BottomCTAButton() {
       <ClerkLoaded>
         <SignedOut>
           <SignUpButton mode="modal">
-            <Button size="lg">{t("start")}</Button>
+            <Button
+              className="hover-lift tap-scale bg-gradient-to-r from-emerald-600 via-sky-600 to-violet-600 text-white transition-all duration-200 hover:from-emerald-500 hover:via-sky-500 hover:to-violet-500 dark:from-emerald-500 dark:via-sky-500 dark:to-violet-500"
+              size="lg"
+            >
+              {t("start")}
+            </Button>
           </SignUpButton>
         </SignedOut>
         <SignedIn>
           <Button
+            className="hover-lift tap-scale bg-gradient-to-r from-emerald-600 via-sky-600 to-violet-600 text-white transition-all duration-200 hover:from-emerald-500 hover:via-sky-500 hover:to-violet-500 dark:from-emerald-500 dark:via-sky-500 dark:to-violet-500"
             nativeButton={false}
             render={<Link href={profileHref} />}
             size="lg"

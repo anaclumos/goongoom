@@ -85,7 +85,7 @@
     "identifiedOption": "실명",
     "identifiedDescription": "내 이름으로 질문해요",
     "shuffleAvatar": "바꾸기",
-    "termsAgreement": "질문을 보내면 이용약관에 동의하는 거예요",
+    "termsAgreement": "질문을 보내면 <link>이용약관</link>에 동의하는 거예요",
     "questionSent": "질문을 보냈어요!",
     "questionLabel": "질문",
     "defaultQuestion": "궁금한 질문이 여기에 나타나요.",
@@ -141,7 +141,11 @@
     "socialLinks": "소셜 아이디",
     "accountSettings": "계정 설정",
     "accountSettingsDescription": "아이디, 전화번호, 보안을 관리해요",
-    "saving": "저장하는 중…"
+    "saving": "저장하는 중…",
+    "about": "서비스 정보",
+    "madeBy": "만든 사람",
+    "reportBug": "버그 제보",
+    "suggestFeature": "기능 제안"
   },
 
   "home": {

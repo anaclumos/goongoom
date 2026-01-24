@@ -15,6 +15,7 @@ export async function updateUserProfile(
     bio?: string | null
     socialLinks?: SocialLinks | null
     questionSecurityLevel?: QuestionSecurityLevel | null
+    signatureColor?: string | null
   }
 ) {
   const result = await fetchMutation(api.users.updateProfile, {
@@ -22,6 +23,7 @@ export async function updateUserProfile(
     bio: data.bio,
     socialLinks: data.socialLinks ?? undefined,
     questionSecurityLevel: data.questionSecurityLevel ?? undefined,
+    signatureColor: data.signatureColor ?? undefined,
   })
   return result ? [result] : []
 }
