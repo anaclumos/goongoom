@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl"
 import { useCallback } from "react"
 import { toast } from "sonner"
+import { useSignatureColor } from "@/components/theme/signature-color-provider"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateProfile } from "@/lib/actions/profile"
@@ -25,17 +26,19 @@ export function SignatureColorPicker({
   labels,
 }: SignatureColorPickerProps) {
   const tErrors = useTranslations("errors")
+  const { setSignatureColor } = useSignatureColor()
   const colorNames = getSignatureColorNames()
 
   const handleColorChange = useCallback(
     (value: string) => {
+      setSignatureColor(value)
       toast.promise(updateProfile({ signatureColor: value }), {
         loading: labels.saving,
         success: labels.saved,
         error: (err) => err?.message || tErrors("genericError"),
       })
     },
-    [labels, tErrors]
+    [labels, tErrors, setSignatureColor]
   )
 
   return (
