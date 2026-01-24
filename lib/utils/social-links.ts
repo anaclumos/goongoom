@@ -320,20 +320,6 @@ export function buildSocialLinks(
     .filter((link): link is SocialLinkItem => Boolean(link?.href))
 }
 
-export function getPageStatus(
-  error: string | null,
-  sent: boolean,
-  questionSentMessage: string
-) {
-  if (error) {
-    return { type: "error" as const, message: error }
-  }
-  if (sent) {
-    return { type: "success" as const, message: questionSentMessage }
-  }
-  return null
-}
-
 export function canAskAnonymousQuestion(
   securityLevel: string,
   viewerIsVerified: boolean

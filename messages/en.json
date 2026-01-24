@@ -14,12 +14,6 @@
     "user": "User",
     "menu": "Menu"
   },
-  "time": {
-    "justNow": "Just now",
-    "minutesAgo": "{minutes}m ago",
-    "hoursAgo": "{hours}h ago",
-    "daysAgo": "{days}d ago"
-  },
   "metadata": {
     "title": "Goongoom",
     "description": "Ask anything. Get honest answers."
@@ -56,9 +50,6 @@
     "later": "Maybe later",
     "fasterTitle": "Faster with a passkey",
     "fasterDescription": "Log in with one touch using Face ID,\nfingerprint, or device lock."
-  },
-  "theme": {
-    "toggle": "Switch theme"
   },
   "share": {
     "title": "Share",
@@ -230,9 +221,6 @@
     "answerCreateError": "Try again. We hit a snag saving your answer.",
     "pleaseEnterQuestion": "Enter a question"
   },
-  "instagram": {
-    "shareTitle": "Share to Instagram"
-  },
   "friends": {
     "title": "Friends",
     "description": "See what your friends are asking and answering",
@@ -289,8 +277,5 @@
     "youtube": "YouTube",
     "github": "GitHub",
     "naverBlog": "Naver Blog"
-  },
-  "legal": {
-    "copyright": "© 2026 Goongoom. All rights reserved."
   }
 }

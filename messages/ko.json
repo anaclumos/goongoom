@@ -14,12 +14,6 @@
     "user": "사용자",
     "menu": "메뉴"
   },
-  "time": {
-    "justNow": "방금 전",
-    "minutesAgo": "{minutes}분 전",
-    "hoursAgo": "{hours}시간 전",
-    "daysAgo": "{days}일 전"
-  },
   "metadata": {
     "title": "궁금닷컴",
     "description": "궁금한 건 뭐든 물어보고 솔직한 답을 받아요"
@@ -56,9 +50,6 @@
     "later": "나중에 할게요",
     "fasterTitle": "패스키로 더 빠르게!",
     "fasterDescription": "Face ID, 지문, 기기 잠금으로\n한 번 터치하면 로그인 끝!"
-  },
-  "theme": {
-    "toggle": "테마 바꾸기"
   },
   "share": {
     "title": "공유하기",
@@ -230,9 +221,6 @@
     "answerCreateError": "다시 시도해 주세요. 답변을 저장하는 중 문제가 생겼어요.",
     "pleaseEnterQuestion": "질문을 입력해 주세요"
   },
-  "instagram": {
-    "shareTitle": "인스타그램에 공유하기"
-  },
   "friends": {
     "title": "친구",
     "description": "친구들의 질문과 답변을 확인해 보세요",
@@ -289,8 +277,5 @@
     "youtube": "유튜브",
     "github": "깃허브",
     "naverBlog": "네이버 블로그"
-  },
-  "legal": {
-    "copyright": "© 2026 궁금닷컴. 모든 권리 보유."
   }
 }

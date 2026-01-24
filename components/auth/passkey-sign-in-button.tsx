@@ -1,11 +1,16 @@
 "use client"
 
 import { useClerk, useSignIn } from "@clerk/nextjs"
-import type { ReactNode } from "react"
-import { useCallback, useState } from "react"
+import {
+  cloneElement,
+  isValidElement,
+  useCallback,
+  useState,
+  type ReactElement,
+} from "react"
 
 interface PasskeySignInButtonProps {
-  children: ReactNode
+  children: ReactElement<{ onClick?: () => void }>
 }
 
 export function PasskeySignInButton({ children }: PasskeySignInButtonProps) {
@@ -38,9 +43,9 @@ export function PasskeySignInButton({ children }: PasskeySignInButtonProps) {
     }
   }, [signIn, setActive, clerk, isAuthenticating])
 
-  return (
-    <button className="contents" onClick={handleSignIn} type="button">
-      {children}
-    </button>
-  )
+  if (!isValidElement(children)) {
+    return null
+  }
+
+  return cloneElement(children, { onClick: handleSignIn })
 }

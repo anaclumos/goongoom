@@ -19,48 +19,6 @@ export type ProfileActionResult<T = unknown> =
   | { success: true; data: T }
   | { success: false; error: string }
 
-export async function getProfile(): Promise<ProfileActionResult<UserProfile>> {
-  const t = await getTranslations("errors")
-  try {
-    const { userId: clerkId } = await auth()
-
-    if (!clerkId) {
-      return { success: false, error: t("loginRequired") }
-    }
-
-    const clerkUser = await getClerkUserById(clerkId)
-    if (!clerkUser) {
-      return { success: false, error: t("userNotFound") }
-    }
-
-    const dbUser = await getOrCreateUser(clerkId)
-
-    const securityLevel = dbUser?.questionSecurityLevel ?? ""
-    const validSecurityLevel = isQuestionSecurityLevel(securityLevel)
-      ? securityLevel
-      : DEFAULT_QUESTION_SECURITY_LEVEL
-
-    return {
-      success: true,
-      data: {
-        clerkId: clerkUser.clerkId,
-        username: clerkUser.username,
-        displayName: clerkUser.displayName,
-        avatarUrl: clerkUser.avatarUrl,
-        bio: dbUser?.bio || null,
-        socialLinks: dbUser?.socialLinks || null,
-        questionSecurityLevel: validSecurityLevel,
-      },
-    }
-  } catch (error) {
-    console.error("Profile fetch error:", error)
-    return {
-      success: false,
-      error: t("profileLoadError"),
-    }
-  }
-}
-
 export async function updateProfile(data: {
   bio?: string | null
   socialLinks?: SocialLinks | null

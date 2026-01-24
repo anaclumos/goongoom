@@ -112,17 +112,6 @@ export async function getUnansweredQuestions(clerkId: string) {
   })
 }
 
-export function getRecentAnsweredQuestions(limit = 20) {
-  return unstable_cache(
-    () => fetchQuery(api.answers.getRecent, { limit }),
-    [CACHE_TAGS.recentAnswers, `limit:${limit}`],
-    {
-      revalidate: 30,
-      tags: [CACHE_TAGS.answers, CACHE_TAGS.recentAnswers],
-    }
-  )()
-}
-
 export function getRecentAnswersLimitPerUser(
   totalLimit = 30,
   perUserLimit = 2
@@ -145,16 +134,6 @@ export function getRecentAnswersLimitPerUser(
   )()
 }
 
-export async function getQuestionsWithAnswers(
-  recipientClerkId: string,
-  options?: { limit?: number; offset?: number }
-) {
-  return await fetchQuery(api.questions.getByRecipient, {
-    recipientClerkId,
-    limit: options?.limit,
-  })
-}
-
 export async function getQuestionByIdAndRecipient(
   questionId: QuestionId,
   recipientClerkId: string
@@ -175,34 +154,9 @@ export async function getAnsweredQuestionNumber(
   })
 }
 
-export async function getSentQuestionsWithAnswers(
-  senderClerkId: string,
-  options?: { limit?: number; offset?: number }
-) {
-  return await fetchQuery(api.questions.getSentByUser, {
-    senderClerkId,
-    limit: options?.limit,
-  })
-}
-
 export async function getUserLocale(clerkId: string) {
   const user = await fetchQuery(api.users.getByClerkId, { clerkId })
   return user?.locale
-}
-
-export function getUserCount() {
-  return unstable_cache(
-    () => fetchQuery(api.users.count, {}),
-    [CACHE_TAGS.userCount],
-    {
-      revalidate: 300,
-      tags: [CACHE_TAGS.users, CACHE_TAGS.userCount],
-    }
-  )()
-}
-
-export async function getFriends(clerkId: string) {
-  return await fetchQuery(api.questions.getFriends, { clerkId })
 }
 
 export async function getFriendsAnswers(clerkId: string, limit = 20) {
