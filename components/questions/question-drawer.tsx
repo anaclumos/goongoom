@@ -3,11 +3,10 @@
 import { SignUpButton, useUser } from "@clerk/nextjs"
 import { LockIcon, SentIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useMutation } from "convex/react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
-import { toast } from "sonner"
+import { useFormStatus } from "react-dom"
 import { PasskeySignInButton } from "@/components/auth/passkey-sign-in-button"
 import { QuestionInputTrigger } from "@/components/questions/question-input-trigger"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -22,7 +21,6 @@ import {
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
-import { api } from "@/convex/_generated/api"
 
 function generateAvatarSeed() {
   return Math.random().toString(36).substring(2, 15)
@@ -37,11 +35,13 @@ interface QuestionDrawerProps {
   recipientClerkId: string
   canAskAnonymously: boolean
   canAskPublic: boolean
+  submitAction: (formData: FormData) => Promise<void>
   requiresSignIn?: boolean
 }
 
-function SubmitButton({ pending }: { pending: boolean }) {
+function SubmitButton() {
   const t = useTranslations("questions")
+  const { pending } = useFormStatus()
   return (
     <Button
       className="h-14 w-full rounded-2xl bg-gradient-to-r from-emerald to-emerald/90 font-semibold text-base transition-all disabled:opacity-70"
@@ -216,20 +216,17 @@ function QuestionTypeSelector({
 
 export function QuestionDrawer({
   recipientName,
-  recipientClerkId,
   canAskAnonymously,
   canAskPublic,
+  submitAction,
   requiresSignIn = false,
 }: QuestionDrawerProps) {
   const t = useTranslations("questions")
-  const tErrors = useTranslations("errors")
   const [open, setOpen] = useState(false)
   const [questionType, setQuestionType] = useState<"anonymous" | "public">(
     canAskAnonymously ? "anonymous" : "public"
   )
   const [avatarSeed, setAvatarSeed] = useState(generateAvatarSeed)
-  const createQuestion = useMutation(api.questions.create)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleAnonymousClick = () => {
     if (questionType === "anonymous") {
@@ -241,40 +238,6 @@ export function QuestionDrawer({
 
   const handlePublicClick = () => {
     setQuestionType("public")
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    try {
-      const formData = new FormData(e.currentTarget)
-      const content = String(formData.get("question") || "").trim()
-      const questionType = String(formData.get("questionType") || "anonymous")
-      const avatarSeed = String(formData.get("avatarSeed") || "")
-
-      if (!content) {
-        toast.error(tErrors("pleaseEnterQuestion"))
-        setIsSubmitting(false)
-        return
-      }
-
-      const isAnonymous = questionType !== "public"
-      await createQuestion({
-        recipientClerkId,
-        content,
-        isAnonymous,
-        anonymousAvatarSeed: isAnonymous && avatarSeed ? avatarSeed : undefined,
-      })
-
-      setOpen(false)
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to send question"
-      )
-    } finally {
-      setIsSubmitting(false)
-    }
   }
 
   const isAnonymous = questionType === "anonymous"
@@ -303,7 +266,7 @@ export function QuestionDrawer({
             {requiresSignIn ? (
               <SignInPrompt />
             ) : (
-              <form className="space-y-6 py-2" onSubmit={handleSubmit}>
+              <form action={submitAction} className="space-y-6 py-2">
                 <div>
                   <Textarea
                     className="min-h-28 resize-none rounded-2xl border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-emerald focus:bg-background focus:ring-2 focus:ring-emerald/20"
@@ -337,7 +300,7 @@ export function QuestionDrawer({
                 )}
 
                 <div className="space-y-3 pt-2">
-                  <SubmitButton pending={isSubmitting} />
+                  <SubmitButton />
                   <p className="text-balance text-center text-muted-foreground text-xs leading-relaxed">
                     {t.rich("termsAgreement", {
                       link: (chunks) => (

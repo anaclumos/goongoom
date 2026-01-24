@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { revalidatePath } from "next/cache"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { MainContent } from "@/components/layout/main-content"
 import { EditProfileButton } from "@/components/profile/edit-profile-button"
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { ToastOnMount } from "@/components/ui/toast-on-mount"
+import { createQuestion } from "@/lib/actions/questions"
 import { getClerkUserByUsername, getClerkUsersByIds } from "@/lib/clerk"
 import { getOrCreateUser, getUserWithAnsweredQuestions } from "@/lib/db/queries"
 import { DEFAULT_QUESTION_SECURITY_LEVEL } from "@/lib/question-security"
@@ -80,6 +82,37 @@ export default async function UserProfilePage({
     viewerIsVerified
   )
   const requiresSignIn = !viewerIsVerified && securityLevel !== "anyone"
+
+  async function submitQuestion(formData: FormData) {
+    "use server"
+    const tErrors = await getTranslations("errors")
+    const content = String(formData.get("question") || "").trim()
+    const questionType = String(formData.get("questionType") || "anonymous")
+    const avatarSeed = String(formData.get("avatarSeed") || "")
+
+    if (!content) {
+      redirect(
+        `/${recipientUsername}?error=${encodeURIComponent(tErrors("pleaseEnterQuestion"))}`
+      )
+    }
+
+    const isAnonymous = questionType !== "public"
+    const result = await createQuestion({
+      recipientClerkId,
+      content,
+      isAnonymous,
+      anonymousAvatarSeed: isAnonymous && avatarSeed ? avatarSeed : undefined,
+    })
+
+    if (!result.success) {
+      redirect(
+        `/${recipientUsername}?error=${encodeURIComponent(result.error)}`
+      )
+    }
+
+    revalidatePath(`/${recipientUsername}`)
+    redirect(`/${recipientUsername}?sent=1`)
+  }
 
   const senderIds = Array.from(
     new Set(
@@ -217,6 +250,7 @@ export default async function UserProfilePage({
         recipientClerkId={recipientClerkId}
         recipientName={displayName}
         requiresSignIn={requiresSignIn}
+        submitAction={submitQuestion}
       />
     </MainContent>
   )

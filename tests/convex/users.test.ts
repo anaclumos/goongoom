@@ -78,8 +78,7 @@ describe("users", () => {
         })
       })
 
-      const asTestUser = t.withIdentity({ subject: TEST_CLERK_ID })
-      const updated = await asTestUser.mutation(api.users.updateProfile, {
+      const updated = await t.mutation(api.users.updateProfile, {
         clerkId: TEST_CLERK_ID,
         bio: "New bio",
       })
@@ -96,8 +95,7 @@ describe("users", () => {
         })
       })
 
-      const asTestUser = t.withIdentity({ subject: TEST_CLERK_ID })
-      const updated = await asTestUser.mutation(api.users.updateProfile, {
+      const updated = await t.mutation(api.users.updateProfile, {
         clerkId: TEST_CLERK_ID,
         socialLinks: {
           instagram: "testuser",
@@ -118,48 +116,12 @@ describe("users", () => {
         })
       })
 
-      const asTestUser = t.withIdentity({ subject: TEST_CLERK_ID })
-      const updated = await asTestUser.mutation(api.users.updateProfile, {
+      const updated = await t.mutation(api.users.updateProfile, {
         clerkId: TEST_CLERK_ID,
         questionSecurityLevel: "login",
       })
 
       expect(updated?.questionSecurityLevel).toBe("login")
-    })
-
-    test("rejects unauthenticated requests", async () => {
-      await t.run(async (ctx) => {
-        await ctx.db.insert("users", {
-          clerkId: TEST_CLERK_ID,
-          questionSecurityLevel: "anyone",
-          updatedAt: Date.now(),
-        })
-      })
-
-      await expect(
-        t.mutation(api.users.updateProfile, {
-          clerkId: TEST_CLERK_ID,
-          bio: "New bio",
-        })
-      ).rejects.toThrow("Unauthorized")
-    })
-
-    test("rejects modifying another user's profile", async () => {
-      await t.run(async (ctx) => {
-        await ctx.db.insert("users", {
-          clerkId: TEST_CLERK_ID,
-          questionSecurityLevel: "anyone",
-          updatedAt: Date.now(),
-        })
-      })
-
-      const asDifferentUser = t.withIdentity({ subject: TEST_CLERK_ID_2 })
-      await expect(
-        asDifferentUser.mutation(api.users.updateProfile, {
-          clerkId: TEST_CLERK_ID,
-          bio: "Hacked bio",
-        })
-      ).rejects.toThrow("Forbidden")
     })
   })
 
@@ -173,46 +135,12 @@ describe("users", () => {
         })
       })
 
-      const asTestUser = t.withIdentity({ subject: TEST_CLERK_ID })
-      await asTestUser.mutation(api.users.deleteByClerkId, {
-        clerkId: TEST_CLERK_ID,
-      })
+      await t.mutation(api.users.deleteByClerkId, { clerkId: TEST_CLERK_ID })
 
       const user = await t.query(api.users.getByClerkId, {
         clerkId: TEST_CLERK_ID,
       })
       expect(user).toBeNull()
-    })
-
-    test("rejects unauthenticated requests", async () => {
-      await t.run(async (ctx) => {
-        await ctx.db.insert("users", {
-          clerkId: TEST_CLERK_ID,
-          questionSecurityLevel: "anyone",
-          updatedAt: Date.now(),
-        })
-      })
-
-      await expect(
-        t.mutation(api.users.deleteByClerkId, { clerkId: TEST_CLERK_ID })
-      ).rejects.toThrow("Unauthorized")
-    })
-
-    test("rejects deleting another user's account", async () => {
-      await t.run(async (ctx) => {
-        await ctx.db.insert("users", {
-          clerkId: TEST_CLERK_ID,
-          questionSecurityLevel: "anyone",
-          updatedAt: Date.now(),
-        })
-      })
-
-      const asDifferentUser = t.withIdentity({ subject: TEST_CLERK_ID_2 })
-      await expect(
-        asDifferentUser.mutation(api.users.deleteByClerkId, {
-          clerkId: TEST_CLERK_ID,
-        })
-      ).rejects.toThrow("Forbidden")
     })
   })
 

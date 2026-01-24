@@ -1,5 +1,4 @@
 import { v } from "convex/values"
-import { internal } from "./_generated/api"
 import { mutation, query } from "./_generated/server"
 
 export const create = mutation({
@@ -8,62 +7,22 @@ export const create = mutation({
     content: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
-    const userId = identity?.subject
-
-    try {
-      const question = await ctx.db.get(args.questionId)
-      if (!question) {
-        throw new Error("Question not found")
-      }
-      if (question.answerId) {
-        throw new Error("Question already answered")
-      }
-
-      const answerId = await ctx.db.insert("answers", {
-        questionId: args.questionId,
-        content: args.content,
-      })
-
-      await ctx.db.patch(args.questionId, { answerId })
-
-      const result = await ctx.db.get(answerId)
-
-      await ctx.db.insert("logs", {
-        userId,
-        action: "answers.create",
-        payload: args,
-        entityType: "answer",
-        entityId: result?._id,
-        success: true,
-      })
-
-      if (result && question.senderClerkId && userId) {
-        await ctx.scheduler.runAfter(
-          0,
-          internal.notifications.sendAnswerNotification,
-          {
-            senderClerkId: question.senderClerkId,
-            answererClerkId: userId,
-            answererUsername: identity?.nickname ?? undefined,
-            answerContent: args.content,
-            answerId: result._id,
-          }
-        )
-      }
-
-      return result
-    } catch (error) {
-      await ctx.db.insert("logs", {
-        userId,
-        action: "answers.create",
-        payload: args,
-        entityType: "answer",
-        success: false,
-        errorMessage: error instanceof Error ? error.message : String(error),
-      })
-      throw error
+    const question = await ctx.db.get(args.questionId)
+    if (!question) {
+      throw new Error("Question not found")
     }
+    if (question.answerId) {
+      throw new Error("Question already answered")
+    }
+
+    const answerId = await ctx.db.insert("answers", {
+      questionId: args.questionId,
+      content: args.content,
+    })
+
+    await ctx.db.patch(args.questionId, { answerId })
+
+    return await ctx.db.get(answerId)
   },
 })
 

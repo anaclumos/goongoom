@@ -7,15 +7,12 @@ import {
   UserIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useMutation } from "convex/react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
-import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { api } from "@/convex/_generated/api"
-import type { Id } from "@/convex/_generated/dataModel"
+import { createAnswer } from "@/lib/actions/answers"
 import { cn } from "@/lib/utils"
 
 interface QuickAnswerDialogProps {
@@ -40,7 +37,6 @@ export function QuickAnswerDialog({
   const router = useRouter()
   const [answer, setAnswer] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const createAnswer = useMutation(api.answers.create)
 
   async function handleSubmit() {
     if (!(question && answer.trim()) || isSubmitting) {
@@ -49,18 +45,16 @@ export function QuickAnswerDialog({
 
     setIsSubmitting(true)
     try {
-      await createAnswer({
-        questionId: question.id as Id<"questions">,
+      const result = await createAnswer({
+        questionId: question.id,
         content: answer.trim(),
       })
 
-      setAnswer("")
-      onOpenChange(false)
-      router.refresh()
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to submit answer"
-      )
+      if (result.success) {
+        setAnswer("")
+        onOpenChange(false)
+        router.refresh()
+      }
     } finally {
       setIsSubmitting(false)
     }

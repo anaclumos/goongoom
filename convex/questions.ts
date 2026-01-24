@@ -1,5 +1,4 @@
 import { v } from "convex/values"
-import { internal } from "./_generated/api"
 import type { Doc, Id } from "./_generated/dataModel"
 import { mutation, type QueryCtx, query } from "./_generated/server"
 
@@ -30,53 +29,14 @@ export const create = mutation({
     anonymousAvatarSeed: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
-    const userId = identity?.subject
-
-    try {
-      const id = await ctx.db.insert("questions", {
-        recipientClerkId: args.recipientClerkId,
-        senderClerkId: args.senderClerkId,
-        content: args.content,
-        isAnonymous: args.isAnonymous,
-        anonymousAvatarSeed: args.anonymousAvatarSeed,
-      })
-      const result = await ctx.db.get(id)
-
-      await ctx.db.insert("logs", {
-        userId,
-        action: "questions.create",
-        payload: args,
-        entityType: "question",
-        entityId: result?._id,
-        success: true,
-      })
-
-      // Schedule push notification asynchronously
-      if (result) {
-        await ctx.scheduler.runAfter(
-          0,
-          internal.notifications.sendQuestionNotification,
-          {
-            recipientClerkId: args.recipientClerkId,
-            content: args.content,
-            questionId: result._id,
-          }
-        )
-      }
-
-      return result
-    } catch (error) {
-      await ctx.db.insert("logs", {
-        userId,
-        action: "questions.create",
-        payload: args,
-        entityType: "question",
-        success: false,
-        errorMessage: error instanceof Error ? error.message : String(error),
-      })
-      throw error
-    }
+    const id = await ctx.db.insert("questions", {
+      recipientClerkId: args.recipientClerkId,
+      senderClerkId: args.senderClerkId,
+      content: args.content,
+      isAnonymous: args.isAnonymous,
+      anonymousAvatarSeed: args.anonymousAvatarSeed,
+    })
+    return await ctx.db.get(id)
   },
 })
 

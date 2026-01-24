@@ -1,6 +1,5 @@
 "use client"
 
-import { useUser } from "@clerk/nextjs"
 import {
   AnonymousIcon,
   InstagramIcon,
@@ -11,7 +10,6 @@ import {
   UserMultipleIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useMutation } from "convex/react"
 import { isEmpty } from "es-toolkit/compat"
 import { useTranslations } from "next-intl"
 import { useCallback, useRef, useState } from "react"
@@ -22,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { api } from "@/convex/_generated/api"
+import { updateProfile } from "@/lib/actions/profile"
 import type { SignatureColor } from "@/lib/colors/signature-colors"
 import { QUESTION_SECURITY_LEVELS } from "@/lib/question-security"
 import type { SocialLinks } from "@/lib/types"
@@ -54,8 +52,6 @@ export function ProfileEditForm({
 }: ProfileEditFormProps) {
   const t = useTranslations("settings")
   const tErrors = useTranslations("errors")
-  const { user } = useUser()
-  const updateProfileMutation = useMutation(api.users.updateProfile)
 
   const [bio, setBio] = useState(initialBio || "")
   const [instagram, setInstagram] = useState(initialInstagramHandle)
@@ -69,28 +65,18 @@ export function ProfileEditForm({
   const lastSavedTwitter = useRef(initialTwitterHandle)
 
   const saveProfile = useCallback(
-    async (data: {
+    (data: {
       bio?: string | null
       socialLinks?: SocialLinks | null
       questionSecurityLevel?: string
     }) => {
-      if (!user?.id) {
-        return
-      }
-
-      await toast.promise(
-        updateProfileMutation({
-          clerkId: user.id,
-          ...data,
-        }),
-        {
-          loading: t("saving"),
-          success: t("profileUpdated"),
-          error: (err) => err?.message || tErrors("genericError"),
-        }
-      )
+      toast.promise(updateProfile(data), {
+        loading: t("saving"),
+        success: t("profileUpdated"),
+        error: (err) => err?.message || tErrors("genericError"),
+      })
     },
-    [t, tErrors, user, updateProfileMutation]
+    [t, tErrors]
   )
 
   const handleBioBlur = useCallback(() => {

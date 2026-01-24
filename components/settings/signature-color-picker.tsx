@@ -1,14 +1,12 @@
 "use client"
 
-import { useUser } from "@clerk/nextjs"
-import { useMutation } from "convex/react"
 import { useTranslations } from "next-intl"
 import { useCallback } from "react"
 import { toast } from "sonner"
 import { useSignatureColor } from "@/components/theme/signature-color-provider"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { api } from "@/convex/_generated/api"
+import { updateProfile } from "@/lib/actions/profile"
 import {
   getSignatureColorNames,
   SIGNATURE_COLORS,
@@ -30,29 +28,17 @@ export function SignatureColorPicker({
   const tErrors = useTranslations("errors")
   const { setSignatureColor } = useSignatureColor()
   const colorNames = getSignatureColorNames()
-  const { user } = useUser()
-  const updateProfileMutation = useMutation(api.users.updateProfile)
 
   const handleColorChange = useCallback(
-    async (value: string) => {
+    (value: string) => {
       setSignatureColor(value)
-      if (!user?.id) {
-        return
-      }
-
-      await toast.promise(
-        updateProfileMutation({
-          clerkId: user.id,
-          signatureColor: value,
-        }),
-        {
-          loading: labels.saving,
-          success: labels.saved,
-          error: (err) => err?.message || tErrors("genericError"),
-        }
-      )
+      toast.promise(updateProfile({ signatureColor: value }), {
+        loading: labels.saving,
+        success: labels.saved,
+        error: (err) => err?.message || tErrors("genericError"),
+      })
     },
-    [labels, tErrors, setSignatureColor, user, updateProfileMutation]
+    [labels, tErrors, setSignatureColor]
   )
 
   return (

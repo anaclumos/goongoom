@@ -1,9 +1,8 @@
 "use client"
 
 import { useUser } from "@clerk/nextjs"
-import { useMutation } from "convex/react"
 import { useEffect, useRef } from "react"
-import { api } from "@/convex/_generated/api"
+import { subscribeToPush } from "@/lib/actions/push"
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 
@@ -57,7 +56,6 @@ async function subscribeToPushNotifications(
 export function PushNotificationProvider() {
   const { user, isLoaded } = useUser()
   const hasSubscribed = useRef(false)
-  const upsertPushSubscription = useMutation(api.push.upsert)
 
   useEffect(() => {
     if (!(isLoaded && user) || hasSubscribed.current) {
@@ -93,17 +91,18 @@ export function PushNotificationProvider() {
       const subscriptionJson = subscription.toJSON()
       if (subscriptionJson.endpoint && subscriptionJson.keys) {
         hasSubscribed.current = true
-        await upsertPushSubscription({
-          clerkId: user.id,
+        await subscribeToPush({
           endpoint: subscriptionJson.endpoint,
-          p256dh: subscriptionJson.keys.p256dh ?? "",
-          auth: subscriptionJson.keys.auth ?? "",
+          keys: {
+            p256dh: subscriptionJson.keys.p256dh ?? "",
+            auth: subscriptionJson.keys.auth ?? "",
+          },
         })
       }
     }
 
     setupPush()
-  }, [isLoaded, user, upsertPushSubscription])
+  }, [isLoaded, user])
 
   return null
 }
