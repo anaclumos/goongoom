@@ -1,6 +1,6 @@
 'use client'
 
-import { SignUpButton } from '@clerk/nextjs'
+import { SignUpButton, useUser } from '@clerk/nextjs'
 import {
   Home01Icon,
   InboxIcon,
@@ -17,33 +17,6 @@ import { GUEST_TAB_ROUTES, TAB_ROUTES } from '@/components/navigation/navigation
 import { Ultralink } from '@/components/navigation/ultralink'
 import { usePrefetchRoutes } from '@/components/navigation/use-prefetch-routes'
 import { cn } from '@/lib/utils'
-
-const loggedInTabItems = [
-  {
-    titleKey: 'home' as const,
-    href: '/',
-    icon: Home01Icon,
-    namespace: 'sidebar' as const,
-  },
-  {
-    titleKey: 'inbox' as const,
-    href: '/inbox',
-    icon: InboxIcon,
-    namespace: 'sidebar' as const,
-  },
-  {
-    titleKey: 'friends' as const,
-    href: '/friends',
-    icon: UserGroupIcon,
-    namespace: 'sidebar' as const,
-  },
-  {
-    titleKey: 'settings' as const,
-    href: '/settings',
-    icon: Settings01Icon,
-    namespace: 'sidebar' as const,
-  },
-]
 
 const guestTabItems = [
   {
@@ -63,6 +36,34 @@ export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
   const tSidebar = useTranslations('sidebar')
   const tCommon = useTranslations('common')
   const tUi = useTranslations('ui')
+  const { user } = useUser()
+
+  const loggedInTabItems = [
+    {
+      titleKey: 'home' as const,
+      href: user?.username ? `/${user.username}` : '/',
+      icon: Home01Icon,
+      namespace: 'sidebar' as const,
+    },
+    {
+      titleKey: 'inbox' as const,
+      href: '/inbox',
+      icon: InboxIcon,
+      namespace: 'sidebar' as const,
+    },
+    {
+      titleKey: 'friends' as const,
+      href: '/friends',
+      icon: UserGroupIcon,
+      namespace: 'sidebar' as const,
+    },
+    {
+      titleKey: 'settings' as const,
+      href: '/settings',
+      icon: Settings01Icon,
+      namespace: 'sidebar' as const,
+    },
+  ]
 
   const tabItems = isLoggedIn ? loggedInTabItems : guestTabItems
   usePrefetchRoutes(isLoggedIn ? TAB_ROUTES : GUEST_TAB_ROUTES)
@@ -70,6 +71,9 @@ export function MobileTabBar({ isLoggedIn = false }: MobileTabBarProps) {
   const isActive = (href: string) => {
     if (href === '/') {
       return pathname === '/'
+    }
+    if (user?.username && href === `/${user.username}`) {
+      return pathname === `/${user.username}`
     }
     return pathname.startsWith(href)
   }
