@@ -123,6 +123,28 @@ export function getRecentAnsweredQuestions(limit = 20) {
   )()
 }
 
+export function getRecentAnswersLimitPerUser(
+  totalLimit = 30,
+  perUserLimit = 2
+) {
+  return unstable_cache(
+    () =>
+      fetchQuery(api.answers.getRecentLimitPerUser, {
+        totalLimit,
+        perUserLimit,
+      }),
+    [
+      CACHE_TAGS.recentAnswers,
+      `total:${totalLimit}`,
+      `perUser:${perUserLimit}`,
+    ],
+    {
+      revalidate: 30,
+      tags: [CACHE_TAGS.answers, CACHE_TAGS.recentAnswers],
+    }
+  )()
+}
+
 export async function getQuestionsWithAnswers(
   recipientClerkId: string,
   options?: { limit?: number; offset?: number }

@@ -18,50 +18,54 @@ interface LandingFeaturesProps {
 
 export function LandingFeatures({ t, tShare }: LandingFeaturesProps) {
   return (
-    <div className="border-border border-y bg-muted/40 py-24">
+    <div className="border-border/40 border-y bg-muted/30 py-24">
       <div className="mx-auto max-w-5xl px-6">
         <div className="grid gap-8 sm:grid-cols-3">
-          <Card className="hover-lift bg-amber-50/40 transition-all duration-200 dark:bg-amber-950/20">
-            <div className="h-1 w-full rounded-full bg-amber-500/60" />
-            <CardContent className="space-y-4">
-              <div className="inline-flex size-12 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-                <HugeiconsIcon icon={ShieldKeyIcon} size={24} />
+          <Card className="group hover-lift relative overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/20 hover:bg-background hover:shadow-lg hover:shadow-primary/5">
+            <div className="absolute inset-x-0 top-0 h-1 w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <CardContent className="space-y-6 p-8">
+              <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <HugeiconsIcon icon={ShieldKeyIcon} size={28} />
               </div>
-              <div className="space-y-2">
-                <CardTitle className="text-xl">{t("safeAnonymity")}</CardTitle>
-                <CardDescription className="text-base">
+              <div className="space-y-3">
+                <CardTitle className="font-bold text-xl">
+                  {t("safeAnonymity")}
+                </CardTitle>
+                <CardDescription className="text-base text-muted-foreground/80 leading-relaxed">
                   {t("safeAnonymityDescription")}
                 </CardDescription>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover-lift bg-sky-50/40 transition-all duration-200 dark:bg-sky-950/20">
-            <div className="h-1 w-full rounded-full bg-sky-500/60" />
-            <CardContent className="space-y-4">
-              <div className="inline-flex size-12 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
-                <HugeiconsIcon icon={Share01Icon} size={24} />
+          <Card className="group hover-lift relative overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/20 hover:bg-background hover:shadow-lg hover:shadow-primary/5">
+            <div className="absolute inset-x-0 top-0 h-1 w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <CardContent className="space-y-6 p-8">
+              <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <HugeiconsIcon icon={Share01Icon} size={28} />
               </div>
-              <div className="space-y-2">
-                <CardTitle className="text-xl">{tShare("easyShare")}</CardTitle>
-                <CardDescription className="text-base">
+              <div className="space-y-3">
+                <CardTitle className="font-bold text-xl">
+                  {tShare("easyShare")}
+                </CardTitle>
+                <CardDescription className="text-base text-muted-foreground/80 leading-relaxed">
                   {tShare("easyShareDescription")}
                 </CardDescription>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="hover-lift bg-violet-50/40 transition-all duration-200 dark:bg-violet-950/20">
-            <div className="h-1 w-full rounded-full bg-violet-500/60" />
-            <CardContent className="space-y-4">
-              <div className="inline-flex size-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
-                <HugeiconsIcon icon={SparklesIcon} size={24} />
+          <Card className="group hover-lift relative overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/20 hover:bg-background hover:shadow-lg hover:shadow-primary/5">
+            <div className="absolute inset-x-0 top-0 h-1 w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <CardContent className="space-y-6 p-8">
+              <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <HugeiconsIcon icon={SparklesIcon} size={28} />
               </div>
-              <div className="space-y-2">
-                <CardTitle className="text-xl">
+              <div className="space-y-3">
+                <CardTitle className="font-bold text-xl">
                   {tShare("instagramShare")}
                 </CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base text-muted-foreground/80 leading-relaxed">
                   {tShare("instagramShareDescription")}
                 </CardDescription>
               </div>

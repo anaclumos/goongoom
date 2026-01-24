@@ -82,6 +82,79 @@ export const getRecent = query({
   },
 })
 
+export const getRecentLimitPerUser = query({
+  args: {
+    totalLimit: v.optional(v.number()),
+    perUserLimit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const totalLimit = args.totalLimit ?? 30
+    const perUserLimit = args.perUserLimit ?? 2
+
+    const answers = await ctx.db
+      .query("answers")
+      .filter((q) => q.eq(q.field("deletedAt"), undefined))
+      .order("desc")
+      .take(totalLimit * 5)
+
+    const questionIds = [...new Set(answers.map((a) => a.questionId))]
+    const questions = await Promise.all(questionIds.map((id) => ctx.db.get(id)))
+    const validQuestions = questions.filter(
+      (q): q is NonNullable<typeof q> => q !== null && !q.deletedAt
+    )
+    const questionMap = new Map(validQuestions.map((q) => [q._id, q]))
+
+    const recipientClerkIds = [
+      ...new Set(
+        answers
+          .map((a) => questionMap.get(a.questionId)?.recipientClerkId)
+          .filter((id): id is string => id !== undefined)
+      ),
+    ]
+    const users = await Promise.all(
+      recipientClerkIds.map((clerkId) =>
+        ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+          .first()
+      )
+    )
+    const userMap = new Map(
+      users
+        .filter((u): u is NonNullable<typeof u> => u !== null)
+        .map((u) => [u.clerkId, u])
+    )
+
+    const enrichedAnswers = answers
+      .map((answer) => {
+        const question = questionMap.get(answer.questionId)
+        if (!question) return null
+        const user = userMap.get(question.recipientClerkId)
+        return {
+          question,
+          answer,
+          recipientClerkId: question.recipientClerkId,
+          recipientSignatureColor: user?.signatureColor,
+        }
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null)
+
+    const userAnswerCount = new Map<string, number>()
+    const limitedResults: typeof enrichedAnswers = []
+
+    for (const item of enrichedAnswers) {
+      const count = userAnswerCount.get(item.recipientClerkId) ?? 0
+      if (count < perUserLimit) {
+        limitedResults.push(item)
+        userAnswerCount.set(item.recipientClerkId, count + 1)
+      }
+      if (limitedResults.length >= totalLimit) break
+    }
+
+    return limitedResults
+  },
+})
+
 export const getFriendsAnswers = query({
   args: {
     clerkId: v.string(),

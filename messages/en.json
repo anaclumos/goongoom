@@ -178,13 +178,10 @@
   },
 
   "home": {
-    "hotTitle": "Hot anonymous Q&A",
-    "heroTitle": "Ask anything you're curious about",
-    "heroDescription": "Ask anonymously, answer honestly.\nShare your profile and hear what your friends really think.",
-    "safeAnonymity": "Safe anonymity",
-    "safeAnonymityDescription": "Questioner identities stay completely anonymous. Start honest conversations without any pressure.",
-    "ctaTitle": "Get started",
-    "ctaDescription": "Join {userCount} people already on Goongoom."
+    "feedTitle": "Stories on Goongoom",
+    "feedEmptyTitle": "No stories yet",
+    "feedEmptyDescription": "Be the first to ask a question!",
+    "questionLabel": "Question"
   },
   "footer": {
     "terms": "Terms of Service",
