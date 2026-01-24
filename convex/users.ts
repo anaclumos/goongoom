@@ -1,5 +1,10 @@
 import { v } from "convex/values"
-import { internalMutation, mutation, query } from "./_generated/server"
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from "./_generated/server"
 
 // NOTE: Convex doesn't provide a native count() operation, so this implementation
 // fetches all user documents to count them. This is the recommended Convex pattern
@@ -15,6 +20,16 @@ export const count = query({
 })
 
 export const getByClerkId = query({
+  args: { clerkId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first()
+  },
+})
+
+export const getByClerkIdInternal = internalQuery({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -65,45 +80,71 @@ export const updateProfile = mutation({
     signatureColor: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .first()
+    const identity = await ctx.auth.getUserIdentity()
+    const userId = identity?.subject
 
-    if (!user) {
-      throw new Error("User not found")
-    }
+    try {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+        .first()
 
-    const updateData: {
-      bio?: string
-      socialLinks?: {
-        instagram?: string
-        facebook?: string
-        github?: string
-        twitter?: string
+      if (!user) {
+        throw new Error("User not found")
       }
-      questionSecurityLevel?: string
-      signatureColor?: string
-      updatedAt: number
-    } = {
-      updatedAt: Date.now(),
-    }
 
-    if (args.bio !== undefined) {
-      updateData.bio = args.bio ?? undefined
-    }
-    if (args.socialLinks !== undefined) {
-      updateData.socialLinks = args.socialLinks ?? undefined
-    }
-    if (args.questionSecurityLevel) {
-      updateData.questionSecurityLevel = args.questionSecurityLevel
-    }
-    if (args.signatureColor !== undefined) {
-      updateData.signatureColor = args.signatureColor
-    }
+      const updateData: {
+        bio?: string
+        socialLinks?: {
+          instagram?: string
+          facebook?: string
+          github?: string
+          twitter?: string
+        }
+        questionSecurityLevel?: string
+        signatureColor?: string
+        updatedAt: number
+      } = {
+        updatedAt: Date.now(),
+      }
 
-    await ctx.db.patch(user._id, updateData)
-    return await ctx.db.get(user._id)
+      if (args.bio !== undefined) {
+        updateData.bio = args.bio ?? undefined
+      }
+      if (args.socialLinks !== undefined) {
+        updateData.socialLinks = args.socialLinks ?? undefined
+      }
+      if (args.questionSecurityLevel) {
+        updateData.questionSecurityLevel = args.questionSecurityLevel
+      }
+      if (args.signatureColor !== undefined) {
+        updateData.signatureColor = args.signatureColor
+      }
+
+      await ctx.db.patch(user._id, updateData)
+      const result = await ctx.db.get(user._id)
+
+      await ctx.db.insert("logs", {
+        userId,
+        action: "users.updateProfile",
+        payload: args,
+        entityType: "user",
+        entityId: user._id,
+        success: true,
+      })
+
+      return result
+    } catch (error) {
+      await ctx.db.insert("logs", {
+        userId,
+        action: "users.updateProfile",
+        payload: args,
+        entityType: "user",
+        success: false,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      })
+      throw error
+    }
   },
 })
 

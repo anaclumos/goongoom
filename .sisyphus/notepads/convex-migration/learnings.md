@@ -1,0 +1,4 @@
+- Converted `QuestionDrawer` from Server Actions to Convex `useMutation` for better interactivity and consistency with the Convex stack.
+- Removed inline server actions from `app/page.tsx` and `app/[username]/page.tsx`.
+- Implemented client-side form handling with `sonner` for toast notifications.
+- Maintained existing UX including loading states and redirects.

@@ -1,26 +1,32 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
+import { useMutation } from "convex/react"
 import { useLocale, useTranslations } from "next-intl"
-import { useState, useTransition } from "react"
+import { useState } from "react"
+import { api } from "@/convex/_generated/api"
 import { type Locale, localeNames, locales } from "@/i18n/config"
-import { setUserLocale } from "@/lib/actions/locale"
 import { Label } from "../ui/label"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 
 export function LocaleSelector() {
   const t = useTranslations("settings")
   const currentLocale = useLocale()
-  const [isPending, startTransition] = useTransition()
+  const { user } = useUser()
   const [selectedLocale, setSelectedLocale] = useState<Locale>(
     currentLocale as Locale
   )
+  const [isPending, setIsPending] = useState(false)
+  const updateLocale = useMutation(api.users.updateLocale)
 
   function handleLocaleChange(value: string) {
     const locale = value as Locale
     setSelectedLocale(locale)
-    startTransition(async () => {
-      await setUserLocale(locale)
-    })
+    setIsPending(true)
+    updateLocale({
+      clerkId: user?.id ?? "",
+      locale,
+    }).finally(() => setIsPending(false))
   }
 
   return (

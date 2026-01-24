@@ -1,6 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { revalidatePath } from "next/cache"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
@@ -18,7 +17,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { ToastOnMount } from "@/components/ui/toast-on-mount"
-import { createQuestion } from "@/lib/actions/questions"
 import { getClerkUserById } from "@/lib/clerk"
 import {
   getOrCreateUser,
@@ -119,30 +117,6 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
 
   const recipientClerkId = clerkId
 
-  async function submitQuestion(formData: FormData) {
-    "use server"
-    const tErrors = await getTranslations("errors")
-    const content = String(formData.get("question") || "").trim()
-    const questionType = String(formData.get("questionType") || "anonymous")
-
-    if (!content) {
-      redirect(`/?error=${encodeURIComponent(tErrors("pleaseEnterQuestion"))}`)
-    }
-
-    const result = await createQuestion({
-      recipientClerkId,
-      content,
-      isAnonymous: questionType !== "public",
-    })
-
-    if (!result.success) {
-      redirect(`/?error=${encodeURIComponent(result.error)}`)
-    }
-
-    revalidatePath("/")
-    redirect("/?sent=1")
-  }
-
   return (
     <MainContent>
       <Card className="mb-6">
@@ -236,7 +210,6 @@ async function MyProfile({ clerkId, searchParams }: MyProfileProps) {
         recipientClerkId={recipientClerkId}
         recipientName={displayName}
         requiresSignIn={false}
-        submitAction={submitQuestion}
       />
     </MainContent>
   )

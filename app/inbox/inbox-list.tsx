@@ -7,10 +7,12 @@ import {
   UserIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { useMutation } from "convex/react"
 import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { toast } from "sonner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,7 +25,8 @@ import {
 } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
-import { createAnswer } from "@/lib/actions/answers"
+import { api } from "@/convex/_generated/api"
+import type { Id } from "@/convex/_generated/dataModel"
 
 function getDicebearUrl(seed: string) {
   return `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}&flip=true`
@@ -62,6 +65,7 @@ export function InboxList({ questions }: InboxListProps) {
   const [answer, setAnswer] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [shouldRefreshOnClose, setShouldRefreshOnClose] = useState(false)
+  const createAnswer = useMutation(api.answers.create)
 
   function handleQuestionClick(question: QuestionItem) {
     setSelectedQuestion(question)
@@ -87,15 +91,18 @@ export function InboxList({ questions }: InboxListProps) {
 
     setIsSubmitting(true)
     try {
-      const result = await createAnswer({
-        questionId: selectedQuestion.id,
+      await createAnswer({
+        questionId: selectedQuestion.id as Id<"questions">,
         content: answer.trim(),
       })
 
-      if (result.success) {
-        setShouldRefreshOnClose(true)
-        setIsDrawerOpen(false)
-      }
+      setAnswer("")
+      setShouldRefreshOnClose(true)
+      setIsDrawerOpen(false)
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to submit answer"
+      )
     } finally {
       setIsSubmitting(false)
     }

@@ -11,6 +11,7 @@
 import type * as answers from "../answers.js";
 import type * as http from "../http.js";
 import type * as logs from "../logs.js";
+import type * as notifications from "../notifications.js";
 import type * as push from "../push.js";
 import type * as questions from "../questions.js";
 import type * as types from "../types.js";
@@ -26,6 +27,7 @@ declare const fullApi: ApiFromModules<{
   answers: typeof answers;
   http: typeof http;
   logs: typeof logs;
+  notifications: typeof notifications;
   push: typeof push;
   questions: typeof questions;
   types: typeof types;
