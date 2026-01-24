@@ -140,7 +140,7 @@ function formatHandleLabel(handle: string) {
   if (handle.startsWith("UC") && handle.length >= 24) {
     return handle
   }
-  return handle.startsWith("@") ? handle : `@${handle}`
+  return handle.replace(HANDLE_PREFIX_REGEX, "")
 }
 
 function normalizeHandleEntry(
