@@ -1,6 +1,7 @@
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
+import { waitUntil } from "@vercel/functions"
 import { getTranslations } from "next-intl/server"
 import { withAudit } from "@/lib/audit/with-audit"
 import { getClerkUserById } from "@/lib/clerk"
@@ -82,7 +83,11 @@ export async function createAnswer(data: {
           return { success: false, error: t("answerCreateFailed") }
         }
 
-        notifyQuestionSender(question, answer, clerkId)
+        waitUntil(
+          notifyQuestionSender(question, answer, clerkId).catch((err) =>
+            console.error("Push notification failed:", err)
+          )
+        )
 
         return { success: true, data: answer }
       } catch (error) {

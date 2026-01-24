@@ -1,6 +1,8 @@
 import { fetchMutation, fetchQuery } from "convex/nextjs"
+import { unstable_cache } from "next/cache"
 import { api } from "@/convex/_generated/api"
 import type { QuestionId, SocialLinks } from "@/convex/types"
+import { CACHE_TAGS } from "@/lib/cache/tags"
 import type { QuestionSecurityLevel } from "@/lib/question-security"
 
 export type { SocialLinks } from "@/convex/types"
@@ -81,7 +83,14 @@ export async function getUnansweredQuestions(clerkId: string) {
 }
 
 export async function getRecentAnsweredQuestions(limit = 20) {
-  return await fetchQuery(api.answers.getRecent, { limit })
+  return unstable_cache(
+    () => fetchQuery(api.answers.getRecent, { limit }),
+    [CACHE_TAGS.recentAnswers, `limit:${limit}`],
+    {
+      revalidate: 30,
+      tags: [CACHE_TAGS.answers, CACHE_TAGS.recentAnswers],
+    }
+  )()
 }
 
 export async function getQuestionsWithAnswers(
@@ -130,7 +139,14 @@ export async function getUserLocale(clerkId: string) {
 }
 
 export async function getUserCount() {
-  return await fetchQuery(api.users.count, {})
+  return unstable_cache(
+    () => fetchQuery(api.users.count, {}),
+    [CACHE_TAGS.userCount],
+    {
+      revalidate: 300,
+      tags: [CACHE_TAGS.users, CACHE_TAGS.userCount],
+    }
+  )()
 }
 
 export async function getFriends(clerkId: string) {

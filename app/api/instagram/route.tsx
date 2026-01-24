@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
+import { getCache } from "@vercel/functions"
 import { ImageResponse } from "next/og"
 import { getSignatureColor } from "@/lib/colors/signature-colors"
 
@@ -51,8 +52,29 @@ const fontBoldPromise = readFile(
   join(process.cwd(), "public/fonts/Pretendard-Bold.otf")
 )
 
+function generateCacheKey(searchParams: URLSearchParams): string {
+  const sortedParams = Array.from(searchParams.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}=${v}`)
+    .join("&")
+  return `og:instagram:${sortedParams}`
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
+  const cacheKey = generateCacheKey(searchParams)
+  const cache = getCache()
+
+  const cachedBytes = (await cache.get(cacheKey)) as Uint8Array | null
+  if (cachedBytes) {
+    return new Response(Buffer.from(cachedBytes), {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "X-Cache": "HIT",
+      },
+    })
+  }
 
   const question = pickText(
     searchParams.get("question"),
@@ -90,7 +112,7 @@ export async function GET(request: Request) {
     fetchImageAsBase64(answererAvatarSrc, colors.gradient),
   ])
 
-  return new ImageResponse(
+  const imageResponse = new ImageResponse(
     <div
       style={{
         width: "100%",
@@ -183,9 +205,18 @@ export async function GET(request: Request) {
         { name: "Pretendard", data: fontSemiBold, weight: 600 },
         { name: "Pretendard", data: fontBold, weight: 700 },
       ],
-      headers: {
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
     }
   )
+
+  const imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
+
+  cache.set(cacheKey, imageBytes, { ttl: 3600, tags: ["og:images"] })
+
+  return new Response(imageBytes, {
+    headers: {
+      "Content-Type": "image/png",
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "X-Cache": "MISS",
+    },
+  })
 }

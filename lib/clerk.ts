@@ -1,6 +1,8 @@
 import type { User } from "@clerk/nextjs/server"
 import { clerkClient } from "@clerk/nextjs/server"
+import { unstable_cache } from "next/cache"
 import { cache } from "react"
+import { CACHE_TAGS } from "./cache/tags"
 
 export interface ClerkUserInfo {
   clerkId: string
@@ -45,7 +47,17 @@ async function fetchClerkUserById(
   }
 }
 
-export const getClerkUserById = cache(fetchClerkUserById)
+const getCachedClerkUser = (clerkId: string) =>
+  unstable_cache(
+    () => fetchClerkUserById(clerkId),
+    [CACHE_TAGS.clerkUser(clerkId)],
+    {
+      revalidate: 300,
+      tags: [CACHE_TAGS.clerkUsers, CACHE_TAGS.clerkUser(clerkId)],
+    }
+  )()
+
+export const getClerkUserById = cache(getCachedClerkUser)
 
 export async function getClerkUsersByIds(
   clerkIds: string[]
