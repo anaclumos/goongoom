@@ -1,6 +1,11 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
+import { cookies } from "next/headers"
 import { ImageResponse } from "next/og"
+import {
+  DEFAULT_SIGNATURE_COLOR,
+  SIGNATURE_COLORS,
+} from "@/lib/colors/signature-colors"
 
 export const runtime = "nodejs"
 export const alt = "궁금닷컴 - 무엇이든 물어보세요"
@@ -17,6 +22,12 @@ const fontBoldPromise = readFile(
 const logoPromise = readFile(join(process.cwd(), "assets/logo.png"))
 
 export default async function Image() {
+  const cookieStore = await cookies()
+  const themeCookie = cookieStore.get("theme")?.value
+  const isDark = themeCookie === "dark"
+  const colors = SIGNATURE_COLORS[DEFAULT_SIGNATURE_COLOR]
+  const theme = isDark ? colors.dark : colors.light
+
   const [fontRegular, fontBold, logoData] = await Promise.all([
     fontRegularPromise,
     fontBoldPromise,
@@ -33,9 +44,9 @@ export default async function Image() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#ecfdf5",
+        backgroundColor: theme.bg,
         fontFamily: "Pretendard",
-        color: "#111827",
+        color: isDark ? "#F9FAFB" : "#111827",
         gap: "40px",
       }}
     >
@@ -57,7 +68,9 @@ export default async function Image() {
         }}
       >
         <div style={{ fontSize: "92px", fontWeight: 700 }}>궁금닷컴</div>
-        <div style={{ fontSize: "42px", color: "#6B7280" }}>
+        <div
+          style={{ fontSize: "42px", color: isDark ? "#9CA3AF" : "#6B7280" }}
+        >
           무엇이든 물어보세요
         </div>
       </div>
@@ -67,7 +80,7 @@ export default async function Image() {
           position: "absolute",
           bottom: "40px",
           fontSize: "28px",
-          color: "#9CA3AF",
+          color: isDark ? "#6B7280" : "#9CA3AF",
         }}
       >
         goongoom.com

@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
+import { useTheme } from "next-themes"
+import { useEffect, useMemo } from "react"
 
 interface InstagramSharePrefetchProps {
   imageUrl: string
@@ -9,12 +10,25 @@ interface InstagramSharePrefetchProps {
 export function InstagramSharePrefetch({
   imageUrl,
 }: InstagramSharePrefetchProps) {
+  const { resolvedTheme } = useTheme()
+
+  const themedImageUrl = useMemo(() => {
+    if (typeof window === "undefined") {
+      return imageUrl
+    }
+    const url = new URL(imageUrl, window.location.origin)
+    if (resolvedTheme === "dark") {
+      url.searchParams.set("dark", "1")
+    }
+    return url.pathname + url.search
+  }, [imageUrl, resolvedTheme])
+
   useEffect(() => {
     let cancelled = false
 
     async function prefetch() {
       try {
-        const response = await fetch(imageUrl, { cache: "force-cache" })
+        const response = await fetch(themedImageUrl, { cache: "force-cache" })
         if (cancelled || !response.ok) {
           return
         }
@@ -28,7 +42,7 @@ export function InstagramSharePrefetch({
     return () => {
       cancelled = true
     }
-  }, [imageUrl])
+  }, [themedImageUrl])
 
   return null
 }

@@ -14,6 +14,7 @@ import { NavigationProvider } from "@/components/navigation/navigation-provider"
 import { PushNotificationProvider } from "@/components/notifications/push-provider"
 import { AddToHomeScreenNudge } from "@/components/pwa/add-to-homescreen-nudge"
 import { SignatureColorProvider } from "@/components/theme/signature-color-provider"
+import { ThemeCookieSync } from "@/components/theme/theme-cookie-sync"
 import { Toaster } from "@/components/ui/sonner"
 import { getOrCreateUser } from "@/lib/db/queries"
 import "./globals.css"
@@ -65,6 +66,7 @@ export default async function RootLayout({
               disableTransitionOnChange
               enableSystem
             >
+              <ThemeCookieSync />
               <SignatureColorProvider signatureColor={dbUser?.signatureColor} />
               <NavigationProvider />
               <EscapeInAppBrowser />

@@ -50,8 +50,6 @@ interface InboxListProps {
   questions: QuestionItem[]
 }
 
-const DRAWER_ANIMATION_DURATION = 300
-
 export function InboxList({ questions }: InboxListProps) {
   const t = useTranslations("answers")
   const tCommon = useTranslations("common")
@@ -63,6 +61,7 @@ export function InboxList({ questions }: InboxListProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [answer, setAnswer] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [shouldRefreshOnClose, setShouldRefreshOnClose] = useState(false)
 
   function handleQuestionClick(question: QuestionItem) {
     setSelectedQuestion(question)
@@ -70,13 +69,15 @@ export function InboxList({ questions }: InboxListProps) {
     setIsDrawerOpen(true)
   }
 
-  function handleDrawerClose() {
-    setIsDrawerOpen(false)
-    // Wait for drawer close animation to complete before clearing state
-    setTimeout(() => {
+  function handleDrawerAnimationEnd(open: boolean) {
+    if (!open) {
       setSelectedQuestion(null)
       setAnswer("")
-    }, DRAWER_ANIMATION_DURATION)
+      if (shouldRefreshOnClose) {
+        setShouldRefreshOnClose(false)
+        router.refresh()
+      }
+    }
   }
 
   async function handleSubmit() {
@@ -92,13 +93,8 @@ export function InboxList({ questions }: InboxListProps) {
       })
 
       if (result.success) {
-        // Close drawer first, let animation complete, then refresh
+        setShouldRefreshOnClose(true)
         setIsDrawerOpen(false)
-        setTimeout(() => {
-          setSelectedQuestion(null)
-          setAnswer("")
-          router.refresh()
-        }, DRAWER_ANIMATION_DURATION)
       }
     } finally {
       setIsSubmitting(false)
@@ -175,7 +171,8 @@ export function InboxList({ questions }: InboxListProps) {
       </div>
 
       <Drawer
-        onOpenChange={(open) => !open && handleDrawerClose()}
+        onAnimationEnd={handleDrawerAnimationEnd}
+        onOpenChange={setIsDrawerOpen}
         open={isDrawerOpen}
         repositionInputs={false}
       >

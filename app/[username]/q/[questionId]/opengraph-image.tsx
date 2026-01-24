@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
+import { cookies } from "next/headers"
 import { ImageResponse } from "next/og"
 import { getClerkUserById, getClerkUserByUsername } from "@/lib/clerk"
 import { getSignatureColor } from "@/lib/colors/signature-colors"
@@ -50,6 +51,10 @@ interface PageProps {
 export default async function Image({ params }: PageProps) {
   const { username, questionId: questionIdParam } = await params
   const questionId = questionIdParam as QuestionId
+  const cookieStore = await cookies()
+  const themeCookie = cookieStore.get("theme")?.value
+  const isDark = themeCookie === "dark"
+
   const [fontRegular, fontSemiBold, fontBold] = await Promise.all([
     fontRegularPromise,
     fontSemiBoldPromise,
@@ -113,6 +118,7 @@ export default async function Image({ params }: PageProps) {
   const question = clamp(qa.content, 80)
   const answer = clamp(qa.answer.content, 100)
   const colors = getSignatureColor(dbUser?.signatureColor)
+  const theme = isDark ? colors.dark : colors.light
 
   let askerAvatarSrc: string
   if (qa.isAnonymous) {
@@ -141,9 +147,9 @@ export default async function Image({ params }: PageProps) {
         flexDirection: "column",
         justifyContent: "center",
         padding: "56px",
-        backgroundColor: colors.light.bg,
+        backgroundColor: theme.bg,
         fontFamily: "Pretendard",
-        color: "#111827",
+        color: isDark ? "#F9FAFB" : "#111827",
       }}
     >
       <div
@@ -166,13 +172,15 @@ export default async function Image({ params }: PageProps) {
             style={{
               display: "flex",
               maxWidth: "80%",
-              backgroundColor: "#FFFFFF",
+              backgroundColor: isDark ? "#1F2937" : "#FFFFFF",
               borderRadius: "32px",
               padding: "32px 40px",
               fontSize: "40px",
               fontWeight: 600,
               lineHeight: 1.4,
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+              boxShadow: isDark
+                ? "0 2px 8px rgba(0, 0, 0, 0.2)"
+                : "0 2px 8px rgba(0, 0, 0, 0.04)",
             }}
           >
             {question}

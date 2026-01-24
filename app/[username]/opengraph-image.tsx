@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
+import { cookies } from "next/headers"
 import { ImageResponse } from "next/og"
 import { getClerkUserByUsername } from "@/lib/clerk"
 import { getSignatureColor } from "@/lib/colors/signature-colors"
@@ -27,6 +28,10 @@ interface PageProps {
 
 export default async function Image({ params }: PageProps) {
   const { username } = await params
+  const cookieStore = await cookies()
+  const themeCookie = cookieStore.get("theme")?.value
+  const isDark = themeCookie === "dark"
+
   const [fontRegular, fontBold, logoData] = await Promise.all([
     fontRegularPromise,
     fontBoldPromise,
@@ -62,6 +67,7 @@ export default async function Image({ params }: PageProps) {
 
   const dbUser = await getOrCreateUser(clerkUser.clerkId)
   const colors = getSignatureColor(dbUser?.signatureColor)
+  const theme = isDark ? colors.dark : colors.light
   const displayName = clerkUser.displayName || clerkUser.username || username
   const bio = dbUser?.bio ? clamp(dbUser.bio, 120) : null
 
@@ -73,9 +79,9 @@ export default async function Image({ params }: PageProps) {
         display: "flex",
         flexDirection: "column",
         padding: "72px",
-        backgroundColor: colors.light.bg,
+        backgroundColor: theme.bg,
         fontFamily: "Pretendard",
-        color: "#111827",
+        color: isDark ? "#F9FAFB" : "#111827",
       }}
     >
       <div
@@ -115,7 +121,7 @@ export default async function Image({ params }: PageProps) {
             src={clerkUser.avatarUrl}
             style={{
               borderRadius: "110px",
-              border: `6px solid ${colors.light.border}`,
+              border: `6px solid ${theme.border}`,
             }}
             width={220}
           />
@@ -125,13 +131,13 @@ export default async function Image({ params }: PageProps) {
               width: "220px",
               height: "220px",
               borderRadius: "110px",
-              backgroundColor: colors.light.bg,
+              backgroundColor: theme.bg,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "88px",
               fontWeight: 700,
-              color: colors.light.primary,
+              color: theme.primary,
             }}
           >
             {displayName[0] || "?"}
@@ -149,14 +155,16 @@ export default async function Image({ params }: PageProps) {
           <div style={{ fontSize: "68px", fontWeight: 700, lineHeight: 1.2 }}>
             {clamp(displayName, 20)}
           </div>
-          <div style={{ fontSize: "40px", color: "#6B7280" }}>
+          <div
+            style={{ fontSize: "40px", color: isDark ? "#9CA3AF" : "#6B7280" }}
+          >
             @{clamp(clerkUser.username || username, 24)}
           </div>
           {bio && (
             <div
               style={{
                 fontSize: "34px",
-                color: "#374151",
+                color: isDark ? "#D1D5DB" : "#374151",
                 marginTop: "8px",
                 lineHeight: 1.4,
               }}
@@ -173,7 +181,7 @@ export default async function Image({ params }: PageProps) {
           alignItems: "center",
           justifyContent: "space-between",
           fontSize: "28px",
-          color: "#9CA3AF",
+          color: isDark ? "#6B7280" : "#9CA3AF",
         }}
       >
         <div>무엇이든 물어보세요</div>
