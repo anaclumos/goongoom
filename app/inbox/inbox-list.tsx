@@ -19,7 +19,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -324,14 +323,15 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
                   </span>
                 )}
               </Button>
+              <Button
+                className="h-14 w-full rounded-2xl text-destructive"
+                onClick={() => setIsDeclineDialogOpen(true)}
+                type="button"
+                variant="outline"
+              >
+                {tInbox('declineButton')}
+              </Button>
               <AlertDialog onOpenChange={setIsDeclineDialogOpen} open={isDeclineDialogOpen}>
-                <AlertDialogTrigger
-                  render={
-                    <Button className="h-14 w-full rounded-2xl text-destructive" type="button" variant="outline" />
-                  }
-                >
-                  {tInbox('declineButton')}
-                </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>{tInbox('declineTitle')}</AlertDialogTitle>

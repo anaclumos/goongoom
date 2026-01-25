@@ -81,6 +81,7 @@ export const softDelete = mutation({
     }
 
     await ctx.db.patch(args.id, { deletedAt: Date.now() })
+    await ctx.db.patch(answer.questionId, { answerId: undefined })
     return { success: true, questionId: answer.questionId }
   },
 })
