@@ -249,12 +249,68 @@ export function ProfileEditForm({
     setState((prev) => [...prev, createHandleRow()])
   }
 
-  const removeHandleRow = (id: string, setState: React.Dispatch<React.SetStateAction<HandleRow[]>>) => {
-    setState((prev) => {
-      const next = prev.filter((item) => item.id !== id)
-      return next.length ? next : [createHandleRow()]
-    })
-  }
+  const removeInstagramRow = useCallback(
+    (id: string) => {
+      const nextRows = instagramRows.filter((item) => item.id !== id)
+      const newInstagram = nextRows.length ? nextRows : [createHandleRow()]
+      setInstagramRows(newInstagram)
+      const links = buildSocialLinksPayload({
+        instagram: newInstagram,
+        twitter: twitterRows,
+        youtube: youtubeRows,
+        github: githubRows,
+        naverBlog: naverBlogRows,
+      })
+      const serialized = serializeSocialLinks(links)
+      if (serialized !== lastSavedSocialLinks.current) {
+        lastSavedSocialLinks.current = serialized
+        saveProfile({ socialLinks: links.length ? links : null })
+      }
+    },
+    [instagramRows, twitterRows, youtubeRows, githubRows, naverBlogRows, saveProfile]
+  )
+
+  const removeTwitterRow = useCallback(
+    (id: string) => {
+      const nextRows = twitterRows.filter((item) => item.id !== id)
+      const newTwitter = nextRows.length ? nextRows : [createHandleRow()]
+      setTwitterRows(newTwitter)
+      const links = buildSocialLinksPayload({
+        instagram: instagramRows,
+        twitter: newTwitter,
+        youtube: youtubeRows,
+        github: githubRows,
+        naverBlog: naverBlogRows,
+      })
+      const serialized = serializeSocialLinks(links)
+      if (serialized !== lastSavedSocialLinks.current) {
+        lastSavedSocialLinks.current = serialized
+        saveProfile({ socialLinks: links.length ? links : null })
+      }
+    },
+    [instagramRows, twitterRows, youtubeRows, githubRows, naverBlogRows, saveProfile]
+  )
+
+  const removeYoutubeRow = useCallback(
+    (id: string) => {
+      const nextRows = youtubeRows.filter((item) => item.id !== id)
+      const newYoutube = nextRows.length ? nextRows : [createHandleRow()]
+      setYoutubeRows(newYoutube)
+      const links = buildSocialLinksPayload({
+        instagram: instagramRows,
+        twitter: twitterRows,
+        youtube: newYoutube,
+        github: githubRows,
+        naverBlog: naverBlogRows,
+      })
+      const serialized = serializeSocialLinks(links)
+      if (serialized !== lastSavedSocialLinks.current) {
+        lastSavedSocialLinks.current = serialized
+        saveProfile({ socialLinks: links.length ? links : null })
+      }
+    },
+    [instagramRows, twitterRows, youtubeRows, githubRows, naverBlogRows, saveProfile]
+  )
 
   const updateCustomAt = (
     id: string,
@@ -269,12 +325,47 @@ export function ProfileEditForm({
     setState((prev) => [...prev, createCustomRow()])
   }
 
-  const removeCustomRow = (id: string, setState: React.Dispatch<React.SetStateAction<CustomLinkRow[]>>) => {
-    setState((prev) => {
-      const next = prev.filter((item) => item.id !== id)
-      return next.length ? next : [createCustomRow()]
-    })
-  }
+  const removeGithubRow = useCallback(
+    (id: string) => {
+      const nextRows = githubRows.filter((item) => item.id !== id)
+      const newGithub = nextRows.length ? nextRows : [createCustomRow()]
+      setGithubRows(newGithub)
+      const links = buildSocialLinksPayload({
+        instagram: instagramRows,
+        twitter: twitterRows,
+        youtube: youtubeRows,
+        github: newGithub,
+        naverBlog: naverBlogRows,
+      })
+      const serialized = serializeSocialLinks(links)
+      if (serialized !== lastSavedSocialLinks.current) {
+        lastSavedSocialLinks.current = serialized
+        saveProfile({ socialLinks: links.length ? links : null })
+      }
+    },
+    [instagramRows, twitterRows, youtubeRows, githubRows, naverBlogRows, saveProfile]
+  )
+
+  const removeNaverBlogRow = useCallback(
+    (id: string) => {
+      const nextRows = naverBlogRows.filter((item) => item.id !== id)
+      const newNaverBlog = nextRows.length ? nextRows : [createCustomRow()]
+      setNaverBlogRows(newNaverBlog)
+      const links = buildSocialLinksPayload({
+        instagram: instagramRows,
+        twitter: twitterRows,
+        youtube: youtubeRows,
+        github: githubRows,
+        naverBlog: newNaverBlog,
+      })
+      const serialized = serializeSocialLinks(links)
+      if (serialized !== lastSavedSocialLinks.current) {
+        lastSavedSocialLinks.current = serialized
+        saveProfile({ socialLinks: links.length ? links : null })
+      }
+    },
+    [instagramRows, twitterRows, youtubeRows, githubRows, naverBlogRows, saveProfile]
+  )
 
   const handleNaverBlogHandleBlur = useCallback(
     async (rowId: string, handle: string) => {
@@ -353,7 +444,7 @@ export function ProfileEditForm({
                       <Button
                         aria-label={tSocial('remove')}
                         className="shrink-0"
-                        onClick={() => removeHandleRow(row.id, setInstagramRows)}
+                        onClick={() => removeInstagramRow(row.id)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -392,7 +483,7 @@ export function ProfileEditForm({
                       <Button
                         aria-label={tSocial('remove')}
                         className="shrink-0"
-                        onClick={() => removeHandleRow(row.id, setTwitterRows)}
+                        onClick={() => removeTwitterRow(row.id)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -431,7 +522,7 @@ export function ProfileEditForm({
                       <Button
                         aria-label={tSocial('remove')}
                         className="shrink-0"
-                        onClick={() => removeHandleRow(row.id, setYoutubeRows)}
+                        onClick={() => removeYoutubeRow(row.id)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -470,7 +561,7 @@ export function ProfileEditForm({
                       <Button
                         aria-label={tSocial('remove')}
                         className="shrink-0"
-                        onClick={() => removeCustomRow(row.id, setGithubRows)}
+                        onClick={() => removeGithubRow(row.id)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -509,7 +600,7 @@ export function ProfileEditForm({
                       <Button
                         aria-label={tSocial('remove')}
                         className="shrink-0"
-                        onClick={() => removeCustomRow(row.id, setNaverBlogRows)}
+                        onClick={() => removeNaverBlogRow(row.id)}
                         size="icon-sm"
                         type="button"
                         variant="ghost"
@@ -546,7 +637,7 @@ export function ProfileEditForm({
               }
               return (
                 <Label
-                  className="group relative flex cursor-pointer items-start gap-3 rounded-xl border-2 border-transparent bg-muted/30 p-3 transition-all hover:border-border hover:bg-muted/50 has-data-checked:border-emerald/50 has-data-checked:bg-emerald/5"
+                   className="group relative flex cursor-pointer items-start gap-3 rounded-xl border-2 border-transparent bg-muted/30 p-3 transition-all has-data-checked:border-emerald/50 has-data-checked:bg-emerald/5"
                   key={level}
                 >
                   <RadioGroupItem

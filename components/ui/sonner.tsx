@@ -36,7 +36,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: 'cn-toast !bg-popover/80 !backdrop-blur-md !border-border !text-popover-foreground !shadow-lg',
+          toast: 'cn-toast !backdrop-blur-md !shadow-lg',
+          default: '!bg-popover/80 !border-border !text-popover-foreground',
           success:
             '!bg-emerald-600 !border-emerald-700 !text-white dark:!bg-emerald-600 dark:!border-emerald-500 dark:!text-white [&_[data-icon]]:!text-white dark:[&_[data-icon]]:!text-emerald-100',
           error:
