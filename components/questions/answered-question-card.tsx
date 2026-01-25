@@ -105,8 +105,8 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
     : undefined
 
   return (
-    <Ultralink className="block" href={`/${username}/q/${questionId}`} prefetchImages={imagesToPrefetch}>
-      <Card className="group relative transition-colors">
+    <Ultralink className="block h-full" href={`/${username}/q/${questionId}`} prefetchImages={imagesToPrefetch}>
+      <Card className="group relative h-full transition-colors">
         <CardContent className="flex flex-col gap-4">
           <div className="flex w-full items-start gap-3">
             <Avatar className="size-10 flex-shrink-0">
