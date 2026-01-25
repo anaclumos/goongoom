@@ -1,7 +1,7 @@
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { action, internalMutation, internalQuery, mutation, query } from './_generated/server'
-import { CHAR_LIMITS } from './char-limits'
+import { CHAR_LIMITS } from './charLimits'
 
 const HTML_TITLE_REGEX = /<title[^>]*>([^<]+)<\/title>/i
 const NAVER_BLOG_TITLE_SUFFIX = ': 네이버 블로그'

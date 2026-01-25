@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
-import { CHAR_LIMITS } from '@/lib/char-limits'
+import { CHAR_LIMITS } from '@/lib/charLimits'
 import { cn } from '@/lib/utils'
 
 interface QuickAnswerDialogProps {

@@ -1,7 +1,7 @@
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { mutation, query } from './_generated/server'
-import { CHAR_LIMITS } from './char-limits'
+import { CHAR_LIMITS } from './charLimits'
 
 export const create = mutation({
   args: {

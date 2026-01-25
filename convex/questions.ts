@@ -2,7 +2,7 @@ import { ConvexError, v } from 'convex/values'
 import type { Doc, Id } from './_generated/dataModel'
 import { internal } from './_generated/api'
 import { mutation, type QueryCtx, query } from './_generated/server'
-import { CHAR_LIMITS } from './char-limits'
+import { CHAR_LIMITS } from './charLimits'
 
 const PUSH_MESSAGES = {
   ko: { newQuestionTitle: '새 질문이 왔어요!' },
