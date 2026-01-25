@@ -28,7 +28,7 @@ export function AccountSettingsButton() {
         <p className="truncate text-muted-foreground text-sm">{t('accountSettingsDescription')}</p>
       </div>
       <HugeiconsIcon
-         className="size-5 shrink-0 text-muted-foreground transition-transform"
+        className="size-5 shrink-0 text-muted-foreground transition-transform"
         icon={ArrowRight01Icon}
         strokeWidth={2}
       />

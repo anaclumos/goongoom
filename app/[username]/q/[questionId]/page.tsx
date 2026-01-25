@@ -200,19 +200,12 @@ export default function QADetailPage() {
   return (
     <MainContent>
       <div className="mb-4">
-        <Button
-          nativeButton={false}
-          render={<Ultralink href={`/${username}`} />}
-          size="lg"
-          variant="ghost"
-        >
+        <Button nativeButton={false} render={<Ultralink href={`/${username}`} />} size="lg" variant="ghost">
           {tProfile('backToProfile', { firstName })}
         </Button>
       </div>
 
-      <h1 className="mb-6 font-bold text-2xl">
-        {tQuestions('questionNumber', { firstName, number: questionNumber })}
-      </h1>
+      <h1 className="mb-6 font-bold text-2xl">{tQuestions('questionNumber', { firstName, number: questionNumber })}</h1>
 
       <Card>
         <CardContent className="flex flex-col gap-4">

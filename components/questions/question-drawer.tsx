@@ -114,13 +114,13 @@ function QuestionTypeSelector({
   return (
     <div className="grid grid-cols-2 gap-3">
       <button
-         className={`group flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-background p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-           canAskAnonymously
-             ? `cursor-pointer ${
-                 isAnonymous ? 'border-emerald/50 bg-emerald/5 ring-2 ring-emerald/10' : 'border-border/50'
-               }`
-             : 'cursor-not-allowed border-border/20 opacity-50'
-         }`}
+        className={`group flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-background p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+          canAskAnonymously
+            ? `cursor-pointer ${
+                isAnonymous ? 'border-emerald/50 bg-emerald/5 ring-2 ring-emerald/10' : 'border-border/50'
+              }`
+            : 'cursor-not-allowed border-border/20 opacity-50'
+        }`}
         disabled={!canAskAnonymously}
         onClick={onAnonymousClick}
         type="button"
@@ -142,13 +142,13 @@ function QuestionTypeSelector({
       </button>
 
       <button
-         className={`group flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-background p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-           canAskPublic
-             ? `cursor-pointer ${
-                 isAnonymous ? 'border-border/50' : 'border-emerald/50 bg-emerald/5 ring-2 ring-emerald/10'
-               }`
-             : 'cursor-not-allowed border-border/20 opacity-50'
-         }`}
+        className={`group flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-background p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+          canAskPublic
+            ? `cursor-pointer ${
+                isAnonymous ? 'border-border/50' : 'border-emerald/50 bg-emerald/5 ring-2 ring-emerald/10'
+              }`
+            : 'cursor-not-allowed border-border/20 opacity-50'
+        }`}
         disabled={!canAskPublic}
         onClick={onPublicClick}
         type="button"
@@ -272,7 +272,12 @@ export function QuestionDrawer({
                     value={question}
                   />
                   <div className="flex justify-end">
-                    <span className={cn('font-medium text-xs', question.length > CHAR_LIMITS.QUESTION ? 'text-destructive' : 'text-muted-foreground')}>
+                    <span
+                      className={cn(
+                        'font-medium text-xs',
+                        question.length > CHAR_LIMITS.QUESTION ? 'text-destructive' : 'text-muted-foreground'
+                      )}
+                    >
                       {question.length}/{CHAR_LIMITS.QUESTION}
                     </span>
                   </div>
@@ -298,7 +303,7 @@ export function QuestionDrawer({
                   <p className="text-balance text-center text-muted-foreground text-xs leading-relaxed">
                     {t.rich('termsAgreement', {
                       link: (chunks) => (
-                         <Link className="underline" href="/terms">
+                        <Link className="underline" href="/terms">
                           {chunks}
                         </Link>
                       ),

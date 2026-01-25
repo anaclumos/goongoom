@@ -300,7 +300,9 @@ export const listAllInternal = internalQuery({
 
 export const syncFromClerk = action({
   args: {},
-  handler: async (ctx): Promise<{
+  handler: async (
+    ctx
+  ): Promise<{
     totalUsers: number
     syncedCount: number
     errorCount: number
@@ -375,7 +377,9 @@ export const syncFromClerk = action({
  */
 export const runMigrations = action({
   args: {},
-  handler: async (ctx): Promise<{
+  handler: async (
+    ctx
+  ): Promise<{
     totalUsers: number
     syncedCount: number
     errorCount: number

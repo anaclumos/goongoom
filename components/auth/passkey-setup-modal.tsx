@@ -70,7 +70,7 @@ export function PasskeySetupModal() {
         {!success && (
           <button
             aria-label={t('later')}
-             className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground transition-colors focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            className="absolute top-4 right-4 z-50 flex size-11 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground transition-colors focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             onClick={handleDismiss}
             type="button"
           >
@@ -116,7 +116,7 @@ export function PasskeySetupModal() {
 
               <div className="w-full space-y-2">
                 <Button
-                   className="h-14 w-full rounded-2xl border-none bg-white font-bold text-base text-primary transition-all"
+                  className="h-14 w-full rounded-2xl border-none bg-white font-bold text-base text-primary transition-all"
                   disabled={isLoading}
                   onClick={createPasskey}
                   size="lg"
@@ -132,7 +132,7 @@ export function PasskeySetupModal() {
                 </Button>
 
                 <Button
-                   className="h-14 w-full rounded-2xl font-medium text-primary-foreground/70"
+                  className="h-14 w-full rounded-2xl font-medium text-primary-foreground/70"
                   onClick={handleDismiss}
                   size="lg"
                   variant="ghost"

@@ -222,7 +222,7 @@ function ComboboxChip({
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
           render={<Button variant="ghost" size="icon-xs" />}
-           className="-ml-1 opacity-50"
+          className="-ml-1 opacity-50"
           data-slot="combobox-chip-remove"
         >
           <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} className="pointer-events-none" />

@@ -8,7 +8,12 @@ export function EditProfileButton() {
   const t = useTranslations('profile')
 
   return (
-    <Button className="h-14 flex-1 rounded-2xl font-semibold" nativeButton={false} render={<Ultralink href="/settings/profile" />} variant="outline">
+    <Button
+      className="h-14 flex-1 rounded-2xl font-semibold"
+      nativeButton={false}
+      render={<Ultralink href="/settings/profile" />}
+      variant="outline"
+    >
       {t('edit')}
     </Button>
   )

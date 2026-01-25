@@ -69,7 +69,13 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
   }
 
   return (
-    <Dialog onOpenChange={(next) => { setOpen(next); if (!next) setAnswer('') }} open={open}>
+    <Dialog
+      onOpenChange={(next) => {
+        setOpen(next)
+        if (!next) setAnswer('')
+      }}
+      open={open}
+    >
       <DialogTrigger
         render={
           <SidebarMenuButton className="h-auto items-start py-3">
@@ -112,7 +118,12 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
             value={answer}
           />
           <div className="flex justify-end">
-            <span className={cn('font-medium text-xs', answer.length > CHAR_LIMITS.ANSWER ? 'text-destructive' : 'text-muted-foreground')}>
+            <span
+              className={cn(
+                'font-medium text-xs',
+                answer.length > CHAR_LIMITS.ANSWER ? 'text-destructive' : 'text-muted-foreground'
+              )}
+            >
               {answer.length}/{CHAR_LIMITS.ANSWER}
             </span>
           </div>

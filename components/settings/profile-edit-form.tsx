@@ -1,7 +1,14 @@
 'use client'
 
 import { useAuth } from '@clerk/nextjs'
-import { AnonymousIcon, Cancel01Icon, LockIcon, PaintBrushIcon, UserIcon, UserMultipleIcon } from '@hugeicons/core-free-icons'
+import {
+  AnonymousIcon,
+  Cancel01Icon,
+  LockIcon,
+  PaintBrushIcon,
+  UserIcon,
+  UserMultipleIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { SiGithub, SiInstagram, SiNaver, SiX, SiYoutube } from '@icons-pack/react-simple-icons'
 import { useAction, useMutation } from 'convex/react'
@@ -411,7 +418,9 @@ export function ProfileEditForm({
               value={bio}
             />
             <div className="flex justify-end">
-              <span className={`font-medium text-xs ${bio.length > CHAR_LIMITS.BIO ? 'text-destructive' : 'text-muted-foreground'}`}>
+              <span
+                className={`font-medium text-xs ${bio.length > CHAR_LIMITS.BIO ? 'text-destructive' : 'text-muted-foreground'}`}
+              >
                 {bio.length}/{CHAR_LIMITS.BIO}
               </span>
             </div>
@@ -637,7 +646,7 @@ export function ProfileEditForm({
               }
               return (
                 <Label
-                   className="group relative flex cursor-pointer items-start gap-3 rounded-xl border-2 border-transparent bg-muted/30 p-3 transition-all has-data-checked:border-emerald/50 has-data-checked:bg-emerald/5"
+                  className="group relative flex cursor-pointer items-start gap-3 rounded-xl border-2 border-transparent bg-muted/30 p-3 transition-all has-data-checked:border-emerald/50 has-data-checked:bg-emerald/5"
                   key={level}
                 >
                   <RadioGroupItem
