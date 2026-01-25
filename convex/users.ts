@@ -408,23 +408,77 @@ export const syncFromClerk = action({
   },
 })
 
-export const migrateDisplayNameToFirstName = internalMutation({
+/**
+ * Backfill firstName/fullName from Clerk API for all users.
+ * Run via: npx convex run users:runMigrations
+ */
+export const runMigrations = action({
   args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query('users').collect()
-    let migratedCount = 0
+  handler: async (ctx): Promise<{
+    totalUsers: number
+    syncedCount: number
+    errorCount: number
+    errors: { clerkId: string; error: string }[]
+  }> => {
+    const clerkSecretKey = process.env.CLERK_SECRET_KEY
+    if (!clerkSecretKey) {
+      throw new ConvexError('CLERK_SECRET_KEY not configured')
+    }
+
+    const users = await ctx.runQuery(internal.users.listAllInternal, {})
+    let syncedCount = 0
+    let errorCount = 0
+    const errors: { clerkId: string; error: string }[] = []
 
     for (const user of users) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const userDoc = user as any
-      if (userDoc.displayName !== undefined) {
-        await ctx.db.patch(user._id, {
-          displayName: undefined,
+      try {
+        const response = await fetch(`https://api.clerk.com/v1/users/${user.clerkId}`, {
+          headers: {
+            Authorization: `Bearer ${clerkSecretKey}`,
+            'Content-Type': 'application/json',
+          },
         })
-        migratedCount++
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            errors.push({ clerkId: user.clerkId, error: 'User not found in Clerk' })
+          } else {
+            errors.push({ clerkId: user.clerkId, error: `Clerk API error: ${response.status}` })
+          }
+          errorCount++
+          continue
+        }
+
+        const clerkUser = (await response.json()) as {
+          username?: string | null
+          first_name?: string | null
+          last_name?: string | null
+          image_url?: string | null
+        }
+
+        const firstName = clerkUser.first_name ?? undefined
+        const fullName = buildFullName(clerkUser.first_name, clerkUser.last_name)
+
+        await ctx.runMutation(internal.users.upsertFromWebhook, {
+          clerkId: user.clerkId,
+          username: clerkUser.username ?? undefined,
+          firstName,
+          fullName,
+          avatarUrl: clerkUser.image_url ?? undefined,
+        })
+
+        syncedCount++
+      } catch (err) {
+        errors.push({ clerkId: user.clerkId, error: String(err) })
+        errorCount++
       }
     }
 
-    return { totalUsers: users.length, migratedCount }
+    return {
+      totalUsers: users.length,
+      syncedCount,
+      errorCount,
+      errors: errors.slice(0, 10),
+    }
   },
 })
