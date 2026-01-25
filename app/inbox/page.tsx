@@ -2,9 +2,9 @@
 
 import { useConvexAuth } from 'convex/react'
 import { useQuery } from 'convex/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Suspense, useEffect, useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { ToastOnMount } from '@/components/ui/toast-on-mount'
@@ -24,16 +24,9 @@ function ErrorToast() {
 function InboxContent() {
   const { userId: clerkId } = useAuth()
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth()
-  const router = useRouter()
 
   const t = useTranslations('inbox')
   const tCommon = useTranslations('common')
-
-  useEffect(() => {
-    if (!isAuthLoading && !isAuthenticated) {
-      router.replace('/')
-    }
-  }, [isAuthLoading, isAuthenticated, router])
 
   const unansweredQuestions = useQuery(api.questions.getUnanswered, clerkId ? { recipientClerkId: clerkId } : 'skip')
 

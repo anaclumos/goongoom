@@ -2,9 +2,8 @@
 
 import { useAuth, useUser } from '@clerk/nextjs'
 import { useConvexAuth, useQuery } from 'convex/react'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'
 import { ProfileEditForm } from '@/components/settings/profile-edit-form'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
@@ -17,16 +16,9 @@ export default function ProfileSettingsPage() {
   const { userId: clerkId } = useAuth()
   const { user, isLoaded: isUserLoaded } = useUser()
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth()
-  const router = useRouter()
 
   const t = useTranslations('settings')
   const tSecurity = useTranslations('questionSecurity')
-
-  useEffect(() => {
-    if (!isAuthLoading && !isAuthenticated) {
-      router.replace('/')
-    }
-  }, [isAuthLoading, isAuthenticated, router])
 
   const dbUser = useQuery(api.users.getByClerkId, clerkId ? { clerkId } : 'skip')
 

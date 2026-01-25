@@ -6,13 +6,14 @@ import { useParams, useSearchParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { useCallback, useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'
-import { EditProfileButton } from '@/components/profile/edit-profile-button'
 import { ProfileActions } from '@/components/profile/profile-actions'
 import { ProfileCard } from '@/components/profile/profile-card'
 import { AnsweredQuestionCard } from '@/components/questions/answered-question-card'
 import { QuestionDrawer } from '@/components/questions/question-drawer'
+import { Button } from '@/components/ui/button'
 import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { ToastOnMount } from '@/components/ui/toast-on-mount'
+import { Ultralink } from '@/components/navigation/ultralink'
 import { api } from '@/convex/_generated/api'
 import type { FunctionReturnType } from 'convex/server'
 import { DEFAULT_QUESTION_SECURITY_LEVEL } from '@/lib/question-security'
@@ -147,7 +148,19 @@ export default function UserProfilePage() {
           socialLinks={socialLinks}
           isOwnProfile={isOwnProfile}
         >
-          <ProfileActions editButton={<EditProfileButton />} username={recipientUsername} />
+          <ProfileActions
+            editButton={
+              <Button
+                className="h-14 flex-1 rounded-2xl font-semibold"
+                nativeButton={false}
+                render={<Ultralink href="/settings/profile" />}
+                variant="outline"
+              >
+                {tProfile('edit')}
+              </Button>
+            }
+            username={recipientUsername}
+          />
         </ProfileCard>
       )}
 

@@ -2,9 +2,8 @@
 
 import { useAuth } from '@clerk/nextjs'
 import { useConvexAuth, useQuery } from 'convex/react'
-import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'
 import { AnsweredQuestionCard } from '@/components/questions/answered-question-card'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
@@ -16,17 +15,10 @@ type FriendsAnswer = NonNullable<FunctionReturnType<typeof api.answers.getFriend
 export default function FriendsPage() {
   const { userId: clerkId } = useAuth()
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth()
-  const router = useRouter()
   const locale = useLocale()
 
   const t = useTranslations('friends')
   const tCommon = useTranslations('common')
-
-  useEffect(() => {
-    if (!isAuthLoading && !isAuthenticated) {
-      router.replace('/')
-    }
-  }, [isAuthLoading, isAuthenticated, router])
 
   const friendsAnswers = useQuery(api.answers.getFriendsAnswers, clerkId ? { clerkId, limit: 30 } : 'skip')
 

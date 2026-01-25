@@ -43,6 +43,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isUserLoaded && user?.username) {
+      router.prefetch(`/${user.username}`)
       router.replace(`/${user.username}`)
     }
   }, [isUserLoaded, user, router])
@@ -124,9 +125,7 @@ export default function Home() {
               />
             </div>
 
-            <p className="mt-8 text-sm text-muted-foreground">
-              {t('trustIndicator', { count: answerCount })}
-            </p>
+            <p className="mt-8 text-sm text-muted-foreground">{t('trustIndicator', { count: answerCount })}</p>
           </div>
         </div>
       </section>
@@ -171,9 +170,7 @@ export default function Home() {
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-6">
           <div className="mx-auto max-w-xl text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-              {t('featuresTitle')}
-            </h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">{t('featuresTitle')}</h2>
             <p className="mt-3 text-muted-foreground">{t('featuresSubtitle')}</p>
           </div>
 
@@ -183,9 +180,7 @@ export default function Home() {
                 <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                   <HugeiconsIcon icon={feature.icon} className="size-5" />
                 </div>
-                <h3 className="text-base font-semibold text-foreground">
-                  {t(`${feature.key}Title`)}
-                </h3>
+                <h3 className="text-base font-semibold text-foreground">{t(`${feature.key}Title`)}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground">{t(`${feature.key}Description`)}</p>
               </div>
             ))}
@@ -210,9 +205,7 @@ export default function Home() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">{t(`${useCase.key}Title`)}</h3>
-                      <p className="mt-0.5 text-sm text-muted-foreground">
-                        {t(`${useCase.key}Description`)}
-                      </p>
+                      <p className="mt-0.5 text-sm text-muted-foreground">{t(`${useCase.key}Description`)}</p>
                     </div>
                   </div>
                 ))}

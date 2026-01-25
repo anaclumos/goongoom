@@ -6,12 +6,12 @@ import { formatDistanceToNow } from 'date-fns'
 import { enUS, ko } from 'date-fns/locale'
 import { useParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useTheme } from 'next-themes'
 import { MainContent } from '@/components/layout/main-content'
 import { Ultralink } from '@/components/navigation/ultralink'
 import { CopyLinkButton } from '@/components/questions/copy-link-button'
 import { DeleteResponseButton } from '@/components/questions/delete-response-button'
-import { InstagramSharePrefetch } from '@/components/questions/instagram-share-prefetch'
 import { ShareInstagramButton } from '@/components/questions/share-instagram-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -148,6 +148,15 @@ export default function QADetailPage() {
     })
   }, [qa, dbUser, fullName])
 
+  // Inline instagram share prefetch effect
+  const { resolvedTheme } = useTheme()
+  useEffect(() => {
+    if (isOwner && instagramShareUrl && resolvedTheme) {
+      const img = new Image()
+      img.src = instagramShareUrl
+    }
+  }, [isOwner, instagramShareUrl, resolvedTheme])
+
   const canonicalUrl = `/${username}/q/${questionId}`
 
   if (isLoading) {
@@ -270,8 +279,6 @@ export default function QADetailPage() {
           </Button>
         )}
       </div>
-
-      {isOwner && instagramShareUrl && <InstagramSharePrefetch imageUrl={instagramShareUrl} />}
     </MainContent>
   )
 }

@@ -1,18 +1,18 @@
 'use client'
 
-import { useAuth, useUser } from '@clerk/nextjs'
+import { useAuth, useClerk, useUser } from '@clerk/nextjs'
+import { ArrowRight01Icon, Logout01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { useConvexAuth } from 'convex/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { useEffect } from 'react'
 import { PasskeyNudge } from '@/components/auth/passkey-nudge'
 import { MainContent } from '@/components/layout/main-content'
 import { AboutSection } from '@/components/settings/about-section'
-import { AccountSettingsButton } from '@/components/settings/account-settings-button'
 import { LocaleSelector } from '@/components/settings/locale-selector'
-import { LogoutButton } from '@/components/settings/logout-button'
 import { NotificationSettings } from '@/components/settings/notification-settings'
 import { ThemeSelector } from '@/components/settings/theme-selector'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -22,16 +22,11 @@ export default function SettingsPage() {
   const { userId: clerkId } = useAuth()
   const { user, isLoaded: isUserLoaded } = useUser()
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth()
-  const router = useRouter()
+  const { openUserProfile, signOut } = useClerk()
   const searchParams = useSearchParams()
 
   const t = useTranslations('settings')
-
-  useEffect(() => {
-    if (!isAuthLoading && !isAuthenticated) {
-      router.replace('/')
-    }
-  }, [isAuthLoading, isAuthenticated, router])
+  const tCommon = useTranslations('common')
 
   const error = searchParams.get('error') ? decodeURIComponent(searchParams.get('error')!) : null
 
@@ -107,7 +102,27 @@ export default function SettingsPage() {
       {error && <ToastOnMount message={error} type="error" />}
 
       <div className="space-y-4">
-        <AccountSettingsButton />
+        <button
+          className="group flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-left ring-1 ring-foreground/10 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"
+          onClick={() => openUserProfile()}
+          type="button"
+        >
+          <Avatar className="size-12 shrink-0 ring-2 ring-emerald/20">
+            {user?.imageUrl && <AvatarImage alt={user?.firstName || user?.username || '?'} src={user.imageUrl} />}
+            <AvatarFallback className="bg-emerald/10 font-semibold text-emerald">
+              {(user?.firstName || user?.username || '?')[0] || '?'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-foreground">{user?.firstName || user?.username || '?'}</h3>
+            <p className="truncate text-muted-foreground text-sm">{t('accountSettingsDescription')}</p>
+          </div>
+          <HugeiconsIcon
+            className="size-5 shrink-0 text-muted-foreground transition-transform"
+            icon={ArrowRight01Icon}
+            strokeWidth={2}
+          />
+        </button>
 
         <PasskeyNudge />
 
@@ -129,7 +144,27 @@ export default function SettingsPage() {
 
         <Card>
           <CardContent className="py-0">
-            <LogoutButton />
+            <button
+              className="group flex w-full items-center gap-3 rounded-xl py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              onClick={() => signOut({ redirectUrl: '/' })}
+              type="button"
+            >
+              <div className="flex size-8 items-center justify-center rounded-full bg-muted/50 transition-colors">
+                <HugeiconsIcon
+                  className="size-4 text-muted-foreground transition-colors"
+                  icon={Logout01Icon}
+                  strokeWidth={2}
+                />
+              </div>
+              <span className="flex-1 font-medium text-muted-foreground text-sm transition-colors">
+                {tCommon('logout')}
+              </span>
+              <HugeiconsIcon
+                className="size-4 text-muted-foreground/50 transition-all"
+                icon={ArrowRight01Icon}
+                strokeWidth={2}
+              />
+            </button>
           </CardContent>
         </Card>
 
