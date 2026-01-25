@@ -22,7 +22,7 @@ export function HomeCTAButtons({
 }: HomeCTAButtonsProps) {
   if (isLoggedIn && profileUrl && profileLabel) {
     return (
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
+      <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-3">
         <Link
           href={profileUrl}
           className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-full bg-primary px-10 text-lg font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -43,7 +43,7 @@ export function HomeCTAButtons({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
+    <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-3">
       <SignUpButton mode="modal">
         <button
           type="button"

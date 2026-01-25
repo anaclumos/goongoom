@@ -1,42 +1,45 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
+import { SignUpButton, useUser } from '@clerk/nextjs'
+import {
+  AnonymousIcon,
+  Rocket01Icon,
+  Share08Icon,
+  UserMultiple02Icon,
+  Megaphone01Icon,
+  MessageQuestionIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { useQuery } from 'convex/react'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { HomeCTAButtons } from '@/components/home/home-cta-buttons'
-import { AnsweredQuestionCard } from '@/components/questions/answered-question-card'
-import { CarouselItem } from '@/components/ui/carousel'
-import { HomeCarousel } from '@/components/home/home-carousel'
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
-import type { FunctionReturnType } from 'convex/server'
 
-type RecentAnswer = NonNullable<FunctionReturnType<typeof api.answers.getRecentLimitPerUser>>[number]
+const features = [
+  { icon: AnonymousIcon, key: 'feature1' },
+  { icon: Rocket01Icon, key: 'feature2' },
+  { icon: Share08Icon, key: 'feature3' },
+]
+
+const useCases = [
+  { icon: Megaphone01Icon, key: 'useCase1' },
+  { icon: UserMultiple02Icon, key: 'useCase2' },
+  { icon: MessageQuestionIcon, key: 'useCase3' },
+]
 
 export default function Home() {
-  const t = useTranslations('home')
+  const t = useTranslations('landing')
   const tCommon = useTranslations('common')
   const tProfile = useTranslations('profile')
-  const locale = useLocale()
   const { user, isLoaded: isUserLoaded } = useUser()
   const router = useRouter()
 
-  const recentAnswers = useQuery(api.answers.getRecentLimitPerUser, {
-    totalLimit: 30,
-    perUserLimit: 2,
-  })
   const answerCount = useQuery(api.answers.count, {})
-
-  const cardLabels = useMemo(
-    () => ({
-      anonymous: tCommon('anonymous'),
-      identified: tCommon('identified'),
-    }),
-    [tCommon]
-  )
 
   useEffect(() => {
     if (isUserLoaded && user?.username) {
@@ -45,43 +48,40 @@ export default function Home() {
   }, [isUserLoaded, user, router])
 
   const isRedirecting = isUserLoaded && !!user?.username
-
-  const isLoading = recentAnswers === undefined || answerCount === undefined || isRedirecting
+  const isLoading = answerCount === undefined || isRedirecting
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-background selection:bg-primary/10">
+      <div className="flex flex-col bg-background">
         <section className="relative overflow-hidden py-16 md:py-24">
-          <div className="absolute inset-0 -z-10 h-full w-full bg-background">
-            <div className="absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[100px] dark:bg-primary/10" />
-          </div>
-          <div className="container mx-auto px-4">
-            <div className="mb-12 text-center">
-              <Skeleton className="mx-auto h-12 w-64" />
+          <div className="mx-auto max-w-4xl px-6">
+            <div className="mx-auto max-w-2xl text-center">
+              <Skeleton className="mx-auto mb-6 h-6 w-48" />
+              <Skeleton className="mx-auto h-12 w-72" />
+              <Skeleton className="mx-auto mt-2 h-12 w-56" />
+              <Skeleton className="mx-auto mt-6 h-5 w-full max-w-md" />
+              <Skeleton className="mx-auto mt-2 h-5 w-80" />
+              <div className="mt-10 flex justify-center gap-4">
+                <Skeleton className="h-14 w-36 rounded-full" />
+                <Skeleton className="h-14 w-24 rounded-full" />
+              </div>
+              <Skeleton className="mx-auto mt-8 h-5 w-48" />
             </div>
-            <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-4 px-4 md:grid-cols-2 md:px-8 lg:grid-cols-3 xl:grid-cols-4">
-              {[1, 2, 3, 4].map((n) => (
-                <div key={`skeleton-card-${n}`} className="h-full rounded-xl border bg-card p-4">
-                  <div className="flex items-start gap-3">
-                    <Skeleton className="size-10 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-start justify-end gap-3">
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="ml-auto h-4 w-3/4" />
-                      <Skeleton className="ml-auto h-4 w-1/2" />
-                    </div>
-                    <Skeleton className="size-10 rounded-full" />
-                  </div>
+          </div>
+        </section>
+
+        <section className="border-t bg-muted/30 py-16">
+          <div className="mx-auto max-w-4xl px-6">
+            <Skeleton className="mx-auto mb-4 h-8 w-40" />
+            <Skeleton className="mx-auto mb-12 h-5 w-64" />
+            <div className="grid gap-6 md:grid-cols-3">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="relative rounded-2xl border bg-card p-6">
+                  <Skeleton className="absolute -top-4 left-6 size-8 rounded-full" />
+                  <Skeleton className="mt-4 h-6 w-28" />
+                  <Skeleton className="mt-2 h-4 w-full" />
                 </div>
               ))}
-            </div>
-            <div className="mt-16 flex flex-col items-center gap-6">
-              <Skeleton className="h-6 w-48" />
-              <Skeleton className="h-12 w-40 rounded-full" />
             </div>
           </div>
         </section>
@@ -90,68 +90,190 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background selection:bg-primary/10">
+    <div className="flex flex-col bg-background">
       <section className="relative overflow-hidden py-16 md:py-24">
-        <div className="absolute inset-0 -z-10 h-full w-full bg-background">
-          <div className="absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[100px] dark:bg-primary/10" />
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-pink-500/10 blur-3xl" />
         </div>
 
-        <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              {t('feedTitle')}
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="secondary" className="mb-6">
+              {t('badge')}
+            </Badge>
+
+            <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+              {t('heroTitle1')}
+              <br />
+              <span className="bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+                {t('heroTitle2')}
+              </span>
             </h1>
+
+            <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
+              {t('heroSubtitle')}
+            </p>
+
+            <div className="mt-10">
+              <HomeCTAButtons
+                startLabel={tCommon('start')}
+                loginLabel={tCommon('login')}
+                isLoggedIn={isUserLoaded && !!user}
+                profileLabel={tProfile('myProfile')}
+                profileUrl={user?.username ? `/${user.username}` : undefined}
+              />
+            </div>
+
+            <p className="mt-8 text-sm text-muted-foreground">
+              {t('trustIndicator', { count: answerCount })}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t bg-muted/30 py-16 dark:bg-muted/10">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+              {t('howItWorksTitle')}
+            </h2>
+            <p className="mt-3 text-muted-foreground">{t('howItWorksSubtitle')}</p>
           </div>
 
-          {recentAnswers.length === 0 ? (
-            <div className="mx-auto max-w-md rounded-3xl border border-border/50 bg-background/50 p-12 text-center backdrop-blur-sm">
-              <Empty>
-                <EmptyHeader>
-                  <EmptyTitle>{t('feedEmptyTitle')}</EmptyTitle>
-                  <EmptyDescription>{t('feedEmptyDescription')}</EmptyDescription>
-                </EmptyHeader>
-              </Empty>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <div className="relative rounded-2xl border bg-card p-6">
+              <div className="absolute -top-3 left-6 flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                1
+              </div>
+              <h3 className="mt-3 text-base font-semibold text-foreground">{t('step1Title')}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{t('step1Description')}</p>
             </div>
-          ) : (
-            <div className="mx-auto max-w-[1600px] px-4 md:px-8">
-              <HomeCarousel>
-                {recentAnswers.map((qa: RecentAnswer) => (
-                  <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4" key={qa.question._id}>
-                    <div className="h-full transform rounded-xl transition-all duration-300">
-                      <AnsweredQuestionCard
-                        anonymousAvatarSeed={qa.question.anonymousAvatarSeed}
-                        answerContent={qa.answer.content}
-                        answerCreatedAt={qa.answer._creationTime}
-                        avatarUrl={qa.recipientAvatarUrl ?? null}
-                        firstName={qa.recipientFirstName || qa.recipientUsername || tCommon('user')}
-                        isAnonymous={qa.question.isAnonymous}
-                        labels={cardLabels}
-                        locale={locale}
-                        questionContent={qa.question.content}
-                        questionCreatedAt={qa.question._creationTime}
-                        questionId={qa.question._id}
-                        senderAvatarUrl={null}
-                        senderName={undefined}
-                        signatureColor={qa.recipientSignatureColor}
-                        username={qa.recipientUsername || qa.recipientClerkId}
-                      />
+
+            <div className="relative rounded-2xl border bg-card p-6">
+              <div className="absolute -top-3 left-6 flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                2
+              </div>
+              <h3 className="mt-3 text-base font-semibold text-foreground">{t('step2Title')}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{t('step2Description')}</p>
+            </div>
+
+            <div className="relative rounded-2xl border bg-card p-6">
+              <div className="absolute -top-3 left-6 flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                3
+              </div>
+              <h3 className="mt-3 text-base font-semibold text-foreground">{t('step3Title')}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{t('step3Description')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+              {t('featuresTitle')}
+            </h2>
+            <p className="mt-3 text-muted-foreground">{t('featuresSubtitle')}</p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {features.map((feature) => (
+              <div key={feature.key} className="rounded-2xl border bg-card p-6">
+                <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                  <HugeiconsIcon icon={feature.icon} className="size-5" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground">
+                  {t(`${feature.key}Title`)}
+                </h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">{t(`${feature.key}Description`)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t bg-muted/30 py-16 dark:bg-muted/10">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="grid items-start gap-10 lg:grid-cols-2">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                {t('useCasesTitle')}
+              </h2>
+              <p className="mt-3 text-muted-foreground">{t('useCasesSubtitle')}</p>
+
+              <div className="mt-8 space-y-5">
+                {useCases.map((useCase) => (
+                  <div key={useCase.key} className="flex gap-3">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                      <HugeiconsIcon icon={useCase.icon} className="size-4" />
                     </div>
-                  </CarouselItem>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{t(`${useCase.key}Title`)}</h3>
+                      <p className="mt-0.5 text-sm text-muted-foreground">
+                        {t(`${useCase.key}Description`)}
+                      </p>
+                    </div>
+                  </div>
                 ))}
-              </HomeCarousel>
+              </div>
+
+              <div className="mt-8">
+                <SignUpButton mode="modal">
+                  <Button size="lg" className="h-11 rounded-full px-6">
+                    {t('ctaButton')}
+                  </Button>
+                </SignUpButton>
+              </div>
             </div>
-          )}
 
-          <div className="mt-16 flex flex-col items-center gap-6">
-            <p className="text-center text-lg text-muted-foreground">{t('trustIndicator', { count: answerCount })}</p>
+            <div className="rounded-2xl border bg-card p-5">
+              <div className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-pink-400 opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-pink-500" />
+                </span>
+                {t('liveQuestions')}
+              </div>
+              <div className="space-y-2.5 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs">{tCommon('anonymous')}</span>
+                  <span className="truncate text-foreground">{t('mockQuestion1')}</span>
+                  <span className="ml-auto shrink-0 text-xs">{t('mockTimeNow')}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs">{tCommon('anonymous')}</span>
+                  <span className="truncate text-foreground">{t('mockQuestion2')}</span>
+                  <span className="ml-auto shrink-0 text-xs">{t('mockTime2m')}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="shrink-0 rounded bg-pink-100 px-1.5 py-0.5 text-xs text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+                    민주
+                  </span>
+                  <span className="truncate text-foreground">{t('mockQuestion3')}</span>
+                  <span className="ml-auto shrink-0 text-xs">{t('mockTime5m')}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs">{tCommon('anonymous')}</span>
+                  <span className="truncate text-foreground">{t('mockQuestion4')}</span>
+                  <span className="ml-auto shrink-0 text-xs">{t('mockTime8m')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <HomeCTAButtons
-              startLabel={tCommon('start')}
-              loginLabel={tCommon('login')}
-              isLoggedIn={isUserLoaded && !!user}
-              profileLabel={tProfile('myProfile')}
-              profileUrl={user?.username ? `/${user.username}` : undefined}
-            />
+      <section className="border-t bg-zinc-900 py-16 dark:bg-zinc-950">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">{t('ctaTitle')}</h2>
+          <p className="mx-auto mt-3 max-w-md text-zinc-400">{t('ctaSubtitle')}</p>
+          <div className="mt-8">
+            <SignUpButton mode="modal">
+              <Button size="lg" className="h-11 rounded-full bg-white px-6 text-zinc-900 hover:bg-zinc-100">
+                {t('ctaButton')}
+              </Button>
+            </SignUpButton>
           </div>
         </div>
       </section>
