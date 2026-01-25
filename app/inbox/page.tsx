@@ -4,7 +4,7 @@ import { useConvexAuth } from 'convex/react'
 import { useQuery } from 'convex/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { useEffect, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { ToastOnMount } from '@/components/ui/toast-on-mount'
@@ -12,11 +12,16 @@ import { api } from '@/convex/_generated/api'
 import { useAuth } from '@clerk/nextjs'
 import { InboxList } from './inbox-list'
 
-export default function InboxPage() {
+function ErrorToast() {
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error') ? decodeURIComponent(searchParams.get('error')!) : null
+  return error ? <ToastOnMount message={error} type="error" /> : null
+}
+
+function InboxContent() {
   const { userId: clerkId } = useAuth()
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const t = useTranslations('inbox')
   const tCommon = useTranslations('common')
@@ -28,8 +33,6 @@ export default function InboxPage() {
   }, [isAuthLoading, isAuthenticated, router])
 
   const unansweredQuestions = useQuery(api.questions.getUnanswered, clerkId ? { recipientClerkId: clerkId } : 'skip')
-
-  const error = searchParams.get('error') ? decodeURIComponent(searchParams.get('error')!) : null
 
   const questionsWithSenders = useMemo(() => {
     if (!unansweredQuestions) return []
@@ -60,7 +63,9 @@ export default function InboxPage() {
         <p className="text-muted-foreground text-sm">{t('description')}</p>
       </div>
 
-      {error && <ToastOnMount message={error} type="error" />}
+      <Suspense fallback={null}>
+        <ErrorToast />
+      </Suspense>
 
       {isAuthLoading || isDataLoading ? (
         <InboxList questions={[]} isLoading />
@@ -75,5 +80,13 @@ export default function InboxPage() {
         <InboxList questions={questionsWithSenders} />
       )}
     </MainContent>
+  )
+}
+
+export default function InboxPage() {
+  return (
+    <Suspense fallback={null}>
+      <InboxContent />
+    </Suspense>
   )
 }
