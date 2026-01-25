@@ -247,7 +247,8 @@
     "userNotFound": "We couldn't find this user.",
     "defaultQuestion": "Questions show up here.",
     "defaultAnswer": "Share your answer.",
-    "defaultUser": "User"
+    "defaultUser": "User",
+    "siteDescription": "Ask anything and get honest answers."
   },
   "social": {
     "instagramPlaceholder": "Instagram",

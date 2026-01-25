@@ -36,6 +36,20 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     blockquote: ({ children }) => (
       <blockquote className="border-emerald/50 border-l-4 pl-4 text-muted-foreground italic">{children}</blockquote>
     ),
+    table: ({ children }) => (
+      <div className="my-6 w-full overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-sm">{children}</table>
+      </div>
+    ),
+    thead: ({ children }) => <thead className="bg-muted/50 [&_tr]:border-b">{children}</thead>,
+    tbody: ({ children }) => <tbody className="[&_tr:last-child]:border-0">{children}</tbody>,
+    tr: ({ children }) => <tr className="border-b border-border">{children}</tr>,
+    th: ({ children }) => (
+      <th className="px-3 py-2 text-left align-middle font-medium text-foreground">{children}</th>
+    ),
+    td: ({ children }) => (
+      <td className="px-3 py-2 align-middle text-muted-foreground">{children}</td>
+    ),
     ...components,
   }
 }

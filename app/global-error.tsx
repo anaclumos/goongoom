@@ -24,6 +24,16 @@ const translations = {
     dataCleared: '데이터가 지워졌어요. 새로고침 중...',
     or: '또는',
   },
+  ja: {
+    title: '問題が発生しました',
+    description: 'サーバーメンテナンス中の可能性があります。ページを更新するか、以下のオプションをお試しください。',
+    tryAgain: 'もう一度試す',
+    signOut: 'ログアウト',
+    clearData: 'キャッシュとデータを削除',
+    clearDataDescription: 'ローカルデータを削除すると問題が解決する場合があります。',
+    dataCleared: 'データを削除しました。再読み込み中…',
+    or: 'または',
+  },
 } as const
 
 type Locale = keyof typeof translations
@@ -32,13 +42,15 @@ function getLocale(): Locale {
   if (typeof document === 'undefined') return 'ko'
 
   const cookieMatch = document.cookie.match(/NEXT_LOCALE=([^;]+)/)
-  if (cookieMatch?.[1] === 'en' || cookieMatch?.[1] === 'ko') {
-    return cookieMatch[1]
+  const cookieLocale = cookieMatch?.[1]
+  if (cookieLocale === 'en' || cookieLocale === 'ko' || cookieLocale === 'ja') {
+    return cookieLocale
   }
 
   if (typeof navigator !== 'undefined') {
     const lang = navigator.language.toLowerCase()
     if (lang.startsWith('en')) return 'en'
+    if (lang.startsWith('ja')) return 'ja'
   }
 
   return 'ko'

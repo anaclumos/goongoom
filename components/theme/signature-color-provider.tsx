@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { getSignatureColor } from '@/lib/colors/signature-colors'
+import { getSignatureColor, isValidSignatureColor } from '@/lib/colors/signature-colors'
 
 interface SignatureColorContextValue {
   signatureColor: string | null | undefined
@@ -42,6 +42,7 @@ export function SignatureColorProvider({ children, signatureColor: initialColor 
   const contextValue = useMemo(() => ({ signatureColor, setSignatureColor }), [signatureColor, setSignatureColor])
 
   const colors = getSignatureColor(signatureColor)
+  const hasExplicitColor = signatureColor != null && isValidSignatureColor(signatureColor)
 
   const colorOverrideCSS = `
     :root {
@@ -52,6 +53,7 @@ export function SignatureColorProvider({ children, signatureColor: initialColor 
       --ring: ${colors.light.primary};
       --sidebar-primary: ${colors.light.primary};
       --sidebar-primary-foreground: #ffffff;
+      ${hasExplicitColor ? `--selection-color: ${colors.light.primary};` : ''}
     }
     .dark {
       --emerald: ${colors.dark.primary};
@@ -61,6 +63,7 @@ export function SignatureColorProvider({ children, signatureColor: initialColor 
       --ring: ${colors.dark.primary};
       --sidebar-primary: ${colors.dark.primary};
       --sidebar-primary-foreground: #ffffff;
+      ${hasExplicitColor ? `--selection-color: ${colors.dark.primary};` : ''}
     }
   `
 

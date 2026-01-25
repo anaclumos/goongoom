@@ -58,7 +58,6 @@ export function NotificationSettings({ clerkId }: { clerkId: string }) {
 
   const subscriptions = useQuery(api.push.getByClerkId, { clerkId })
   const upsertPush = useMutation(api.push.upsert)
-  const removePush = useMutation(api.push.remove)
   const removeAllPush = useMutation(api.push.removeAll)
   const sendTestNotification = useAction(api.pushActions.sendTestNotification)
 
@@ -118,7 +117,7 @@ export function NotificationSettings({ clerkId }: { clerkId: string }) {
           const subscription = await registration.pushManager.getSubscription()
           if (subscription) {
             await subscription.unsubscribe()
-            await removePush({ clerkId, endpoint: subscription.endpoint })
+            await removeAllPush({ clerkId })
 
             toast.success(t('notificationSettings.unsubscribeSuccess'), {
               duration: 5000,
@@ -164,7 +163,7 @@ export function NotificationSettings({ clerkId }: { clerkId: string }) {
         toast.error(t('notificationSettings.unsubscribeError'))
       }
     })
-  }, [t, tCommon, clerkId, removePush, removeAllPush, upsertPush])
+  }, [t, tCommon, clerkId, removeAllPush, upsertPush])
 
   const handleToggle = useCallback(
     (checked: boolean) => {

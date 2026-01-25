@@ -2,6 +2,7 @@ import { enUS, jaJP, koKR } from '@clerk/localizations'
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
+import { getTranslations } from 'next-intl/server'
 import Script from 'next/script'
 import { ConvexClientProvider } from '@/app/ConvexClientProvider'
 import { Providers } from '@/components/providers'
@@ -36,9 +37,12 @@ const lineSeedJP = localFont({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: '궁금닷컴',
-  description: '궁금한 건 뭐든 물어보고 솔직한 답을 받아요',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('og')
+  return {
+    title: t('appName'),
+    description: t('siteDescription'),
+  }
 }
 
 export const viewport: Viewport = {

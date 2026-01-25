@@ -173,7 +173,7 @@
     caret-color: var(--emerald);
   }
   ::selection {
-    background-color: oklch(0.69 0.17 162 / 0.3);
+    background-color: color-mix(in oklch, var(--selection-color, #E1306C) 30%, transparent);
     color: inherit;
   }
 }

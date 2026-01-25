@@ -247,7 +247,8 @@
     "userNotFound": "ユーザーが見つかりませんでした。",
     "defaultQuestion": "ここに質問が届きます。",
     "defaultAnswer": "あなたの回答を共有しましょう。",
-    "defaultUser": "ユーザー"
+    "defaultUser": "ユーザー",
+    "siteDescription": "なんでも聞いて、本音の回答をもらおう"
   },
   "social": {
     "instagramPlaceholder": "Instagram",
