@@ -9,6 +9,8 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
+import { CHAR_LIMITS } from '@/lib/char-limits'
+import { cn } from '@/lib/utils'
 import { QuestionInputTrigger } from '@/components/questions/question-input-trigger'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -39,12 +41,12 @@ interface QuestionDrawerProps {
   requiresSignIn?: boolean
 }
 
-function SubmitButton({ pending }: { pending: boolean }) {
+function SubmitButton({ pending, overLimit }: { pending: boolean; overLimit: boolean }) {
   const t = useTranslations('questions')
   return (
     <Button
       className="h-14 w-full rounded-2xl bg-gradient-to-r from-emerald to-emerald/90 font-semibold transition-all disabled:opacity-70"
-      disabled={pending}
+      disabled={pending || overLimit}
       size="lg"
       type="submit"
     >
@@ -270,7 +272,9 @@ export function QuestionDrawer({
                     value={question}
                   />
                   <div className="flex justify-end">
-                    <span className="font-medium text-muted-foreground text-xs">{question.length}</span>
+                    <span className={cn('font-medium text-xs', question.length > CHAR_LIMITS.QUESTION ? 'text-destructive' : 'text-muted-foreground')}>
+                      {question.length}/{CHAR_LIMITS.QUESTION}
+                    </span>
                   </div>
                 </div>
 
@@ -290,7 +294,7 @@ export function QuestionDrawer({
                 {isAnonymous && <input name="avatarSeed" type="hidden" value={avatarSeed} />}
 
                 <div className="space-y-3 pt-2">
-                  <SubmitButton pending={isSubmitting} />
+                  <SubmitButton overLimit={question.length > CHAR_LIMITS.QUESTION} pending={isSubmitting} />
                   <p className="text-balance text-center text-muted-foreground text-xs leading-relaxed">
                     {t.rich('termsAgreement', {
                       link: (chunks) => (

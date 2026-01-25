@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/convex/_generated/api'
+import { CHAR_LIMITS } from '@/lib/char-limits'
 import type { SignatureColor } from '@/lib/colors/signature-colors'
 import { QUESTION_SECURITY_LEVELS } from '@/lib/question-security'
 import type { SocialLinkEntry, SocialLinks } from '@/lib/types'
@@ -319,7 +320,9 @@ export function ProfileEditForm({
               value={bio}
             />
             <div className="flex justify-end">
-              <span className="font-medium text-muted-foreground text-xs">{bio.length}</span>
+              <span className={`font-medium text-xs ${bio.length > CHAR_LIMITS.BIO ? 'text-destructive' : 'text-muted-foreground'}`}>
+                {bio.length}/{CHAR_LIMITS.BIO}
+              </span>
             </div>
           </Field>
 

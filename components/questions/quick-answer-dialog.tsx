@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
+import { CHAR_LIMITS } from '@/lib/char-limits'
 import { cn } from '@/lib/utils'
 
 interface QuickAnswerDialogProps {
@@ -120,7 +121,9 @@ export function QuickAnswerDialog({ question, open, onOpenChange }: QuickAnswerD
               value={answer}
             />
             <div className="flex justify-end">
-              <span className="font-medium text-muted-foreground text-xs">{answer.length}</span>
+              <span className={cn('font-medium text-xs', answer.length > CHAR_LIMITS.ANSWER ? 'text-destructive' : 'text-muted-foreground')}>
+                {answer.length}/{CHAR_LIMITS.ANSWER}
+              </span>
             </div>
           </div>
 
@@ -135,7 +138,7 @@ export function QuickAnswerDialog({ question, open, onOpenChange }: QuickAnswerD
             </Button>
             <Button
               className="h-14 flex-1 rounded-2xl bg-gradient-to-r from-emerald to-emerald/90 font-semibold transition-all disabled:opacity-70"
-              disabled={!answer.trim() || isSubmitting}
+              disabled={!answer.trim() || isSubmitting || answer.length > CHAR_LIMITS.ANSWER}
               onClick={handleSubmit}
               type="button"
             >

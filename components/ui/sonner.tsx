@@ -40,10 +40,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
           success:
             '!bg-emerald-600 !border-emerald-700 !text-white dark:!bg-emerald-600 dark:!border-emerald-500 dark:!text-white [&_[data-icon]]:!text-white dark:[&_[data-icon]]:!text-emerald-100',
           error:
-            '!bg-red-50/80 !border-red-200 !text-red-800 dark:!bg-red-950/50 dark:!border-red-800 dark:!text-red-200 [&_[data-icon]]:!text-red-600 dark:[&_[data-icon]]:!text-red-400',
+            '!bg-red-600 !border-red-700 !text-white dark:!bg-red-600 dark:!border-red-500 dark:!text-white [&_[data-icon]]:!text-white dark:[&_[data-icon]]:!text-red-100',
           warning:
-            '!bg-amber-50/80 !border-amber-200 !text-amber-800 dark:!bg-amber-950/50 dark:!border-amber-800 dark:!text-amber-200 [&_[data-icon]]:!text-amber-600 dark:[&_[data-icon]]:!text-amber-400',
-          info: '!bg-blue-50/80 !border-blue-200 !text-blue-800 dark:!bg-blue-950/50 dark:!border-blue-800 dark:!text-blue-200 [&_[data-icon]]:!text-blue-600 dark:[&_[data-icon]]:!text-blue-400',
+            '!bg-amber-500 !border-amber-600 !text-white dark:!bg-amber-500 dark:!border-amber-400 dark:!text-white [&_[data-icon]]:!text-white dark:[&_[data-icon]]:!text-amber-100',
+          info: '!bg-blue-600 !border-blue-700 !text-white dark:!bg-blue-600 dark:!border-blue-500 dark:!text-white [&_[data-icon]]:!text-white dark:[&_[data-icon]]:!text-blue-100',
         },
       }}
       {...props}
