@@ -17,7 +17,6 @@ export type {
   UserId,
 } from '@/convex/types'
 
-export type { ClerkUserInfo } from '@/lib/clerk'
 export type { QuestionSecurityLevel } from '@/lib/question-security'
 
 export interface UserProfile {

@@ -1,17 +1,17 @@
+'use client'
+
+import { useParams } from 'next/navigation'
+import { useQuery } from 'convex/react'
+import { api } from '@/convex/_generated/api'
 import { SignatureColorProvider } from '@/components/theme/signature-color-provider'
-import { getClerkUserByUsername } from '@/lib/clerk'
-import { getOrCreateUser } from '@/lib/db/queries'
 
 interface ProfileLayoutProps {
   children: React.ReactNode
-  params: Promise<{ username: string }>
 }
 
-export default async function ProfileLayout({ children, params }: ProfileLayoutProps) {
-  const { username } = await params
-
-  const clerkUser = await getClerkUserByUsername(username)
-  const dbUser = clerkUser ? await getOrCreateUser(clerkUser.clerkId) : null
+export default function ProfileLayout({ children }: ProfileLayoutProps) {
+  const { username } = useParams<{ username: string }>()
+  const dbUser = useQuery(api.users.getByUsername, { username })
 
   return <SignatureColorProvider signatureColor={dbUser?.signatureColor}>{children}</SignatureColorProvider>
 }

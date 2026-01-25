@@ -1,51 +1,32 @@
-import { auth } from '@clerk/nextjs/server'
+'use client'
+
+import { useMemo } from 'react'
+import { useAuth } from '@clerk/nextjs'
+import { useQuery } from 'convex/react'
 import { AppShell } from '@/components/layout/app-shell'
-import { getClerkUsersByIds } from '@/lib/clerk'
-import { getUnansweredQuestions } from '@/lib/db/queries'
+import { api } from '@/convex/_generated/api'
 
 interface AppShellWrapperProps {
   children: React.ReactNode
 }
 
-export async function AppShellWrapper({ children }: AppShellWrapperProps) {
-  const { userId: clerkId } = await auth()
+export function AppShellWrapper({ children }: AppShellWrapperProps) {
+  const { userId: clerkId } = useAuth()
 
-  let recentQuestions: Array<{
-    id: string
-    content: string
-    createdAt: number
-    senderName?: string
-    senderAvatarUrl?: string | null
-    isAnonymous?: boolean
-  }> = []
+  const questions = useQuery(api.questions.getUnanswered, clerkId ? { recipientClerkId: clerkId } : 'skip')
 
-  if (clerkId) {
-    const questions = (await getUnansweredQuestions(clerkId)) ?? []
-    const recentFive = questions.filter((q): q is NonNullable<typeof q> => q !== null).slice(0, 5)
+  const recentQuestions = useMemo(() => {
+    if (!questions) return []
 
-    const senderIds = Array.from(
-      new Set(
-        recentFive
-          .map((q) => (q.isAnonymous ? undefined : q.senderClerkId))
-          .filter((id): id is string => id !== undefined)
-      )
-    )
-
-    const senderMap = senderIds.length > 0 ? await getClerkUsersByIds(senderIds) : new Map()
-
-    recentQuestions = recentFive.map((q) => {
-      const sender = !q.isAnonymous && q.senderClerkId ? senderMap.get(q.senderClerkId) : null
-
-      return {
-        id: q._id,
-        content: q.content,
-        createdAt: q._creationTime,
-        senderName: sender?.displayName || sender?.username || undefined,
-        senderAvatarUrl: sender?.avatarUrl || null,
-        isAnonymous: q.isAnonymous,
-      }
-    })
-  }
+    return questions.slice(0, 5).map((q) => ({
+      id: q._id,
+      content: q.content,
+      createdAt: q._creationTime,
+      senderName: q.isAnonymous ? undefined : q.senderDisplayName || q.senderUsername || undefined,
+      senderAvatarUrl: q.isAnonymous ? null : q.senderAvatarUrl || null,
+      isAnonymous: q.isAnonymous,
+    }))
+  }, [questions])
 
   const isLoggedIn = !!clerkId
 

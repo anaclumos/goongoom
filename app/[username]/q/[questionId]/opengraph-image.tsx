@@ -2,9 +2,9 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cookies } from 'next/headers'
 import { ImageResponse } from 'next/og'
-import { getClerkUserById, getClerkUserByUsername } from '@/lib/clerk'
+import { fetchQuery } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
 import { getSignatureColor } from '@/lib/colors/signature-colors'
-import { getOrCreateUser, getQuestionByIdAndRecipient } from '@/lib/db/queries'
 import type { QuestionId } from '@/lib/types'
 
 function getDicebearUrl(seed: string) {
@@ -54,8 +54,8 @@ export default async function Image({ params }: PageProps) {
     fontBoldPromise,
   ])
 
-  const clerkUser = await getClerkUserByUsername(username)
-  if (!clerkUser) {
+  const dbUser = await fetchQuery(api.users.getByUsername, { username })
+  if (!dbUser) {
     const defaultColors = getSignatureColor(null)
     return new ImageResponse(
       <div
@@ -80,7 +80,7 @@ export default async function Image({ params }: PageProps) {
     )
   }
 
-  const qa = await getQuestionByIdAndRecipient(questionId, clerkUser.clerkId)
+  const qa = await fetchQuery(api.questions.getByIdAndRecipient, { id: questionId, recipientClerkId: dbUser.clerkId })
   if (!qa?.answer) {
     const defaultColors = getSignatureColor(null)
     return new ImageResponse(
@@ -106,10 +106,9 @@ export default async function Image({ params }: PageProps) {
     )
   }
 
-  const dbUser = await getOrCreateUser(clerkUser.clerkId)
-  const displayName = clerkUser.displayName || clerkUser.username || username
-  const question = clamp(qa.content, 80)
-  const answer = clamp(qa.answer.content, 100)
+  const displayName = dbUser.displayName || dbUser.username || username
+  const questionContent = clamp(qa.content, 80)
+  const answerContent = clamp(qa.answer.content, 100)
   const colors = getSignatureColor(dbUser?.signatureColor)
   const theme = isDark ? colors.dark : colors.light
 
@@ -117,13 +116,13 @@ export default async function Image({ params }: PageProps) {
   if (qa.isAnonymous) {
     askerAvatarSrc = getDicebearUrl(qa.anonymousAvatarSeed || qa._id)
   } else if (qa.senderClerkId) {
-    const sender = await getClerkUserById(qa.senderClerkId)
+    const sender = await fetchQuery(api.users.getByClerkId, { clerkId: qa.senderClerkId })
     askerAvatarSrc = sender?.avatarUrl || getDicebearUrl(qa.senderClerkId)
   } else {
     askerAvatarSrc = getDicebearUrl(qa._id)
   }
 
-  const answererAvatarSrc = clerkUser.avatarUrl || getDicebearUrl(clerkUser.clerkId)
+  const answererAvatarSrc = dbUser.avatarUrl || getDicebearUrl(dbUser.clerkId)
 
   const [askerAvatarUrl, answererAvatarUrl] = await Promise.all([
     fetchImageAsBase64(askerAvatarSrc),
@@ -166,7 +165,7 @@ export default async function Image({ params }: PageProps) {
               boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
             }}
           >
-            {question}
+            {questionContent}
           </div>
         </div>
         <div
@@ -190,7 +189,7 @@ export default async function Image({ params }: PageProps) {
               color: '#FFFFFF',
             }}
           >
-            {answer}
+            {answerContent}
           </div>
           <img alt={displayName} height={60} src={answererAvatarUrl} style={{ borderRadius: '30px' }} width={60} />
         </div>

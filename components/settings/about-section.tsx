@@ -1,12 +1,14 @@
+'use client'
+
 import { ArrowUpRight01Icon, Bug02Icon, Idea01Icon, UserIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { getTranslations } from 'next-intl/server'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 
 const ANACLUMOS_URL = 'https://goongoom.com/anaclumos'
 
-export async function AboutSection() {
-  const t = await getTranslations('settings')
+export function AboutSection() {
+  const t = useTranslations('settings')
 
   return (
     <Card>

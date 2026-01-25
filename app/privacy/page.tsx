@@ -1,21 +1,13 @@
-import type { Metadata } from 'next'
-import { getLocale, getTranslations } from 'next-intl/server'
+'use client'
+
+import { useLocale } from 'next-intl'
 import { MainContent } from '@/components/layout/main-content'
+import PrivacyKo from '@/content/legal/privacy.ko.mdx'
+import PrivacyEn from '@/content/legal/privacy.en.mdx'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('footer')
-  return {
-    title: t('privacy'),
-  }
-}
-
-export default async function PrivacyPage() {
-  const locale = await getLocale()
-
-  const Content =
-    locale === 'ko'
-      ? (await import('@/content/legal/privacy.ko.mdx')).default
-      : (await import('@/content/legal/privacy.en.mdx')).default
+export default function PrivacyPage() {
+  const locale = useLocale()
+  const Content = locale === 'ko' ? PrivacyKo : PrivacyEn
 
   return (
     <MainContent>

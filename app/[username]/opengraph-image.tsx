@@ -3,9 +3,9 @@ import { join } from 'node:path'
 import { cookies } from 'next/headers'
 import { ImageResponse } from 'next/og'
 import { getTranslations } from 'next-intl/server'
-import { getClerkUserByUsername } from '@/lib/clerk'
+import { fetchQuery } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
 import { getSignatureColor } from '@/lib/colors/signature-colors'
-import { getOrCreateUser } from '@/lib/db/queries'
 
 export const runtime = 'nodejs'
 export const alt = 'User Profile'
@@ -36,8 +36,8 @@ export default async function Image({ params }: PageProps) {
   ])
   const logoBase64 = `data:image/png;base64,${logoData.toString('base64')}`
 
-  const clerkUser = await getClerkUserByUsername(username)
-  if (!clerkUser) {
+  const dbUser = await fetchQuery(api.users.getByUsername, { username })
+  if (!dbUser) {
     const defaultColors = getSignatureColor(null)
     return new ImageResponse(
       <div
@@ -62,10 +62,9 @@ export default async function Image({ params }: PageProps) {
     )
   }
 
-  const dbUser = await getOrCreateUser(clerkUser.clerkId)
   const colors = getSignatureColor(dbUser?.signatureColor)
   const theme = isDark ? colors.dark : colors.light
-  const displayName = clerkUser.displayName || clerkUser.username || username
+  const displayName = dbUser.displayName || dbUser.username || username
   const bio = dbUser?.bio ? clamp(dbUser.bio, 120) : null
 
   return new ImageResponse(
@@ -101,11 +100,11 @@ export default async function Image({ params }: PageProps) {
           marginTop: '32px',
         }}
       >
-        {clerkUser.avatarUrl ? (
+        {dbUser.avatarUrl ? (
           <img
             alt={displayName}
             height={220}
-            src={clerkUser.avatarUrl}
+            src={dbUser.avatarUrl}
             style={{
               borderRadius: '110px',
               border: `6px solid ${theme.border}`,
@@ -141,7 +140,7 @@ export default async function Image({ params }: PageProps) {
         >
           <div style={{ fontSize: '68px', fontWeight: 700, lineHeight: 1.2 }}>{clamp(displayName, 20)}</div>
           <div style={{ fontSize: '40px', color: isDark ? '#9CA3AF' : '#6B7280' }}>
-            @{clamp(clerkUser.username || username, 24)}
+            @{clamp(dbUser.username || username, 24)}
           </div>
           {bio && (
             <div
@@ -168,7 +167,7 @@ export default async function Image({ params }: PageProps) {
         }}
       >
         <div>{t('tagline')}</div>
-        <div>goongoom.com/{clamp(clerkUser.username || username, 16)}</div>
+        <div>goongoom.com/{clamp(dbUser.username || username, 16)}</div>
       </div>
     </div>,
     {

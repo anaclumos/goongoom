@@ -1,21 +1,13 @@
-import type { Metadata } from 'next'
-import { getLocale, getTranslations } from 'next-intl/server'
+'use client'
+
+import { useLocale } from 'next-intl'
 import { MainContent } from '@/components/layout/main-content'
+import TermsKo from '@/content/legal/terms.ko.mdx'
+import TermsEn from '@/content/legal/terms.en.mdx'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('footer')
-  return {
-    title: t('terms'),
-  }
-}
-
-export default async function TermsPage() {
-  const locale = await getLocale()
-
-  const Content =
-    locale === 'ko'
-      ? (await import('@/content/legal/terms.ko.mdx')).default
-      : (await import('@/content/legal/terms.en.mdx')).default
+export default function TermsPage() {
+  const locale = useLocale()
+  const Content = locale === 'ko' ? TermsKo : TermsEn
 
   return (
     <MainContent>
