@@ -7,18 +7,7 @@ import type { QuestionSecurityLevel } from '@/lib/question-security'
 export type { SocialLinks } from '@/convex/types'
 
 async function getAuthToken() {
-  const authResult = await auth()
-  const token = await authResult.getToken({ template: 'convex' })
-  
-  // DEBUG: Log token status (remove after debugging)
-  if (!token) {
-    console.error('[AUTH DEBUG] getToken returned null', {
-      userId: authResult.userId,
-      sessionId: authResult.sessionId,
-    })
-  }
-  
-  return token ?? undefined
+  return (await (await auth()).getToken({ template: 'convex' })) ?? undefined
 }
 
 export async function getOrCreateUser(clerkId: string) {
@@ -90,14 +79,11 @@ export async function getQuestionById(id: QuestionId) {
 }
 
 export async function getUnansweredQuestions(clerkId: string) {
-  return await fetchQuery(api.questions.getUnanswered, {
-    recipientClerkId: clerkId,
-  })
+  const token = await getAuthToken()
+  return await fetchQuery(api.questions.getUnanswered, { recipientClerkId: clerkId }, { token })
 }
 
 export async function getQuestionByIdAndRecipient(questionId: QuestionId, recipientClerkId: string) {
-  return await fetchQuery(api.questions.getByIdAndRecipient, {
-    id: questionId,
-    recipientClerkId,
-  })
+  const token = await getAuthToken()
+  return await fetchQuery(api.questions.getByIdAndRecipient, { id: questionId, recipientClerkId }, { token })
 }
