@@ -22,7 +22,8 @@ export type { QuestionSecurityLevel } from '@/lib/question-security'
 export interface UserProfile {
   clerkId: string
   username: string | null
-  displayName: string | null
+  firstName: string | null
+  fullName: string | null
   avatarUrl: string | null
   bio: string | null
   socialLinks: import('@/convex/types').SocialLinks | null

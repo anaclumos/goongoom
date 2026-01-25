@@ -44,7 +44,8 @@ export default function UserProfilePage() {
 
   const isLoading = dbUser === undefined
 
-  const displayName = dbUser?.displayName || dbUser?.username || username
+  const firstName = dbUser?.firstName || dbUser?.username || username
+  const fullName = dbUser?.fullName || dbUser?.username || username
   const recipientClerkId = dbUser?.clerkId || ''
   const recipientUsername = dbUser?.username || username
 
@@ -93,7 +94,7 @@ export default function UserProfilePage() {
       const avatarSeed = String(formData.get('avatarSeed') || '')
 
       if (!content) {
-        return { success: false, error: 'Please enter a question' }
+        return { success: false, error: tErrors('pleaseEnterQuestion') }
       }
 
       const isAnonymous = questionType !== 'public'
@@ -133,7 +134,7 @@ export default function UserProfilePage() {
         <ProfileCard isLoading />
       ) : (
         <ProfileCard
-          displayName={displayName}
+          fullName={fullName}
           username={recipientUsername}
           avatarUrl={dbUser.avatarUrl}
           bio={dbUser.bio}
@@ -161,7 +162,7 @@ export default function UserProfilePage() {
               answerContent={qa.firstAnswer.content}
               answerCreatedAt={qa.firstAnswer._creationTime}
               avatarUrl={dbUser.avatarUrl ?? null}
-              displayName={displayName}
+              firstName={firstName}
               isAnonymous={qa.isAnonymous}
               key={qa._id}
               labels={cardLabels}
@@ -170,7 +171,7 @@ export default function UserProfilePage() {
               questionCreatedAt={qa._creationTime}
               questionId={qa._id}
               senderAvatarUrl={qa.senderAvatarUrl ?? null}
-              senderName={qa.senderDisplayName || qa.senderUsername}
+              senderName={qa.senderFirstName || qa.senderUsername}
               signatureColor={dbUser.signatureColor}
               username={recipientUsername}
             />
@@ -189,7 +190,7 @@ export default function UserProfilePage() {
           canAskAnonymously={canAskAnonymously}
           canAskPublic={viewerIsVerified}
           recipientClerkId={recipientClerkId}
-          recipientName={displayName}
+          recipientName={firstName}
           requiresSignIn={requiresSignIn}
           submitAction={submitQuestion}
           successMessage={t('questionSent')}

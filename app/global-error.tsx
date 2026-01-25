@@ -12,6 +12,7 @@ const translations = {
     clearData: 'Clear cache & data',
     clearDataDescription: 'This will clear local data and may help resolve the issue.',
     dataCleared: 'Data cleared. Reloading...',
+    or: 'or',
   },
   ko: {
     title: '문제가 발생했어요',
@@ -21,6 +22,7 @@ const translations = {
     clearData: '캐시 및 데이터 지우기',
     clearDataDescription: '로컬 데이터를 지우면 문제가 해결될 수 있어요.',
     dataCleared: '데이터가 지워졌어요. 새로고침 중...',
+    or: '또는',
   },
 } as const
 
@@ -308,7 +310,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
               </button>
 
               <div className="divider">
-                <span>or</span>
+                <span>{t.or}</span>
               </div>
 
               <button className="btn-secondary" disabled={clearing} onClick={handleClearData} type="button">

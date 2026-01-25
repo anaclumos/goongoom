@@ -25,7 +25,7 @@ type AnsweredQuestionCardProps =
       answerContent: string
       answerCreatedAt: number
       username: string
-      displayName: string
+      firstName: string
       avatarUrl: string | null
       locale: string
       labels: {
@@ -83,7 +83,7 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
     answerContent,
     answerCreatedAt,
     username,
-    displayName,
+    firstName,
     avatarUrl,
     locale,
     labels,
@@ -91,7 +91,7 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
   } = props
 
   const anonymityLabel = isAnonymous ? labels.anonymous : senderName || labels.identified
-  const fallbackInitial = displayName[0] || '?'
+  const fallbackInitial = firstName[0] || '?'
   const questionerAvatarUrl = getQuestionerAvatarUrl(isAnonymous, anonymousAvatarSeed, questionId, senderAvatarUrl)
   const questionerFallback = isAnonymous ? '?' : senderName?.[0] || '?'
   const imagesToPrefetch = [questionerAvatarUrl, avatarUrl].filter((url): url is string => Boolean(url))
@@ -141,7 +141,7 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
                 <ClampedAnswer content={answerContent} />
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
-                {displayName} ·{' '}
+                {firstName} ·{' '}
                 {formatDistanceToNow(answerCreatedAt, {
                   addSuffix: true,
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
@@ -149,7 +149,7 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
               </p>
             </div>
             <Avatar className="size-10 flex-shrink-0">
-              {avatarUrl && <AvatarImage alt={displayName} src={avatarUrl} />}
+              {avatarUrl && <AvatarImage alt={firstName} src={avatarUrl} />}
               <AvatarFallback>{fallbackInitial}</AvatarFallback>
             </Avatar>
           </div>

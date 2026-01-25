@@ -9,7 +9,8 @@ import { SignatureColorProvider } from '@/components/theme/signature-color-provi
 interface CurrentUser {
   clerkId: string
   username: string | null
-  displayName: string | null
+  firstName: string | null
+  fullName: string | null
   avatarUrl: string | null
   bio: string | null
   signatureColor: string | null
@@ -50,7 +51,8 @@ export function UserProvider({ children }: UserProviderProps) {
     return {
       clerkId: dbUser.clerkId,
       username: dbUser.username ?? null,
-      displayName: dbUser.displayName ?? null,
+      firstName: dbUser.firstName ?? null,
+      fullName: dbUser.fullName ?? null,
       avatarUrl: dbUser.avatarUrl ?? null,
       bio: dbUser.bio ?? null,
       signatureColor: dbUser.signatureColor ?? null,

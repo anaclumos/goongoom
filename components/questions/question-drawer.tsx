@@ -115,6 +115,7 @@ function QuestionTypeSelector({
   onPublicClick,
 }: QuestionTypeSelectorProps) {
   const t = useTranslations('questions')
+  const tCommon = useTranslations('common')
   const tRestrictions = useTranslations('restrictions')
   const { user } = useUser()
   const isAnonymous = questionType === 'anonymous'
@@ -134,7 +135,7 @@ function QuestionTypeSelector({
         type="button"
       >
         <Avatar className={`size-12 ring-2 ring-background transition-all ${isAnonymous ? 'ring-emerald/20' : ''}`}>
-          <AvatarImage alt="Anonymous" src={getAvatarUrl(avatarSeed)} />
+          <AvatarImage alt={tCommon('anonymous')} src={getAvatarUrl(avatarSeed)} />
           <AvatarFallback>?</AvatarFallback>
         </Avatar>
         <div className="space-y-1 text-center">
@@ -162,7 +163,7 @@ function QuestionTypeSelector({
         type="button"
       >
         <Avatar className={`size-12 ring-2 ring-background transition-all ${isAnonymous ? '' : 'ring-emerald/20'}`}>
-          {user?.imageUrl && <AvatarImage alt={user?.firstName || 'You'} src={user.imageUrl} />}
+          {user?.imageUrl && <AvatarImage alt={user?.firstName || tCommon('you')} src={user.imageUrl} />}
           <AvatarFallback className="bg-gradient-to-br from-muted to-muted/50 font-semibold text-muted-foreground">
             {user?.firstName?.[0] || '?'}
           </AvatarFallback>

@@ -12,7 +12,9 @@
     "anonymous": "익명",
     "identified": "실명",
     "user": "사용자",
-    "menu": "메뉴"
+    "menu": "메뉴",
+    "you": "나",
+    "asker": "질문자"
   },
   "metadata": {
     "title": "궁금닷컴",
@@ -94,7 +96,8 @@
     "deleteResponse": "답변 삭제하기",
     "deleteResponseTitle": "이 답변을 삭제할까요?",
     "deleteResponseDescription": "삭제하면 질문이 받은 질문함에 다시 보여요.",
-    "noAnswersYet": "아직 답변한 질문이 없어요."
+    "noAnswersYet": "아직 답변한 질문이 없어요.",
+    "answerCreated": "답변을 보냈어요!"
   },
   "inbox": {
     "title": "받은 질문",
@@ -272,11 +275,21 @@
   "social": {
     "instagramPlaceholder": "인스타그램",
     "twitterPlaceholder": "트위터",
+    "youtubePlaceholder": "유튜브",
+    "githubPlaceholder": "깃허브",
+    "naverBlogPlaceholder": "네이버 블로그",
+    "labelPlaceholder": "이름",
     "instagram": "인스타그램",
     "twitter": "X (트위터)",
     "youtube": "유튜브",
     "github": "깃허브",
-    "naverBlog": "네이버 블로그"
+    "naverBlog": "네이버 블로그",
+    "addInstagram": "인스타그램 추가",
+    "addTwitter": "트위터 추가",
+    "addYoutube": "유튜브 추가",
+    "addGithub": "깃허브 추가",
+    "addNaverBlog": "네이버 블로그 추가",
+    "remove": "삭제"
   },
   "globalError": {
     "title": "문제가 발생했어요",
@@ -285,6 +298,7 @@
     "signOut": "로그아웃하기",
     "clearData": "캐시 및 데이터 지우기",
     "clearDataDescription": "로컬 데이터를 지우면 문제가 해결될 수 있어요.",
-    "dataCleared": "데이터가 지워졌어요. 새로고침 중..."
+    "dataCleared": "데이터가 지워졌어요. 새로고침 중...",
+    "or": "또는"
   }
 }

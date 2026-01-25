@@ -12,7 +12,9 @@
     "anonymous": "Anonymous",
     "identified": "Identified",
     "user": "User",
-    "menu": "Menu"
+    "menu": "Menu",
+    "you": "You",
+    "asker": "Asker"
   },
   "metadata": {
     "title": "Goongoom",
@@ -94,7 +96,8 @@
     "deleteResponse": "Delete answer",
     "deleteResponseTitle": "Delete this answer?",
     "deleteResponseDescription": "We'll remove your answer, and the question will go back to your inbox.",
-    "noAnswersYet": "No answered questions yet."
+    "noAnswersYet": "No answered questions yet.",
+    "answerCreated": "Answer sent!"
   },
   "inbox": {
     "title": "Inbox",
@@ -272,11 +275,21 @@
   "social": {
     "instagramPlaceholder": "Instagram",
     "twitterPlaceholder": "Twitter",
+    "youtubePlaceholder": "YouTube",
+    "githubPlaceholder": "GitHub",
+    "naverBlogPlaceholder": "Naver Blog",
+    "labelPlaceholder": "Label",
     "instagram": "Instagram",
     "twitter": "X",
     "youtube": "YouTube",
     "github": "GitHub",
-    "naverBlog": "Naver Blog"
+    "naverBlog": "Naver Blog",
+    "addInstagram": "Add Instagram",
+    "addTwitter": "Add X",
+    "addYoutube": "Add YouTube",
+    "addGithub": "Add GitHub",
+    "addNaverBlog": "Add Naver Blog",
+    "remove": "Remove"
   },
   "globalError": {
     "title": "Something went wrong",
@@ -285,6 +298,7 @@
     "signOut": "Sign out",
     "clearData": "Clear cache & data",
     "clearDataDescription": "This will clear local data and may help resolve the issue.",
-    "dataCleared": "Data cleared. Reloading..."
+    "dataCleared": "Data cleared. Reloading...",
+    "or": "or"
   }
 }

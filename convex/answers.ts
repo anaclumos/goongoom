@@ -162,7 +162,7 @@ export const getRecentLimitPerUser = query({
           answer,
           recipientClerkId: question.recipientClerkId,
           recipientUsername: user?.username,
-          recipientDisplayName: user?.displayName,
+          recipientFirstName: user?.firstName,
           recipientAvatarUrl: user?.avatarUrl,
           recipientSignatureColor: user?.signatureColor,
         }
@@ -296,7 +296,7 @@ export const getFriendsAnswers = query({
           answer,
           recipientClerkId: question.recipientClerkId,
           recipientUsername: user?.username,
-          recipientDisplayName: user?.displayName,
+          recipientFirstName: user?.firstName,
           recipientAvatarUrl: user?.avatarUrl,
           recipientSignatureColor: user?.signatureColor,
         }

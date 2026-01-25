@@ -1,8 +1,26 @@
 import { ConvexError, v } from 'convex/values'
-import { action, internalMutation, mutation, query } from './_generated/server'
+import { internal } from './_generated/api'
+import { action, internalMutation, internalQuery, mutation, query } from './_generated/server'
 
 const HTML_TITLE_REGEX = /<title[^>]*>([^<]+)<\/title>/i
 const NAVER_BLOG_TITLE_SUFFIX = ': 네이버 블로그'
+const CJK_REGEX = /^[\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF\u1100-\u11FF]+$/
+
+function isAllCJK(str: string | null | undefined): boolean {
+  if (!str) return false
+  return CJK_REGEX.test(str)
+}
+
+function buildFullName(firstName: string | null | undefined, lastName: string | null | undefined): string | undefined {
+  if (!firstName && !lastName) return undefined
+  if (!firstName) return lastName || undefined
+  if (!lastName) return firstName
+
+  if (isAllCJK(firstName) && isAllCJK(lastName)) {
+    return lastName + firstName
+  }
+  return firstName + ' ' + lastName
+}
 
 export const fetchNaverBlogTitle = action({
   args: { handle: v.string() },
@@ -80,7 +98,8 @@ export const getOrCreate = mutation({
       if (!existing.username && identity.nickname) {
         await ctx.db.patch(existing._id, {
           username: identity.nickname,
-          displayName: identity.name || existing.displayName,
+          firstName: identity.givenName || existing.firstName,
+          fullName: identity.name || existing.fullName,
           avatarUrl: identity.pictureUrl || existing.avatarUrl,
           updatedAt: Date.now(),
         })
@@ -92,7 +111,8 @@ export const getOrCreate = mutation({
     const id = await ctx.db.insert('users', {
       clerkId: args.clerkId,
       username: identity.nickname,
-      displayName: identity.name,
+      firstName: identity.givenName,
+      fullName: identity.name,
       avatarUrl: identity.pictureUrl,
       questionSecurityLevel: 'anyone',
       updatedAt: Date.now(),
@@ -246,7 +266,8 @@ export const upsertFromWebhook = internalMutation({
   args: {
     clerkId: v.string(),
     username: v.optional(v.string()),
-    displayName: v.optional(v.string()),
+    firstName: v.optional(v.string()),
+    fullName: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -258,14 +279,15 @@ export const upsertFromWebhook = internalMutation({
     if (existing) {
       const updates: {
         username?: string
-        displayName?: string
+        firstName?: string
+        fullName?: string
         avatarUrl?: string
         updatedAt: number
       } = { updatedAt: Date.now() }
 
-      // Only update fields that have defined values to avoid clearing existing data
       if (args.username !== undefined) updates.username = args.username
-      if (args.displayName !== undefined) updates.displayName = args.displayName
+      if (args.firstName !== undefined) updates.firstName = args.firstName
+      if (args.fullName !== undefined) updates.fullName = args.fullName
       if (args.avatarUrl !== undefined) updates.avatarUrl = args.avatarUrl
 
       await ctx.db.patch(existing._id, updates)
@@ -275,7 +297,8 @@ export const upsertFromWebhook = internalMutation({
     return await ctx.db.insert('users', {
       clerkId: args.clerkId,
       username: args.username,
-      displayName: args.displayName,
+      firstName: args.firstName,
+      fullName: args.fullName,
       avatarUrl: args.avatarUrl,
       questionSecurityLevel: 'anyone',
       updatedAt: Date.now(),
@@ -307,52 +330,75 @@ export const getByUsername = query({
   },
 })
 
-// One-time migration: Convert old socialLinks object format to new array format
-// Old format: { instagram: "handle", twitter: "handle" }
-// New format: [{ platform: "instagram", content: "handle", labelType: "handle" }, ...]
-export const migrateSocialLinks = internalMutation({
+export const listAllInternal = internalQuery({
   args: {},
   handler: async (ctx) => {
-    const users = await ctx.db.query('users').collect()
-    let migratedCount = 0
+    return await ctx.db.query('users').collect()
+  },
+})
+
+export const syncFromClerk = action({
+  args: {},
+  handler: async (ctx) => {
+    const clerkSecretKey = process.env.CLERK_SECRET_KEY
+    if (!clerkSecretKey) {
+      throw new ConvexError('CLERK_SECRET_KEY not configured')
+    }
+
+    const users = await ctx.runQuery(internal.users.listAllInternal, {})
+    let syncedCount = 0
+    let errorCount = 0
+    const errors: { clerkId: string; error: string }[] = []
 
     for (const user of users) {
-      const socialLinks = user.socialLinks as unknown
+      try {
+        const response = await fetch(`https://api.clerk.com/v1/users/${user.clerkId}`, {
+          headers: {
+            Authorization: `Bearer ${clerkSecretKey}`,
+            'Content-Type': 'application/json',
+          },
+        })
 
-      // Skip if already in new format (array) or undefined
-      if (!socialLinks || Array.isArray(socialLinks)) {
-        continue
-      }
-
-      // Convert old object format to new array format
-      if (typeof socialLinks === 'object') {
-        const oldFormat = socialLinks as Record<string, string>
-        const platforms = ['instagram', 'twitter', 'youtube', 'github', 'naverBlog'] as const
-
-        const newFormat: {
-          platform: (typeof platforms)[number]
-          content: string
-          labelType: 'handle'
-        }[] = []
-
-        for (const platform of platforms) {
-          if (oldFormat[platform]) {
-            newFormat.push({
-              platform,
-              content: oldFormat[platform],
-              labelType: 'handle',
-            })
+        if (!response.ok) {
+          if (response.status === 404) {
+            errors.push({ clerkId: user.clerkId, error: 'User not found in Clerk' })
+          } else {
+            errors.push({ clerkId: user.clerkId, error: `Clerk API error: ${response.status}` })
           }
+          errorCount++
+          continue
         }
 
-        await ctx.db.patch(user._id, {
-          socialLinks: newFormat,
-          updatedAt: Date.now(),
+        const clerkUser = (await response.json()) as {
+          username?: string | null
+          first_name?: string | null
+          last_name?: string | null
+          image_url?: string | null
+        }
+
+        const firstName = clerkUser.first_name ?? undefined
+        const fullName = buildFullName(clerkUser.first_name, clerkUser.last_name)
+
+        await ctx.runMutation(internal.users.upsertFromWebhook, {
+          clerkId: user.clerkId,
+          username: clerkUser.username ?? undefined,
+          firstName,
+          fullName,
+          avatarUrl: clerkUser.image_url ?? undefined,
         })
-        migratedCount++
+
+        syncedCount++
+      } catch (err) {
+        errors.push({ clerkId: user.clerkId, error: String(err) })
+        errorCount++
       }
     }
 
-    return { migratedCount, totalUsers: users.length }
+    return {
+      totalUsers: users.length,
+      syncedCount,
+      errorCount,
+      errors: errors.slice(0, 10),
+    }
   },
 })

@@ -20,7 +20,7 @@ type ProfileCardProps =
     }
   | {
       isLoading?: false
-      displayName: string
+      fullName: string
       username: string
       avatarUrl?: string | null
       bio?: string | null
@@ -50,17 +50,17 @@ export function ProfileCard(props: ProfileCardProps) {
     )
   }
 
-  const { displayName, username, avatarUrl, bio, noBioText, socialLinks, isOwnProfile, children } = props
+  const { fullName, username, avatarUrl, bio, noBioText, socialLinks, isOwnProfile, children } = props
 
   return (
     <Card className="mb-6">
       <CardContent className="flex items-center gap-6">
         <Avatar className="size-24 ring-2 ring-primary/30">
-          {avatarUrl && <AvatarImage alt={displayName} src={avatarUrl} />}
-          <AvatarFallback>{displayName[0] || '?'}</AvatarFallback>
+          {avatarUrl && <AvatarImage alt={fullName} src={avatarUrl} />}
+          <AvatarFallback>{fullName[0] || '?'}</AvatarFallback>
         </Avatar>
         <div className="flex flex-1 flex-col gap-1">
-          <h1 className="font-semibold text-foreground text-xl">{displayName}</h1>
+          <h1 className="font-semibold text-foreground text-xl">{fullName}</h1>
           <p className="text-muted-foreground text-sm">@{username}</p>
           <p className="mt-1 text-sm">{bio || <span className="text-muted-foreground">{noBioText}</span>}</p>
         </div>

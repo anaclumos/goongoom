@@ -202,7 +202,7 @@ export const getByIdAndRecipient = query({
       ...question,
       answer: answer && !answer.deletedAt ? answer : null,
       senderUsername: sender?.username,
-      senderDisplayName: sender?.displayName,
+      senderFirstName: sender?.firstName,
       senderAvatarUrl: sender?.avatarUrl,
     }
   },
@@ -256,7 +256,7 @@ export const getUnanswered = query({
       return {
         ...question,
         senderUsername: sender?.username,
-        senderDisplayName: sender?.displayName,
+        senderFirstName: sender?.firstName,
         senderAvatarUrl: sender?.avatarUrl,
       }
     })
@@ -283,7 +283,7 @@ export const getAnsweredByRecipient = query({
         ...question,
         answer: question.answerId ? (answerMap.get(question.answerId) ?? null) : null,
         senderUsername: sender?.username,
-        senderDisplayName: sender?.displayName,
+        senderFirstName: sender?.firstName,
         senderAvatarUrl: sender?.avatarUrl,
       }
     })

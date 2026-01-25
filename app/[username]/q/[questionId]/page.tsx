@@ -45,7 +45,7 @@ interface QuestionerInfo {
 function getQuestionerInfo(
   isAnonymous: boolean,
   anonymousSeed: string,
-  senderDisplayName: string | undefined,
+  senderFirstName: string | undefined,
   senderAvatarUrl: string | undefined,
   anonymousLabel: string,
   identifiedLabel: string
@@ -59,8 +59,8 @@ function getQuestionerInfo(
   }
   return {
     avatarUrl: senderAvatarUrl || null,
-    name: senderDisplayName || identifiedLabel,
-    fallback: senderDisplayName?.[0] || '?',
+    name: senderFirstName || identifiedLabel,
+    fallback: senderFirstName?.[0] || '?',
   }
 }
 
@@ -117,14 +117,15 @@ export default function QADetailPage() {
   const isLoading = dbUser === undefined || qa === undefined || questionNumber === undefined
 
   const isOwner = viewerId === dbUser?.clerkId
-  const displayName = dbUser?.displayName || dbUser?.username || username
+  const firstName = dbUser?.firstName || dbUser?.username || username
+  const fullName = dbUser?.fullName || dbUser?.username || username
 
   const questioner = useMemo(() => {
     if (!qa) return null
     return getQuestionerInfo(
       qa.isAnonymous,
       qa.anonymousAvatarSeed || `anon_${qa._id}`,
-      qa.senderDisplayName,
+      qa.senderFirstName,
       qa.senderAvatarUrl,
       tCommon('anonymous'),
       tCommon('identified')
@@ -142,12 +143,12 @@ export default function QADetailPage() {
     return buildShareUrl({
       question: qa.content,
       answer: qa.answer.content,
-      name: displayName,
+      name: fullName,
       askerAvatarUrl: askerAvatarForShare,
       answererAvatarUrl: answererAvatarForShare,
       signatureColor: dbUser.signatureColor,
     })
-  }, [qa, dbUser, displayName])
+  }, [qa, dbUser, fullName])
 
   const canonicalUrl = `/${username}/q/${questionId}`
 
@@ -209,12 +210,12 @@ export default function QADetailPage() {
           variant="ghost"
         >
           <HugeiconsIcon className="size-5" icon={ArrowLeft01Icon} />
-          {tProfile('backToProfile', { displayName })}
+          {tProfile('backToProfile', { displayName: firstName })}
         </Button>
       </div>
 
       <h1 className="mb-6 font-bold text-2xl">
-        {tQuestions('questionNumber', { displayName, number: questionNumber })}
+        {tQuestions('questionNumber', { displayName: firstName, number: questionNumber })}
       </h1>
 
       <Card>
@@ -243,7 +244,7 @@ export default function QADetailPage() {
                 <p className="leading-relaxed">{answer.content}</p>
               </Card>
               <p className="mt-1 mr-1 text-muted-foreground text-xs">
-                {displayName} ·{' '}
+                {firstName} ·{' '}
                 {formatDistanceToNow(answer._creationTime, {
                   addSuffix: true,
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
@@ -251,8 +252,8 @@ export default function QADetailPage() {
               </p>
             </div>
             <Avatar className="size-10 flex-shrink-0">
-              {dbUser.avatarUrl && <AvatarImage alt={displayName} src={dbUser.avatarUrl} />}
-              <AvatarFallback>{displayName[0] || '?'}</AvatarFallback>
+              {dbUser.avatarUrl && <AvatarImage alt={firstName} src={dbUser.avatarUrl} />}
+              <AvatarFallback>{firstName[0] || '?'}</AvatarFallback>
             </Avatar>
           </div>
         </CardContent>
@@ -276,7 +277,7 @@ export default function QADetailPage() {
             render={<Ultralink href={`/${username}`} />}
             size="lg"
           >
-            {tQuestions('askAnotherQuestion', { displayName })}
+            {tQuestions('askAnotherQuestion', { displayName: firstName })}
           </Button>
         )}
       </div>
