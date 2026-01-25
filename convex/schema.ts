@@ -44,7 +44,7 @@ export default defineSchema({
     content: v.string(),
     isAnonymous: v.boolean(),
     anonymousAvatarSeed: v.optional(v.string()),
-    answerId: v.optional(v.id('answers')),
+    answerId: v.optional(v.union(v.id('answers'), v.null())),
     deletedAt: v.optional(v.number()),
   })
     .index('by_recipient', ['recipientClerkId'])
