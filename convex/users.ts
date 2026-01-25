@@ -79,9 +79,38 @@ export const getByClerkId = query({
   },
 })
 
-export const getOrCreate = mutation({
-  args: { clerkId: v.string() },
-handler: async (ctx, args) => {
+export const updateProfile = mutation({
+  args: {
+    clerkId: v.string(),
+    bio: v.optional(v.union(v.string(), v.null())),
+    socialLinks: v.optional(
+      v.union(
+        v.array(
+          v.object({
+            platform: v.union(
+              v.literal('instagram'),
+              v.literal('twitter'),
+              v.literal('youtube'),
+              v.literal('github'),
+              v.literal('naverBlog')
+            ),
+            content: v.union(
+              v.string(),
+              v.object({
+                handle: v.string(),
+                label: v.string(),
+              })
+            ),
+            labelType: v.union(v.literal('handle'), v.literal('custom')),
+          })
+        ),
+        v.null()
+      )
+    ),
+    questionSecurityLevel: v.optional(v.string()),
+    signatureColor: v.optional(v.union(v.string(), v.null())),
+  },
+  handler: async (ctx, args) => {
     if (args.bio && args.bio.length > CHAR_LIMITS.BIO) {
       throw new ConvexError(`Bio exceeds ${CHAR_LIMITS.BIO} character limit`)
     }
@@ -128,7 +157,7 @@ handler: async (ctx, args) => {
       updateData.questionSecurityLevel = args.questionSecurityLevel
     }
     if (args.signatureColor !== undefined) {
-      updateData.signatureColor = args.signatureColor
+      updateData.signatureColor = args.signatureColor ?? undefined
     }
 
     await ctx.db.patch(user._id, updateData)
