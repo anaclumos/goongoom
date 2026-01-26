@@ -498,3 +498,43 @@ export const getFriends = query({
     return Array.from(friendsMap.values()).sort((a, b) => b.lastInteractionTime - a.lastInteractionTime)
   },
 })
+
+export const listAllAnsweredParams = query({
+  args: {},
+  handler: async (ctx) => {
+    const questions = await ctx.db
+      .query('questions')
+      .filter((q) =>
+        q.and(
+          q.neq(q.field('answerId'), undefined),
+          q.neq(q.field('answerId'), null),
+          q.eq(q.field('deletedAt'), undefined)
+        )
+      )
+      .collect()
+
+    const clerkIds = [...new Set(questions.map((q) => q.recipientClerkId))]
+    const users = await Promise.all(
+      clerkIds.map((clerkId) =>
+        ctx.db
+          .query('users')
+          .withIndex('by_clerk_id', (q) => q.eq('clerkId', clerkId))
+          .first()
+      )
+    )
+    const clerkIdToUsername = new Map<string, string>()
+    for (const user of users) {
+      if (user?.username) {
+        clerkIdToUsername.set(user.clerkId, user.username)
+      }
+    }
+
+    return questions
+      .map((q) => ({
+        username: clerkIdToUsername.get(q.recipientClerkId),
+        questionId: q._id,
+      }))
+      .filter((p) => p.username != null)
+      .map((p) => ({ username: p.username!, questionId: p.questionId as string }))
+  },
+})

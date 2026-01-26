@@ -23,7 +23,7 @@ export default function ProfileSettingsPage() {
   const t = useTranslations('settings')
   const tSecurity = useTranslations('questionSecurity')
 
-  const dbUser = useQuery(api.users.getByClerkId, clerkId ? { clerkId } : 'skip')
+  const dbUser = useQuery(api.users.getByClerkId, isAuthenticated && clerkId ? { clerkId } : 'skip')
 
   const securityOptions = useMemo(
     (): Record<QuestionSecurityLevel, { label: string; description: string }> => ({

@@ -3,7 +3,7 @@
 import { Alert01Icon, Notification03Icon, NotificationOff01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQuery } from 'convex-helpers/react/cache/hooks'
-import { useAction, useMutation } from 'convex/react'
+import { useAction, useConvexAuth, useMutation } from 'convex/react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -55,10 +55,11 @@ export function NotificationSettings({ clerkId }: { clerkId: string }) {
   const t = useTranslations('settings')
   const tCommon = useTranslations('common')
   const isClient = useIsClient()
+  const { isAuthenticated } = useConvexAuth()
   const [permission, setPermission] = useState<PermissionState>(getInitialPermission)
   const [isPending, startTransition] = useTransition()
 
-  const subscriptions = useQuery(api.push.getByClerkId, { clerkId })
+  const subscriptions = useQuery(api.push.getByClerkId, isAuthenticated ? { clerkId } : 'skip')
   const upsertPush = useMutation(api.push.upsert)
   const removeAllPush = useMutation(api.push.removeAll)
   const sendTestNotification = useAction(api.pushActions.sendTestNotification)

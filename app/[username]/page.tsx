@@ -1,7 +1,13 @@
-export { default } from './user-profile'
+import { ConvexHttpClient } from 'convex/browser'
+import { api } from '@/convex/_generated/api'
+import UserProfilePage from './user-profile'
 
-export const dynamic = 'force-static'
+export async function generateStaticParams() {
+  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
+  const usernames = await convex.query(api.users.listAllUsernames, {})
+  return usernames.map((username) => ({ username }))
+}
 
-export function generateStaticParams() {
-  return []
+export default function Page() {
+  return <UserProfilePage />
 }

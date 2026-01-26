@@ -24,7 +24,10 @@ export default function FriendsPage() {
   const t = useTranslations('friends')
   const tCommon = useTranslations('common')
 
-  const friendsAnswers = useQuery(api.answers.getFriendsAnswers, clerkId ? { clerkId, limit: 30 } : 'skip')
+  const friendsAnswers = useQuery(
+    api.answers.getFriendsAnswers,
+    isAuthenticated && clerkId ? { clerkId, limit: 30 } : 'skip'
+  )
 
   const cardLabels = useMemo(
     () => ({

@@ -30,7 +30,10 @@ function InboxContent() {
   const t = useTranslations('inbox')
   const tCommon = useTranslations('common')
 
-  const unansweredQuestions = useQuery(api.questions.getUnanswered, clerkId ? { recipientClerkId: clerkId } : 'skip')
+  const unansweredQuestions = useQuery(
+    api.questions.getUnanswered,
+    isAuthenticated && clerkId ? { recipientClerkId: clerkId } : 'skip'
+  )
 
   const questionsWithSenders = useMemo(() => {
     if (!unansweredQuestions) return []

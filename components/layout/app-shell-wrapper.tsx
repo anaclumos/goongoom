@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { useQuery } from 'convex-helpers/react/cache/hooks'
+import { useConvexAuth } from 'convex/react'
 import { AppShell } from '@/components/layout/app-shell'
 import { api } from '@/convex/_generated/api'
 import type { FunctionReturnType } from 'convex/server'
@@ -15,8 +16,12 @@ interface AppShellWrapperProps {
 
 export function AppShellWrapper({ children }: AppShellWrapperProps) {
   const { userId: clerkId } = useAuth()
+  const { isAuthenticated } = useConvexAuth()
 
-  const questions = useQuery(api.questions.getUnanswered, clerkId ? { recipientClerkId: clerkId } : 'skip')
+  const questions = useQuery(
+    api.questions.getUnanswered,
+    isAuthenticated && clerkId ? { recipientClerkId: clerkId } : 'skip'
+  )
 
   const recentQuestions = useMemo(() => {
     if (!questions) return []

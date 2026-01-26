@@ -316,6 +316,16 @@ export const listAllInternal = internalQuery({
   },
 })
 
+export const listAllUsernames = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query('users').collect()
+    return users
+      .map((u) => u.username)
+      .filter((username): username is string => username != null)
+  },
+})
+
 export const syncFromClerk = action({
   args: {},
   handler: async (
