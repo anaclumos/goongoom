@@ -323,11 +323,7 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
                       {selectedQuestion.isAnonymous ? tCommon('anonymous') : selectedQuestion.senderName}
                     </span>
                   </div>
-                  <p className="leading-relaxed">
-                    {selectedQuestion.content.length > 100
-                      ? `${selectedQuestion.content.slice(0, 100)}...`
-                      : selectedQuestion.content}
-                  </p>
+                  <p className="leading-relaxed">{selectedQuestion.content}</p>
                 </DrawerDescription>
               )}
             </DrawerHeader>
