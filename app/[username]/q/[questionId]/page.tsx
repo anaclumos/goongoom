@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-static'
+
 import { useAuth } from '@clerk/nextjs'
 import { useQuery } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'

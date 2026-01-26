@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getUserLocale } from '@/i18n/request'
+import { defaultLocale } from '@/i18n/config'
 
 const manifestStrings = {
   ko: {
@@ -19,9 +19,8 @@ const manifestStrings = {
   },
 } as const
 
-export default async function manifest(): Promise<MetadataRoute.Manifest> {
-  const locale = await getUserLocale()
-  const strings = manifestStrings[locale]
+export default function manifest(): MetadataRoute.Manifest {
+  const strings = manifestStrings[defaultLocale]
 
   return {
     name: strings.name,

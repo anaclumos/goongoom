@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-static'
+
 import { useConvexAuth } from 'convex/react'
 import { useQuery } from 'convex/react'
 import { useSearchParams } from 'next/navigation'

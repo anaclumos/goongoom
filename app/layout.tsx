@@ -1,21 +1,9 @@
-import { enUS, jaJP, koKR } from '@clerk/localizations'
-import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata, Viewport } from 'next'
-import { cookies } from 'next/headers'
 import localFont from 'next/font/local'
-import { getTranslations } from 'next-intl/server'
 import Script from 'next/script'
-import { ConvexClientProvider } from '@/app/ConvexClientProvider'
-import { Providers } from '@/components/providers'
-import type { Locale } from '@/i18n/config'
-import { getUserLocale } from '@/i18n/request'
+import { ClientProviders } from '@/app/client-providers'
+import { defaultLocale } from '@/i18n/config'
 import './globals.css'
-
-const clerkLocalizations: Record<Locale, typeof koKR> = {
-  ko: koKR,
-  en: enUS,
-  ja: jaJP,
-}
 
 const lineSeedKR = localFont({
   src: [
@@ -38,12 +26,9 @@ const lineSeedJP = localFont({
   display: 'swap',
 })
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('og')
-  return {
-    title: t('appName'),
-    description: t('siteDescription'),
-  }
+export const metadata: Metadata = {
+  title: 'Goongoom',
+  description: 'Ask anything and get honest answers.',
 }
 
 export const viewport: Viewport = {
@@ -54,49 +39,18 @@ export const viewport: Viewport = {
   ],
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const locale = await getUserLocale()
-
-  // Read referral cookie server-side
-  let signUpUnsafeMetadata: Record<string, string> | undefined
-  try {
-    const cookieStore = await cookies()
-    const referralRaw = cookieStore.get('referral')?.value
-
-    if (referralRaw) {
-      const referralData = JSON.parse(decodeURIComponent(referralRaw))
-      signUpUnsafeMetadata = {
-        referrerUsername: referralData.u,
-        utmSource: referralData.s,
-        utmMedium: referralData.m,
-        utmCampaign: referralData.c,
-        utmTerm: referralData.t,
-        utmContent: referralData.n,
-      }
-    }
-  } catch (err) {
-    console.warn('Failed to parse referral cookie:', err)
-  }
-
   return (
-    <ClerkProvider
-      localization={clerkLocalizations[locale]}
-      // @ts-ignore - signUpUnsafeMetadata is a custom prop for referral tracking
-      signUpUnsafeMetadata={signUpUnsafeMetadata}
-    >
-      <html className={`${lineSeedKR.variable} ${lineSeedJP.variable}`} lang={locale} suppressHydrationWarning>
-        <body className="bg-background font-sans antialiased">
-          <ConvexClientProvider>
-            <Providers initialLocale={locale}>{children}</Providers>
-          </ConvexClientProvider>
-          <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
-          <Script src="/_vercel/speed-insights/script.js" strategy="afterInteractive" />
-        </body>
-      </html>
-    </ClerkProvider>
+    <html className={`${lineSeedKR.variable} ${lineSeedJP.variable}`} lang={defaultLocale} suppressHydrationWarning>
+      <body className="bg-background font-sans antialiased">
+        <ClientProviders>{children}</ClientProviders>
+        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
+        <Script src="/_vercel/speed-insights/script.js" strategy="afterInteractive" />
+      </body>
+    </html>
   )
 }

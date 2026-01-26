@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-static'
+
 import { SignUpButton, useUser } from '@clerk/nextjs'
 import {
   AnonymousIcon,
