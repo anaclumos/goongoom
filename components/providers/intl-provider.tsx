@@ -27,7 +27,7 @@ export function IntlProvider({ children, initialLocale }: IntlProviderProps) {
   )
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages[locale]}>
+    <NextIntlClientProvider locale={locale} messages={messages[locale]} timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}>
       {children}
     </NextIntlClientProvider>
   )
