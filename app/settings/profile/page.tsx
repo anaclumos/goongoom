@@ -3,7 +3,8 @@
 export const dynamic = 'force-static'
 
 import { useAuth, useUser } from '@clerk/nextjs'
-import { useConvexAuth, useQuery } from 'convex/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
+import { useConvexAuth } from 'convex/react'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'

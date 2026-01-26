@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { useConvexAuth, useQuery } from 'convex/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
+import { useConvexAuth } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { SignatureColorProvider } from '@/components/theme/signature-color-provider'
 

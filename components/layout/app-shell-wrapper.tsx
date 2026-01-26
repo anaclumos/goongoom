@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { useQuery } from 'convex/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
 import { AppShell } from '@/components/layout/app-shell'
 import { api } from '@/convex/_generated/api'
 import type { FunctionReturnType } from 'convex/server'

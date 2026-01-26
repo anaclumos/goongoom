@@ -1,7 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { useQuery } from 'convex/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
 import { api } from '@/convex/_generated/api'
 import { SignatureColorProvider } from '@/components/theme/signature-color-provider'
 

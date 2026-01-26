@@ -2,7 +2,8 @@
 
 import { Alert01Icon, Notification03Icon, NotificationOff01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useAction, useMutation, useQuery } from 'convex/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
+import { useAction, useMutation } from 'convex/react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useState, useTransition } from 'react'
 import { toast } from 'sonner'

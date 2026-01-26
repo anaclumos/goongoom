@@ -3,7 +3,7 @@
 export const dynamic = 'force-static'
 
 import { useAuth } from '@clerk/nextjs'
-import { useQuery } from 'convex/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
 import { formatDistanceToNow } from 'date-fns'
 import { enUS, ko } from 'date-fns/locale'
 import { useParams } from 'next/navigation'

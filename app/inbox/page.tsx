@@ -2,8 +2,8 @@
 
 export const dynamic = 'force-static'
 
+import { useQuery } from 'convex-helpers/react/cache/hooks'
 import { useConvexAuth } from 'convex/react'
-import { useQuery } from 'convex/react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Suspense, useMemo } from 'react'
