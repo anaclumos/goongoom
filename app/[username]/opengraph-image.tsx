@@ -149,7 +149,7 @@ export default async function Image({ params }: PageProps) {
         >
           <div style={{ fontSize: '68px', fontWeight: 700, lineHeight: 1.2 }}>{clamp(fullName, 20)}</div>
           <div style={{ fontSize: '40px', color: isDark ? '#9CA3AF' : '#6B7280' }}>
-            @{clamp(dbUser.username || username, 24)}
+            {`@${dbUser.username || username}`}
           </div>
           {bio && (
             <div
@@ -176,7 +176,7 @@ export default async function Image({ params }: PageProps) {
         }}
       >
         <div>{t('tagline')}</div>
-        <div>goongoom.com/{clamp(dbUser.username || username, 16)}</div>
+        <div>{`goongoom.com/${dbUser.username || username}`}</div>
       </div>
     </div>,
     {
