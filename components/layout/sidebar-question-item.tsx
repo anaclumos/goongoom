@@ -95,7 +95,7 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
         render={
           <SidebarMenuButton className="h-auto items-start py-3">
             <div className="flex flex-col gap-1 overflow-hidden">
-              <span className="line-clamp-2 font-medium text-xs">{question.content}</span>
+              <span className="line-clamp-2 whitespace-pre-line font-medium text-xs">{question.content}</span>
               <span className="text-[10px] text-muted-foreground">
                 {formatDistanceToNow(question.createdAt, {
                   addSuffix: true,
@@ -122,7 +122,7 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
               {question.isAnonymous ? tCommon('anonymous') : question.senderName || tCommon('user')}
             </span>
           </div>
-          <DialogDescription className="text-foreground leading-relaxed">{question.content}</DialogDescription>
+          <DialogDescription className="whitespace-pre-line text-foreground leading-relaxed">{question.content}</DialogDescription>
         </div>
 
         <div className="mt-4 space-y-2">
