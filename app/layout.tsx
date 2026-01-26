@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ClientProviders } from '@/app/client-providers'
 import { defaultLocale } from '@/i18n/config'
 import './globals.css'
@@ -48,8 +49,8 @@ export default function RootLayout({
     <html className={`${lineSeedKR.variable} ${lineSeedJP.variable}`} lang={defaultLocale} suppressHydrationWarning>
       <body className="bg-background font-sans antialiased">
         <ClientProviders>{children}</ClientProviders>
-        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
-        <Script src="/_vercel/speed-insights/script.js" strategy="afterInteractive" />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

@@ -1,17 +1,16 @@
 import { SiGithub, SiInstagram, SiNaver, SiX, SiYoutube } from '@icons-pack/react-simple-icons'
 import type { SocialLinkEntry, SocialLinks } from '@/lib/types'
 
-export const HTTPS_PROTOCOL_REGEX = /^https?:\/\//i
-export const LEADING_SLASHES_REGEX = /^\/+/
-export const HANDLE_PREFIX_REGEX = /^@/
-export const URL_PATTERN_REGEX =
+const HTTPS_PROTOCOL_REGEX = /^https?:\/\//i
+const LEADING_SLASHES_REGEX = /^\/+/
+const HANDLE_PREFIX_REGEX = /^@/
+const URL_PATTERN_REGEX =
   /:\/\/|\/|instagram\.com|twitter\.com|x\.com|youtube\.com|youtu\.be|github\.com|blog\.naver\.com|naver\.com|www\./i
-export const HTML_TITLE_REGEX = /<title[^>]*>([^<]+)<\/title>/i
 
 const HANDLE_PLATFORMS = new Set(['instagram', 'twitter', 'youtube'])
 const CUSTOM_LABEL_PLATFORMS = new Set(['github', 'naverBlog'])
 
-export function toProfileUrl(value: string | undefined, domain: string) {
+function toProfileUrl(value: string | undefined, domain: string) {
   if (!value) {
     return null
   }
@@ -163,7 +162,7 @@ function normalizeSocialLinkEntry(entry: SocialLinkEntry): SocialLinkEntry | nul
   return null
 }
 
-export function normalizeSocialLinks(socialLinks: SocialLinks | null | undefined) {
+function normalizeSocialLinks(socialLinks: SocialLinks | null | undefined) {
   if (!Array.isArray(socialLinks)) {
     return []
   }
@@ -194,35 +193,6 @@ const DEFAULT_LABELS: SocialLabels = {
   youtube: 'YouTube',
   github: 'GitHub',
   naverBlog: 'Naver Blog',
-}
-
-const NAVER_BLOG_TITLE_SUFFIX = ': 네이버 블로그'
-
-export async function fetchNaverBlogTitle(handle: string): Promise<string> {
-  if (!handle) {
-    return handle
-  }
-  try {
-    const url = `https://blog.naver.com/${handle}`
-    const response = await fetch(url, {
-      next: { revalidate: 86_400 },
-    })
-    if (!response.ok) {
-      return handle
-    }
-    const html = await response.text()
-    const titleMatch = HTML_TITLE_REGEX.exec(html)
-    if (!titleMatch?.[1]) {
-      return handle
-    }
-    let title = titleMatch[1]
-    if (title.endsWith(NAVER_BLOG_TITLE_SUFFIX)) {
-      title = title.slice(0, -NAVER_BLOG_TITLE_SUFFIX.length)
-    }
-    return title.trim() || handle
-  } catch {
-    return handle
-  }
 }
 
 export function buildSocialLinks(

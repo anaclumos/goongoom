@@ -1,5 +1,5 @@
-export const seenRoutes = new Set<string>()
-export const seenImages = new Set<string>()
+const seenRoutes = new Set<string>()
+const seenImages = new Set<string>()
 export const imageCache = new Map<string, string[]>()
 
 export function prefetchImage(src: string): void {
