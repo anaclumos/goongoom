@@ -35,9 +35,10 @@ async function fetchImageAsBase64(url: string): Promise<string> {
   }
 }
 
-const fontRegularPromise = readFile(join(process.cwd(), 'public/fonts/Pretendard-Regular.otf'))
-const fontSemiBoldPromise = readFile(join(process.cwd(), 'public/fonts/Pretendard-SemiBold.otf'))
-const fontBoldPromise = readFile(join(process.cwd(), 'public/fonts/Pretendard-Bold.otf'))
+const fontKrRegularPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedKR-Rg.otf'))
+const fontKrBoldPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedKR-Bd.otf'))
+const fontJpRegularPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedJP_OTF_Rg.otf'))
+const fontJpBoldPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedJP_OTF_Bd.otf'))
 
 function generateCacheKey(searchParams: URLSearchParams): string {
   const sortedParams = Array.from(searchParams.entries())
@@ -75,13 +76,15 @@ export async function GET(request: Request) {
   const askerAvatarSrc = searchParams.get('askerAvatar') || getDicebearUrl('anonymous')
   const answererAvatarSrc = searchParams.get('answererAvatar') || getDicebearUrl(name)
 
-  const [fontRegular, fontSemiBold, fontBold, askerAvatarUrl, answererAvatarUrl] = await Promise.all([
-    fontRegularPromise,
-    fontSemiBoldPromise,
-    fontBoldPromise,
-    fetchImageAsBase64(askerAvatarSrc),
-    fetchImageAsBase64(answererAvatarSrc),
-  ])
+  const [fontKrRegular, fontKrBold, fontJpRegular, fontJpBold, askerAvatarUrl, answererAvatarUrl] =
+    await Promise.all([
+      fontKrRegularPromise,
+      fontKrBoldPromise,
+      fontJpRegularPromise,
+      fontJpBoldPromise,
+      fetchImageAsBase64(askerAvatarSrc),
+      fetchImageAsBase64(answererAvatarSrc),
+    ])
 
   const imageResponse = new ImageResponse(
     <div
@@ -93,7 +96,7 @@ export async function GET(request: Request) {
         justifyContent: 'center',
         padding: '80px',
         backgroundColor: theme.bg,
-        fontFamily: 'Pretendard',
+        fontFamily: 'LINE Seed KR, LINE Seed JP',
         color: isDark ? '#F9FAFB' : '#111827',
         wordWrap: 'break-word',
         wordBreak: 'keep-all',
@@ -122,7 +125,7 @@ export async function GET(request: Request) {
               borderRadius: '48px',
               padding: '48px 56px',
               fontSize: '56px',
-              fontWeight: 600,
+              fontWeight: 700,
               lineHeight: 1.4,
               boxShadow: isDark ? '0 4px 24px rgba(0, 0, 0, 0.3)' : '0 4px 24px rgba(0, 0, 0, 0.06)',
             }}
@@ -147,7 +150,7 @@ export async function GET(request: Request) {
               borderRadius: '48px',
               padding: '48px 56px',
               fontSize: '56px',
-              fontWeight: 600,
+              fontWeight: 700,
               lineHeight: 1.4,
               color: '#FFFFFF',
             }}
@@ -168,9 +171,10 @@ export async function GET(request: Request) {
       width: 1080,
       height: 1920,
       fonts: [
-        { name: 'Pretendard', data: fontRegular, weight: 400 },
-        { name: 'Pretendard', data: fontSemiBold, weight: 600 },
-        { name: 'Pretendard', data: fontBold, weight: 700 },
+        { name: 'LINE Seed KR', data: fontKrRegular, weight: 400 },
+        { name: 'LINE Seed KR', data: fontKrBold, weight: 700 },
+        { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
+        { name: 'LINE Seed JP', data: fontJpBold, weight: 700 },
       ],
     }
   )
