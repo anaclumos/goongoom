@@ -26,20 +26,78 @@ interface PageProps {
 
 export default async function Image({ params }: PageProps) {
   const { username } = await params
+
+  let fontRegular: Buffer
+  let fontBold: Buffer
+  let fontJpRegular: Buffer
+  let fontJpBold: Buffer
+  let logoData: Buffer
+  try {
+    ;[fontRegular, fontBold, fontJpRegular, fontJpBold, logoData] = await Promise.all([
+      fontRegularPromise,
+      fontBoldPromise,
+      fontJpRegularPromise,
+      fontJpBoldPromise,
+      logoPromise,
+    ])
+  } catch {
+    const fallbackColors = getSignatureColor(null)
+    return new ImageResponse(
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: `linear-gradient(135deg, ${fallbackColors.gradient[0]} 0%, ${fallbackColors.gradient[1]} 100%)`,
+          fontSize: 48,
+          fontWeight: 700,
+          color: '#FFFFFF',
+        }}
+      >
+        Goongoom
+      </div>,
+      { ...size }
+    )
+  }
+
+  let t: Awaited<ReturnType<typeof getTranslations<'og'>>>
+  let dbUser: Awaited<ReturnType<typeof fetchQuery<typeof api.users.getByUsername>>> | null
+  try {
+    ;[t, dbUser] = await Promise.all([getTranslations('og'), fetchQuery(api.users.getByUsername, { username })])
+  } catch {
+    const fallbackColors = getSignatureColor(null)
+    return new ImageResponse(
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: `linear-gradient(135deg, ${fallbackColors.gradient[0]} 0%, ${fallbackColors.gradient[1]} 100%)`,
+          fontFamily: 'LINE Seed KR, LINE Seed JP',
+          fontSize: 48,
+          fontWeight: 700,
+          color: '#FFFFFF',
+        }}
+      >
+        Goongoom
+      </div>,
+      {
+        ...size,
+        fonts: [
+          { name: 'LINE Seed KR', data: fontBold, weight: 700 },
+          { name: 'LINE Seed JP', data: fontJpBold, weight: 700 },
+        ],
+      }
+    )
+  }
+
   const cookieStore = await cookies()
   const themeCookie = cookieStore.get('theme')?.value
   const isDark = themeCookie === 'dark'
-
-  const dbUserPromise = fetchQuery(api.users.getByUsername, { username })
-  const [fontRegular, fontBold, fontJpRegular, fontJpBold, logoData, t, dbUser] = await Promise.all([
-    fontRegularPromise,
-    fontBoldPromise,
-    fontJpRegularPromise,
-    fontJpBoldPromise,
-    logoPromise,
-    getTranslations('og'),
-    dbUserPromise,
-  ])
   const logoBase64 = `data:image/png;base64,${logoData.toString('base64')}`
 
   if (!dbUser) {

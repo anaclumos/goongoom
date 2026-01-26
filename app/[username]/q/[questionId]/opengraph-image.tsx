@@ -45,18 +45,71 @@ interface PageProps {
 export default async function Image({ params }: PageProps) {
   const { username, questionId: questionIdParam } = await params
   const questionId = questionIdParam as QuestionId
-  const cookieStore = await cookies()
-  const themeCookie = cookieStore.get('theme')?.value
-  const isDark = themeCookie === 'dark'
 
-  const dbUserPromise = fetchQuery(api.users.getByUsername, { username })
-  const [fontRegular, fontBold, fontJpRegular, fontJpBold, dbUser] = await Promise.all([
-    fontRegularPromise,
-    fontBoldPromise,
-    fontJpRegularPromise,
-    fontJpBoldPromise,
-    dbUserPromise,
-  ])
+  let fontRegular: Buffer
+  let fontBold: Buffer
+  let fontJpRegular: Buffer
+  let fontJpBold: Buffer
+  try {
+    ;[fontRegular, fontBold, fontJpRegular, fontJpBold] = await Promise.all([
+      fontRegularPromise,
+      fontBoldPromise,
+      fontJpRegularPromise,
+      fontJpBoldPromise,
+    ])
+  } catch {
+    const fallbackColors = getSignatureColor(null)
+    return new ImageResponse(
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: `linear-gradient(135deg, ${fallbackColors.gradient[0]} 0%, ${fallbackColors.gradient[1]} 100%)`,
+          fontSize: 48,
+          fontWeight: 700,
+          color: '#FFFFFF',
+        }}
+      >
+        Goongoom
+      </div>,
+      { ...size }
+    )
+  }
+
+  let dbUser: Awaited<ReturnType<typeof fetchQuery<typeof api.users.getByUsername>>> | null
+  try {
+    dbUser = await fetchQuery(api.users.getByUsername, { username })
+  } catch {
+    const fallbackColors = getSignatureColor(null)
+    return new ImageResponse(
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: `linear-gradient(135deg, ${fallbackColors.gradient[0]} 0%, ${fallbackColors.gradient[1]} 100%)`,
+          fontFamily: 'LINE Seed KR, LINE Seed JP',
+          fontSize: 48,
+          fontWeight: 700,
+          color: '#FFFFFF',
+        }}
+      >
+        Goongoom
+      </div>,
+      {
+        ...size,
+        fonts: [
+          { name: 'LINE Seed KR', data: fontBold, weight: 700 },
+          { name: 'LINE Seed JP', data: fontJpBold, weight: 700 },
+        ],
+      }
+    )
+  }
 
   if (!dbUser) {
     const defaultColors = getSignatureColor(null)
@@ -86,9 +139,15 @@ export default async function Image({ params }: PageProps) {
     )
   }
 
-  const qa = await fetchQuery(api.questions.getByIdAndRecipient, { id: questionId, recipientClerkId: dbUser.clerkId })
+  let qa: Awaited<ReturnType<typeof fetchQuery<typeof api.questions.getByIdAndRecipient>>> | null
+  try {
+    qa = await fetchQuery(api.questions.getByIdAndRecipient, { id: questionId, recipientClerkId: dbUser.clerkId })
+  } catch {
+    qa = null
+  }
+
   if (!qa?.answer) {
-    const defaultColors = getSignatureColor(null)
+    const userColors = getSignatureColor(dbUser?.signatureColor)
     return new ImageResponse(
       <div
         style={{
@@ -97,7 +156,7 @@ export default async function Image({ params }: PageProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: defaultColors.light.bg,
+          backgroundColor: userColors.light.bg,
           fontFamily: 'LINE Seed KR, LINE Seed JP',
           fontSize: 48,
           color: '#6B7280',
@@ -114,6 +173,10 @@ export default async function Image({ params }: PageProps) {
       }
     )
   }
+
+  const cookieStore = await cookies()
+  const themeCookie = cookieStore.get('theme')?.value
+  const isDark = themeCookie === 'dark'
 
   const fullName = dbUser.fullName || dbUser.username || username
   const questionContent = clamp(qa.content, 80)
