@@ -13,10 +13,8 @@ export const alt = 'User Profile'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-const fontRegularPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedKR-Rg.otf'))
-const fontBoldPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedKR-Bd.otf'))
-const fontJpRegularPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedJP_OTF_Rg.otf'))
-const fontJpBoldPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedJP_OTF_Bd.otf'))
+const fontRegularPromise = readFile(join(process.cwd(), 'assets/fonts/Pretendard-Regular.otf'))
+const fontBoldPromise = readFile(join(process.cwd(), 'assets/fonts/Pretendard-Bold.otf'))
 const logoPromise = readFile(join(process.cwd(), 'assets/logo.png'))
 
 const clamp = (value: string, max: number) => (value.length > max ? `${value.slice(0, max - 1)}…` : value)
@@ -30,17 +28,9 @@ export default async function Image({ params }: PageProps) {
 
   let fontRegular: Buffer
   let fontBold: Buffer
-  let fontJpRegular: Buffer
-  let fontJpBold: Buffer
   let logoData: Buffer
   try {
-    ;[fontRegular, fontBold, fontJpRegular, fontJpBold, logoData] = await Promise.all([
-      fontRegularPromise,
-      fontBoldPromise,
-      fontJpRegularPromise,
-      fontJpBoldPromise,
-      logoPromise,
-    ])
+    ;[fontRegular, fontBold, logoData] = await Promise.all([fontRegularPromise, fontBoldPromise, logoPromise])
   } catch {
     const fallbackColors = getSignatureColor(null)
     return new ImageResponse(
@@ -77,7 +67,7 @@ export default async function Image({ params }: PageProps) {
           alignItems: 'center',
           justifyContent: 'center',
           background: `linear-gradient(135deg, ${fallbackColors.gradient[0]} 0%, ${fallbackColors.gradient[1]} 100%)`,
-          fontFamily: 'LINE Seed KR, LINE Seed JP',
+          fontFamily: 'Pretendard',
           fontSize: 48,
           fontWeight: 700,
           color: '#FFFFFF',
@@ -87,10 +77,7 @@ export default async function Image({ params }: PageProps) {
       </div>,
       {
         ...size,
-        fonts: [
-          { name: 'LINE Seed KR', data: fontBold, weight: 700 },
-          { name: 'LINE Seed JP', data: fontJpBold, weight: 700 },
-        ],
+        fonts: [{ name: 'Pretendard', data: fontBold, weight: 700 }],
       }
     )
   }
@@ -114,7 +101,7 @@ export default async function Image({ params }: PageProps) {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: defaultColors.light.bg,
-          fontFamily: 'LINE Seed KR, LINE Seed JP',
+          fontFamily: 'Pretendard',
           fontSize: 48,
           color: '#6B7280',
         }}
@@ -123,10 +110,7 @@ export default async function Image({ params }: PageProps) {
       </div>,
       {
         ...size,
-        fonts: [
-          { name: 'LINE Seed KR', data: fontRegular, weight: 400 },
-          { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
-        ],
+        fonts: [{ name: 'Pretendard', data: fontRegular, weight: 400 }],
       }
     )
   }
@@ -145,7 +129,7 @@ export default async function Image({ params }: PageProps) {
         flexDirection: 'column',
         padding: '72px',
         backgroundColor: theme.bg,
-        fontFamily: 'LINE Seed KR, LINE Seed JP',
+        fontFamily: 'Pretendard',
         color: isDark ? '#F9FAFB' : '#111827',
       }}
     >
@@ -227,10 +211,8 @@ export default async function Image({ params }: PageProps) {
     {
       ...size,
       fonts: [
-        { name: 'LINE Seed KR', data: fontRegular, weight: 400 },
-        { name: 'LINE Seed KR', data: fontBold, weight: 700 },
-        { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
-        { name: 'LINE Seed JP', data: fontJpBold, weight: 700 },
+        { name: 'Pretendard', data: fontRegular, weight: 400 },
+        { name: 'Pretendard', data: fontBold, weight: 700 },
       ],
     }
   )

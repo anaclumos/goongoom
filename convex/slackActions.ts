@@ -15,17 +15,38 @@ interface SlackMessage {
 
 async function sendSlackMessage(webhookUrl: string, message: SlackMessage): Promise<boolean> {
   try {
+    console.log('Sending Slack message to:', webhookUrl.slice(0, 50) + '...')
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(message),
     })
+    if (!response.ok) {
+      const text = await response.text()
+      console.error('Slack API error:', response.status, text)
+    }
     return response.ok
   } catch (error) {
     console.error('Failed to send Slack message:', error)
     return false
   }
 }
+
+export const testSlack = internalAction({
+  args: {},
+  handler: async (): Promise<{ success: boolean; webhookConfigured: boolean }> => {
+    const webhookUrl = process.env.SLACK_ADMIN_WEBHOOK_URL
+    console.log('SLACK_ADMIN_WEBHOOK_URL configured:', !!webhookUrl)
+    if (!webhookUrl) {
+      return { success: false, webhookConfigured: false }
+    }
+
+    const success = await sendSlackMessage(webhookUrl, {
+      text: 'Test message from Convex',
+    })
+    return { success, webhookConfigured: true }
+  },
+})
 
 export const notifyUserSignup = internalAction({
   args: {

@@ -36,10 +36,8 @@ async function fetchImageAsBase64(url: string): Promise<string> {
   }
 }
 
-const fontKrRegularPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedKR-Rg.otf'))
-const fontKrBoldPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedKR-Bd.otf'))
-const fontJpRegularPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedJP_OTF_Rg.otf'))
-const fontJpBoldPromise = readFile(join(process.cwd(), 'assets/fonts/LINESeedJP_OTF_Bd.otf'))
+const fontRegularPromise = readFile(join(process.cwd(), 'assets/fonts/Pretendard-Regular.otf'))
+const fontBoldPromise = readFile(join(process.cwd(), 'assets/fonts/Pretendard-Bold.otf'))
 
 function generateCacheKey(searchParams: URLSearchParams): string {
   const sortedParams = Array.from(searchParams.entries())
@@ -78,11 +76,9 @@ export async function GET(request: Request) {
   const askerAvatarSrc = searchParams.get('askerAvatar') || getDicebearUrl('anonymous')
   const answererAvatarSrc = searchParams.get('answererAvatar') || getDicebearUrl(name)
 
-  const [fontKrRegular, fontKrBold, fontJpRegular, fontJpBold, askerAvatarUrl, answererAvatarUrl] = await Promise.all([
-    fontKrRegularPromise,
-    fontKrBoldPromise,
-    fontJpRegularPromise,
-    fontJpBoldPromise,
+  const [fontRegular, fontBold, askerAvatarUrl, answererAvatarUrl] = await Promise.all([
+    fontRegularPromise,
+    fontBoldPromise,
     fetchImageAsBase64(askerAvatarSrc),
     fetchImageAsBase64(answererAvatarSrc),
   ])
@@ -97,7 +93,7 @@ export async function GET(request: Request) {
         justifyContent: 'center',
         padding: '80px',
         backgroundColor: theme.bg,
-        fontFamily: 'LINE Seed KR, LINE Seed JP',
+        fontFamily: 'Pretendard',
         color: isDark ? '#F9FAFB' : '#111827',
         wordWrap: 'break-word',
         wordBreak: 'keep-all',
@@ -172,10 +168,8 @@ export async function GET(request: Request) {
       width: 1080,
       height: 1920,
       fonts: [
-        { name: 'LINE Seed KR', data: fontKrRegular, weight: 400 },
-        { name: 'LINE Seed KR', data: fontKrBold, weight: 700 },
-        { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
-        { name: 'LINE Seed JP', data: fontJpBold, weight: 700 },
+        { name: 'Pretendard', data: fontRegular, weight: 400 },
+        { name: 'Pretendard', data: fontBold, weight: 700 },
       ],
     }
   )

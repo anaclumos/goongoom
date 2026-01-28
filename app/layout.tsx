@@ -7,25 +7,14 @@ import { env } from '@/env.vercel'
 import { type Locale } from '@/i18n/config'
 import './globals.css'
 
-const lineSeedKR = localFont({
+const pretendard = localFont({
   src: [
-    { path: '../public/fonts/LINESeedKR-Th.woff2', weight: '100' },
-    { path: '../public/fonts/LINESeedKR-Rg.woff2', weight: '400' },
-    { path: '../public/fonts/LINESeedKR-Bd.woff2', weight: '700' },
+    { path: '../public/fonts/Pretendard-Regular.woff2', weight: '100 400', style: 'normal' },
+    { path: '../public/fonts/Pretendard-Bold.woff2', weight: '500 900', style: 'normal' },
   ],
-  variable: '--font-line-seed-kr',
+  variable: '--font-pretendard',
   display: 'swap',
-})
-
-const lineSeedJP = localFont({
-  src: [
-    { path: '../public/fonts/LINESeedJP_OTF_Th.woff2', weight: '100' },
-    { path: '../public/fonts/LINESeedJP_OTF_Rg.woff2', weight: '400' },
-    { path: '../public/fonts/LINESeedJP_OTF_Bd.woff2', weight: '700' },
-    { path: '../public/fonts/LINESeedJP_OTF_Eb.woff2', weight: '800' },
-  ],
-  variable: '--font-line-seed-jp',
-  display: 'swap',
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -50,7 +39,7 @@ export default async function RootLayout({
   const locale = (await getLocale()) as Locale
 
   return (
-    <html className={`${lineSeedKR.variable} ${lineSeedJP.variable}`} lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
       <body className="bg-background font-sans antialiased">
         <ClientProviders initialLocale={locale}>{children}</ClientProviders>
         <AnalyticsLoader />
