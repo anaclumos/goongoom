@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
+import { SignupPromptModal } from '@/components/auth/signup-prompt-modal'
 import { CHAR_LIMITS } from '@/lib/charLimits'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -184,6 +185,7 @@ export function QuestionDrawer({
   const t = useTranslations('questions')
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
+  const { isSignedIn } = useUser()
 
   const [open, setOpen] = useState(false)
   const [questionType, setQuestionType] = useState<'anonymous' | 'public'>(canAskAnonymously ? 'anonymous' : 'public')
@@ -191,6 +193,7 @@ export function QuestionDrawer({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [shouldRefreshOnClose, setShouldRefreshOnClose] = useState(false)
   const [question, setQuestion] = useState('')
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false)
 
   const handleAnonymousClick = () => {
     if (questionType === 'anonymous') {
@@ -231,6 +234,9 @@ export function QuestionDrawer({
         toast.success(successMessage)
         setShouldRefreshOnClose(true)
         setOpen(false)
+        if (!isSignedIn) {
+          setTimeout(() => setShowSignupPrompt(true), 500)
+        }
       } else {
         toast.error(result.error)
       }
@@ -242,6 +248,8 @@ export function QuestionDrawer({
   const isAnonymous = questionType === 'anonymous'
 
   return (
+    <>
+    <SignupPromptModal onOpenChange={setShowSignupPrompt} open={showSignupPrompt} />
     <Drawer onAnimationEnd={handleAnimationEnd} onOpenChange={setOpen} open={open} repositionInputs={false}>
       <div className="pointer-events-none fixed inset-x-0 bottom-tab-bar z-40 bg-gradient-to-t from-background via-background/80 to-transparent p-4 md:left-(--sidebar-width)">
         <button
@@ -327,5 +335,6 @@ export function QuestionDrawer({
         </div>
       </DrawerContent>
     </Drawer>
+    </>
   )
 }

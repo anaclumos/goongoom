@@ -278,6 +278,13 @@
     "addThreads": "Threadsを追加",
     "remove": "削除"
   },
+  "signupPrompt": {
+    "title": "あなたも質問を受け取ろう！",
+    "description": "自分のページを作って、\n友達やフォロワーから質問をもらおう。",
+    "welcomeTitle": "ようこそ！",
+    "welcomeDescription": "質問を受け取る準備ができました。",
+    "later": "あとで"
+  },
   "landing": {
     "badge": "匿名Q&Aプラットフォーム",
     "heroTitle1": "なんでも聞いてみよう。",

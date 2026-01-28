@@ -278,6 +278,13 @@
     "addThreads": "Add Threads",
     "remove": "Remove"
   },
+  "signupPrompt": {
+    "title": "Get your own questions!",
+    "description": "Create your page and receive questions\nfrom friends and followers.",
+    "welcomeTitle": "Welcome!",
+    "welcomeDescription": "You're all set to receive questions.",
+    "later": "Maybe later"
+  },
   "landing": {
     "badge": "Anonymous Q&A Platform",
     "heroTitle1": "Ask anything.",

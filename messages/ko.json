@@ -278,6 +278,13 @@
     "addThreads": "스레드 추가",
     "remove": "삭제"
   },
+  "signupPrompt": {
+    "title": "나도 질문 받아볼까?",
+    "description": "내 페이지를 만들고\n친구들에게 질문을 받아 보세요.",
+    "welcomeTitle": "환영해요!",
+    "welcomeDescription": "이제 질문을 받을 준비가 됐어요.",
+    "later": "나중에 할게요"
+  },
   "landing": {
     "badge": "익명 Q&A 플랫폼",
     "heroTitle1": "무엇이든 물어보세요.",
