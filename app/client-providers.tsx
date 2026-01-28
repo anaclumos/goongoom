@@ -5,7 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { useState, type ReactNode } from 'react'
 import { ConvexClientProvider } from '@/app/ConvexClientProvider'
 import { Providers } from '@/components/providers'
-import { type Locale, defaultLocale } from '@/i18n/config'
+import { type Locale } from '@/i18n/config'
 import { localeStore } from '@/i18n/locale-store'
 
 const clerkLocalizations: Record<Locale, typeof koKR> = {
@@ -16,9 +16,13 @@ const clerkLocalizations: Record<Locale, typeof koKR> = {
 
 interface ClientProvidersProps {
   children: ReactNode
+  initialLocale: Locale
 }
 
-export function ClientProviders({ children }: ClientProvidersProps) {
+export function ClientProviders({ children, initialLocale }: ClientProvidersProps) {
+  if (typeof window === 'undefined') {
+    localeStore.initialize(initialLocale)
+  }
   const locale = localeStore.getSnapshot()
 
   const [signUpUnsafeMetadata] = useState<Record<string, string> | undefined>(() => {
@@ -48,7 +52,7 @@ export function ClientProviders({ children }: ClientProvidersProps) {
       signUpUnsafeMetadata={signUpUnsafeMetadata}
     >
       <ConvexClientProvider>
-        <Providers initialLocale={defaultLocale}>{children}</Providers>
+        <Providers initialLocale={initialLocale}>{children}</Providers>
       </ConvexClientProvider>
     </ClerkProvider>
   )

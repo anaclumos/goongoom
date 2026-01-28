@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
+import { getLocale } from 'next-intl/server'
 import { AnalyticsLoader } from '@/components/analytics/analytics-loader'
 import { ClientProviders } from '@/app/client-providers'
 import { env } from '@/env.vercel'
-import { defaultLocale } from '@/i18n/config'
+import { type Locale } from '@/i18n/config'
 import './globals.css'
 
 const lineSeedKR = localFont({
@@ -41,15 +42,17 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = (await getLocale()) as Locale
+
   return (
-    <html className={`${lineSeedKR.variable} ${lineSeedJP.variable}`} lang={defaultLocale} suppressHydrationWarning>
+    <html className={`${lineSeedKR.variable} ${lineSeedJP.variable}`} lang={locale} suppressHydrationWarning>
       <body className="bg-background font-sans antialiased">
-        <ClientProviders>{children}</ClientProviders>
+        <ClientProviders initialLocale={locale}>{children}</ClientProviders>
         <AnalyticsLoader />
       </body>
     </html>
