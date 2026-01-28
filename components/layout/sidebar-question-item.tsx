@@ -7,6 +7,7 @@ import { enUS, ko } from 'date-fns/locale'
 import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -59,6 +60,11 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
       const result = await createAnswer({
         questionId: question.id as Id<'questions'>,
         content: answer.trim(),
+      })
+      posthog.capture('sidebar_answer_submitted', {
+        question_id: question.id,
+        is_anonymous_question: question.isAnonymous,
+        answer_length: answer.trim().length,
       })
       logAction({
         action: 'createAnswer',

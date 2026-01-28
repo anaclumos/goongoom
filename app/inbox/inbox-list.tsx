@@ -147,6 +147,10 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
   const dateLocale = localeMap[locale as keyof typeof localeMap] ?? enUS
 
   const handleQuestionClick = useCallback((question: QuestionItem) => {
+    posthog.capture('question_selected', {
+      question_id: question.id,
+      is_anonymous: question.isAnonymous,
+    })
     setSelectedQuestion(question)
     setAnswer('')
     setIsDrawerOpen(true)

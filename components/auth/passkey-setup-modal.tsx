@@ -4,6 +4,7 @@ import { useUser } from '@clerk/nextjs'
 import { Cancel01Icon, CheckmarkCircle02Icon, FingerPrintIcon, SecurityCheckIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
@@ -24,13 +25,17 @@ export function PasskeySetupModal() {
       const isDismissed = localStorage.getItem('goongoom:passkey-nudge-dismissed')
 
       if (!(hasPasskeys || isDismissed)) {
-        const timer = setTimeout(() => setOpen(true), 1500)
+        const timer = setTimeout(() => {
+          setOpen(true)
+          posthog.capture('passkey_modal_shown')
+        }, 1500)
         return () => clearTimeout(timer)
       }
     }
   }, [isLoaded, user])
 
   const handleDismiss = () => {
+    posthog.capture('passkey_modal_dismissed')
     localStorage.setItem('goongoom:passkey-nudge-dismissed', 'true')
     setOpen(false)
   }
@@ -38,14 +43,19 @@ export function PasskeySetupModal() {
   const createPasskey = async () => {
     setIsLoading(true)
     setError(null)
+    posthog.capture('passkey_modal_setup_started')
     try {
       await user?.createPasskey()
+      posthog.capture('passkey_modal_setup_success')
       setSuccess(true)
       setTimeout(() => {
         setOpen(false)
       }, 2000)
     } catch (err: unknown) {
       console.error('Error creating passkey:', err)
+      posthog.capture('passkey_modal_setup_error', {
+        error: err instanceof Error ? err.message : 'unknown',
+      })
       setError(t('setupError'))
     } finally {
       setIsLoading(false)

@@ -3,6 +3,7 @@
 import { useAuth } from '@clerk/nextjs'
 import { useMutation } from 'convex/react'
 import { useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useSignatureColor } from '@/components/theme/signature-color-provider'
@@ -29,6 +30,10 @@ export function SignatureColorPicker({ currentColor, labels }: SignatureColorPic
   const handleColorChange = useCallback(
     (value: string) => {
       if (!userId) return
+      posthog.capture('signature_color_changed', {
+        previous_color: currentColor,
+        new_color: value,
+      })
       setSignatureColor(value)
       toast.promise(updateProfile({ clerkId: userId, signatureColor: value }), {
         loading: labels.saving,
@@ -36,7 +41,7 @@ export function SignatureColorPicker({ currentColor, labels }: SignatureColorPic
         error: (err) => err?.message || tErrors('genericError'),
       })
     },
-    [labels, tErrors, setSignatureColor, updateProfile, userId]
+    [labels, tErrors, setSignatureColor, updateProfile, userId, currentColor]
   )
 
   return (

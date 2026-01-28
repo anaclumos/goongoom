@@ -4,6 +4,7 @@ import { useUser } from '@clerk/nextjs'
 import { CheckmarkCircle02Icon, FingerPrintIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -27,11 +28,16 @@ export function PasskeyNudge() {
 
   const createPasskey = async () => {
     setIsLoading(true)
+    posthog.capture('passkey_setup_started')
     try {
       await user?.createPasskey()
+      posthog.capture('passkey_setup_success')
       setSuccess(true)
     } catch (err: unknown) {
       console.error('Error creating passkey:', err)
+      posthog.capture('passkey_setup_error', {
+        error: err instanceof Error ? err.message : 'unknown',
+      })
       toast.error(t('setupError'))
     } finally {
       setIsLoading(false)

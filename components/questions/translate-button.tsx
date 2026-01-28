@@ -4,6 +4,7 @@ import { TranslateIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useCompletion } from '@ai-sdk/react'
 import { useLocale, useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -32,15 +33,18 @@ export function TranslateButton({ text, align = 'start' }: TranslateButtonProps)
       e.preventDefault()
 
       if (completion && showTranslation) {
+        posthog.capture('translate_hidden')
         setShowTranslation(false)
         return
       }
 
       if (completion) {
+        posthog.capture('translate_shown')
         setShowTranslation(true)
         return
       }
 
+      posthog.capture('translate_clicked', { target_locale: locale })
       setShowTranslation(true)
       await complete('', {
         body: { text, targetLocale: locale },

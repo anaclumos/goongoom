@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -14,6 +15,7 @@ export function ProfileActions({ username, editButton }: ProfileActionsProps) {
 
   const handleShare = useCallback(async () => {
     const fullUrl = `${window.location.origin}/${username}`
+    posthog.capture('profile_shared', { username })
 
     if (navigator.share) {
       try {

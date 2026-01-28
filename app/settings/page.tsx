@@ -8,6 +8,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { useConvexAuth } from 'convex/react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { PasskeyNudge } from '@/components/auth/passkey-nudge'
 import { MainContent } from '@/components/layout/main-content'
 import { AboutSection } from '@/components/settings/about-section'
@@ -106,7 +107,10 @@ export default function SettingsPage() {
       <div className="space-y-4">
         <button
           className="group flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-left ring-1 ring-foreground/10 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"
-          onClick={() => openUserProfile()}
+          onClick={() => {
+            posthog.capture('user_profile_opened')
+            openUserProfile()
+          }}
           type="button"
         >
           <Avatar className="size-12 shrink-0 ring-2 ring-emerald/20">
@@ -148,7 +152,10 @@ export default function SettingsPage() {
           <CardContent className="py-0">
             <button
               className="group flex w-full items-center gap-3 rounded-xl py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              onClick={() => signOut({ redirectUrl: '/' })}
+              onClick={() => {
+                posthog.capture('signout_clicked')
+                signOut({ redirectUrl: '/' })
+              }}
               type="button"
             >
               <div className="flex size-8 items-center justify-center rounded-full bg-muted/50 transition-colors">

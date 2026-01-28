@@ -4,6 +4,7 @@ import { useUser } from '@clerk/nextjs'
 import { Cancel01Icon, MoreHorizontalIcon, Share08Icon, SmartPhone01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useTranslations } from 'next-intl'
+import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
@@ -58,12 +59,16 @@ export function AddToHomeScreenNudge() {
     const isDismissed = localStorage.getItem(STORAGE_KEY)
 
     if (isMobile && !isAlreadyInstalled && !isDismissed) {
-      const timer = setTimeout(() => setOpen(true), 3000)
+      const timer = setTimeout(() => {
+        setOpen(true)
+        posthog.capture('a2hs_nudge_shown', { platform: isIOSDevice() ? 'ios' : 'android' })
+      }, 3000)
       return () => clearTimeout(timer)
     }
   }, [isLoaded, user])
 
   const handleDismiss = () => {
+    posthog.capture('a2hs_nudge_dismissed')
     localStorage.setItem(STORAGE_KEY, 'true')
     setOpen(false)
   }
