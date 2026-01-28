@@ -268,7 +268,7 @@ export default function QADetailPage() {
               mode="button"
               shareUrl={instagramShareUrl}
             />
-            <CopyLinkButton className="h-14 w-full rounded-2xl" fullWidth url={canonicalUrl} variant="secondary" />
+            <CopyLinkButton className="h-14 w-full rounded-2xl" fullWidth url={canonicalUrl}/>
             <DeleteResponseButton answerId={answer._id} profileUrl={`/${username}`} />
           </>
         ) : (
