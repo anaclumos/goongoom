@@ -204,7 +204,7 @@
     "answerDeleteError": "Try again. We couldn't delete your answer.",
     "answerCreateError": "Try again. We hit a snag saving your answer.",
     "pleaseEnterQuestion": "Enter a question",
-    "restoreError": "Couldn't restore. Try again."
+    "restoreError": "Try again. Couldn't restore."
   },
   "friends": {
     "title": "Friends",

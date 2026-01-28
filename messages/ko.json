@@ -204,7 +204,7 @@
     "answerDeleteError": "다시 시도해 주세요. 답변을 삭제하지 못했어요.",
     "answerCreateError": "다시 시도해 주세요. 답변을 저장하는 중 문제가 생겼어요.",
     "pleaseEnterQuestion": "질문을 입력해 주세요",
-    "restoreError": "복원하지 못했어요. 다시 시도해 주세요."
+    "restoreError": "다시 시도해 주세요. 복원하지 못했어요."
   },
   "friends": {
     "title": "친구",

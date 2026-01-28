@@ -204,7 +204,7 @@
     "answerDeleteError": "もう一度お試しください。回答を削除できませんでした。",
     "answerCreateError": "もう一度お試しください。回答の保存中に問題が発生しました。",
     "pleaseEnterQuestion": "質問を入力してください",
-    "restoreError": "復元できませんでした。もう一度お試しください。"
+    "restoreError": "もう一度お試しください。復元できませんでした。"
   },
   "friends": {
     "title": "フレンド",
