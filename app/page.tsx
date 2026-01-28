@@ -1,9 +1,9 @@
 export const dynamic = 'force-static'
 
 import {
-  AnonymousIcon,
-  Rocket01Icon,
-  Share08Icon,
+  InstagramIcon,
+  ShieldUserIcon,
+  LanguageCircleIcon,
   UserMultiple02Icon,
   Megaphone01Icon,
   MessageQuestionIcon,
@@ -15,9 +15,9 @@ import { HomeSignUpButton } from '@/components/home/home-signup-button'
 import { Badge } from '@/components/ui/badge'
 
 const features = [
-  { icon: AnonymousIcon, key: 'feature1' },
-  { icon: Rocket01Icon, key: 'feature2' },
-  { icon: Share08Icon, key: 'feature3' },
+  { icon: InstagramIcon, key: 'feature1' },
+  { icon: ShieldUserIcon, key: 'feature2' },
+  { icon: LanguageCircleIcon, key: 'feature3' },
 ]
 
 const useCases = [
