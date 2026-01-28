@@ -8,7 +8,7 @@ export const proxy = clerkMiddleware(async (auth, request) => {
   }
 })
 
-export default proxy;
+export default proxy
 
 export const config = {
   matcher: [

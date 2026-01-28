@@ -135,9 +135,9 @@ export default async function Image({ params }: PageProps) {
       {
         ...size,
         fonts: [
-            { name: 'LINE Seed KR', data: fontRegular, weight: 400 },
-            { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
-          ],
+          { name: 'LINE Seed KR', data: fontRegular, weight: 400 },
+          { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
+        ],
       }
     )
   }
@@ -173,9 +173,9 @@ export default async function Image({ params }: PageProps) {
       {
         ...size,
         fonts: [
-            { name: 'LINE Seed KR', data: fontRegular, weight: 400 },
-            { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
-          ],
+          { name: 'LINE Seed KR', data: fontRegular, weight: 400 },
+          { name: 'LINE Seed JP', data: fontJpRegular, weight: 400 },
+        ],
       }
     )
   }

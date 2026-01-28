@@ -507,7 +507,9 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) => updateHandleAt(row.id, stripNonAscii(event.target.value), setInstagramRows)}
+                          onChange={(event) =>
+                            updateHandleAt(row.id, stripNonAscii(event.target.value), setInstagramRows)
+                          }
                           placeholder={tSocial('instagramPlaceholder')}
                           value={row.value}
                         />
@@ -546,7 +548,9 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) => updateHandleAt(row.id, stripNonAscii(event.target.value), setTwitterRows)}
+                          onChange={(event) =>
+                            updateHandleAt(row.id, stripNonAscii(event.target.value), setTwitterRows)
+                          }
                           placeholder={tSocial('twitterPlaceholder')}
                           value={row.value}
                         />
@@ -585,7 +589,9 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) => updateHandleAt(row.id, stripNonAscii(event.target.value), setYoutubeRows)}
+                          onChange={(event) =>
+                            updateHandleAt(row.id, stripNonAscii(event.target.value), setYoutubeRows)
+                          }
                           placeholder={tSocial('youtubePlaceholder')}
                           value={row.value}
                         />
@@ -624,7 +630,9 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) => updateCustomAt(row.id, 'handle', stripNonAscii(event.target.value), setGithubRows)}
+                          onChange={(event) =>
+                            updateCustomAt(row.id, 'handle', stripNonAscii(event.target.value), setGithubRows)
+                          }
                           placeholder={tSocial('githubPlaceholder')}
                           value={row.handle}
                         />
@@ -663,7 +671,9 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={() => handleNaverBlogHandleBlur(row.id, row.handle)}
-                          onChange={(event) => updateCustomAt(row.id, 'handle', stripNonAscii(event.target.value), setNaverBlogRows)}
+                          onChange={(event) =>
+                            updateCustomAt(row.id, 'handle', stripNonAscii(event.target.value), setNaverBlogRows)
+                          }
                           placeholder={tSocial('naverBlogPlaceholder')}
                           value={row.handle}
                         />
@@ -702,7 +712,9 @@ export function ProfileEditForm({
                           autoCorrect="off"
                           className="min-h-11 rounded-xl border border-border/50 bg-background pl-10 transition-all focus:border-emerald focus:ring-2 focus:ring-emerald/20"
                           onBlur={handleSocialLinksBlur}
-                          onChange={(event) => updateHandleAt(row.id, stripNonAscii(event.target.value), setThreadsRows)}
+                          onChange={(event) =>
+                            updateHandleAt(row.id, stripNonAscii(event.target.value), setThreadsRows)
+                          }
                           placeholder={tSocial('threadsPlaceholder')}
                           value={row.value}
                         />

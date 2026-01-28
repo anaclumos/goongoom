@@ -122,7 +122,9 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
               {question.isAnonymous ? tCommon('anonymous') : question.senderName || tCommon('user')}
             </span>
           </div>
-          <DialogDescription className="whitespace-pre-line text-foreground leading-relaxed">{question.content}</DialogDescription>
+          <DialogDescription className="whitespace-pre-line text-foreground leading-relaxed">
+            {question.content}
+          </DialogDescription>
         </div>
 
         <div className="mt-4 space-y-2">

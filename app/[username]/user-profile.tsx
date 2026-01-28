@@ -169,9 +169,7 @@ export default function UserProfilePage() {
   const isAnswersLoading = answeredQuestions === undefined
   const prefetchQuestionRoutes = useMemo(() => {
     if (!recipientUsername || questionsWithAnswers.length === 0) return []
-    return questionsWithAnswers
-      .slice(0, 6)
-      .map((qa) => `/${recipientUsername}/q/${qa._id}`)
+    return questionsWithAnswers.slice(0, 6).map((qa) => `/${recipientUsername}/q/${qa._id}`)
   }, [questionsWithAnswers, recipientUsername])
 
   usePrefetchQuestionRoutes(prefetchQuestionRoutes, !isLoading && !isAnswersLoading)

@@ -78,15 +78,14 @@ export async function GET(request: Request) {
   const askerAvatarSrc = searchParams.get('askerAvatar') || getDicebearUrl('anonymous')
   const answererAvatarSrc = searchParams.get('answererAvatar') || getDicebearUrl(name)
 
-  const [fontKrRegular, fontKrBold, fontJpRegular, fontJpBold, askerAvatarUrl, answererAvatarUrl] =
-    await Promise.all([
-      fontKrRegularPromise,
-      fontKrBoldPromise,
-      fontJpRegularPromise,
-      fontJpBoldPromise,
-      fetchImageAsBase64(askerAvatarSrc),
-      fetchImageAsBase64(answererAvatarSrc),
-    ])
+  const [fontKrRegular, fontKrBold, fontJpRegular, fontJpBold, askerAvatarUrl, answererAvatarUrl] = await Promise.all([
+    fontKrRegularPromise,
+    fontKrBoldPromise,
+    fontJpRegularPromise,
+    fontJpBoldPromise,
+    fetchImageAsBase64(askerAvatarSrc),
+    fetchImageAsBase64(answererAvatarSrc),
+  ])
 
   const imageResponse = new ImageResponse(
     <div

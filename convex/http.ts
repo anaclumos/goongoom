@@ -79,10 +79,10 @@ http.route({
     if (type === 'user.created') {
       const firstName = data.first_name ?? undefined
       const fullName = buildFullName(data.first_name, data.last_name)
-      
+
       // Extract referral data from unsafe_metadata (first-touch only)
       const { referrerUsername, utmSource, utmMedium, utmCampaign, utmTerm, utmContent } = data.unsafe_metadata || {}
-      
+
       // Create or update user
       const userId = await ctx.runMutation(internal.users.upsertFromWebhook, {
         clerkId: data.id,
@@ -97,7 +97,7 @@ http.route({
         utmTerm,
         utmContent,
       })
-      
+
       // Record referral if referrer is present
       if (referrerUsername) {
         await ctx.runMutation(internal.referrals.recordReferral, {

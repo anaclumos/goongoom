@@ -21,9 +21,7 @@ interface ClientProvidersProps {
 export function ClientProviders({ children }: ClientProvidersProps) {
   const locale = localeStore.getSnapshot()
 
-  const [signUpUnsafeMetadata] = useState<
-    Record<string, string> | undefined
-  >(() => {
+  const [signUpUnsafeMetadata] = useState<Record<string, string> | undefined>(() => {
     if (typeof document === 'undefined') return undefined
     try {
       const match = document.cookie.match(/(^| )referral=([^;]+)/)

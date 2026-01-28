@@ -250,9 +250,7 @@ export default function QADetailPage() {
                   locale: localeMap[locale as keyof typeof localeMap] ?? enUS,
                 })}
               </p>
-              {answer.language && answer.language !== locale && (
-                <TranslateButton align="end" text={answer.content} />
-              )}
+              {answer.language && answer.language !== locale && <TranslateButton align="end" text={answer.content} />}
             </div>
             <Avatar className="size-10 flex-shrink-0">
               {dbUser.avatarUrl && <AvatarImage alt={firstName} src={dbUser.avatarUrl} />}

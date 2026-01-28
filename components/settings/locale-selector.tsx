@@ -30,11 +30,7 @@ export function LocaleSelector() {
         <p className="text-muted-foreground text-sm">{t('languageSettingsDescription')}</p>
       </div>
 
-      <RadioGroup
-        className="flex w-full gap-2"
-        onValueChange={handleLocaleChange}
-        value={currentLocale}
-      >
+      <RadioGroup className="flex w-full gap-2" onValueChange={handleLocaleChange} value={currentLocale}>
         {locales.map((locale) => (
           <Label
             className="group flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-border/50 bg-background px-4 py-3 transition-all disabled:opacity-50 has-data-checked:border-emerald/50 has-data-checked:bg-emerald/5"

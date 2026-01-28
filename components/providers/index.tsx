@@ -69,11 +69,11 @@ export function Providers({ children, initialLocale }: ProvidersProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
       <PrefetchManager />
-       <IntlProvider initialLocale={initialLocale}>
-         <UserProvider>
-           <ReferralCookieCleaner />
-           <LocaleSync />
-           <EscapeInAppBrowser />
+      <IntlProvider initialLocale={initialLocale}>
+        <UserProvider>
+          <ReferralCookieCleaner />
+          <LocaleSync />
+          <EscapeInAppBrowser />
           <AppShellWrapper>
             <main className="flex-1">{children}</main>
           </AppShellWrapper>

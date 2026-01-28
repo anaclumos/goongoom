@@ -20,14 +20,14 @@ interface IntlProviderProps {
 }
 
 export function IntlProvider({ children, initialLocale }: IntlProviderProps) {
-  const locale = useSyncExternalStore(
-    localeStore.subscribe,
-    localeStore.getSnapshot,
-    () => initialLocale
-  )
+  const locale = useSyncExternalStore(localeStore.subscribe, localeStore.getSnapshot, () => initialLocale)
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages[locale]} timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={messages[locale]}
+      timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}
+    >
       {children}
     </NextIntlClientProvider>
   )

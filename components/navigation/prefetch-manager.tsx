@@ -33,9 +33,7 @@ export function PrefetchManager() {
     }
 
     prefetchedRoutesFor.current = nextState
-    const routes = isSignedIn
-      ? Array.from(new Set([...TAB_ROUTES, ...AUTH_REQUIRED_ROUTES]))
-      : GUEST_TAB_ROUTES
+    const routes = isSignedIn ? Array.from(new Set([...TAB_ROUTES, ...AUTH_REQUIRED_ROUTES])) : GUEST_TAB_ROUTES
 
     for (const route of routes) {
       router.prefetch(route)

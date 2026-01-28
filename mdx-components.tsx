@@ -44,12 +44,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     thead: ({ children }) => <thead className="bg-muted/50 [&_tr]:border-b">{children}</thead>,
     tbody: ({ children }) => <tbody className="[&_tr:last-child]:border-0">{children}</tbody>,
     tr: ({ children }) => <tr className="border-b border-border">{children}</tr>,
-    th: ({ children }) => (
-      <th className="px-3 py-2 text-left align-middle font-medium text-foreground">{children}</th>
-    ),
-    td: ({ children }) => (
-      <td className="px-3 py-2 align-middle text-muted-foreground">{children}</td>
-    ),
+    th: ({ children }) => <th className="px-3 py-2 text-left align-middle font-medium text-foreground">{children}</th>,
+    td: ({ children }) => <td className="px-3 py-2 align-middle text-muted-foreground">{children}</td>,
     ...components,
   }
 }

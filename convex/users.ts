@@ -259,30 +259,30 @@ export const upsertFromWebhook = internalMutation({
       if (args.fullName !== undefined) updates.fullName = args.fullName
       if (args.avatarUrl !== undefined) updates.avatarUrl = args.avatarUrl
 
-       await ctx.db.patch(existing._id, updates)
-       return existing._id
-     }
- 
-     // Look up referrer if provided
-     let referredByUserId: Id<'users'> | undefined
-     if (args.referrerUsername) {
-       const referrer = await ctx.db
-         .query('users')
-         .withIndex('by_username', (q) => q.eq('username', args.referrerUsername))
-         .unique()
-       referredByUserId = referrer?._id
-     }
- 
-     return await ctx.db.insert('users', {
-       clerkId: args.clerkId,
-       username: args.username,
-       firstName: args.firstName,
-       fullName: args.fullName,
-       avatarUrl: args.avatarUrl,
-       referredByUserId,
-       questionSecurityLevel: 'anyone',
-       updatedAt: Date.now(),
-     })
+      await ctx.db.patch(existing._id, updates)
+      return existing._id
+    }
+
+    // Look up referrer if provided
+    let referredByUserId: Id<'users'> | undefined
+    if (args.referrerUsername) {
+      const referrer = await ctx.db
+        .query('users')
+        .withIndex('by_username', (q) => q.eq('username', args.referrerUsername))
+        .unique()
+      referredByUserId = referrer?._id
+    }
+
+    return await ctx.db.insert('users', {
+      clerkId: args.clerkId,
+      username: args.username,
+      firstName: args.firstName,
+      fullName: args.fullName,
+      avatarUrl: args.avatarUrl,
+      referredByUserId,
+      questionSecurityLevel: 'anyone',
+      updatedAt: Date.now(),
+    })
   },
 })
 
@@ -321,9 +321,7 @@ export const listAllUsernames = query({
   args: {},
   handler: async (ctx) => {
     const users = await ctx.db.query('users').collect()
-    return users
-      .map((u) => u.username)
-      .filter((username): username is string => username != null)
+    return users.map((u) => u.username).filter((username): username is string => username != null)
   },
 })
 

@@ -57,13 +57,7 @@ export function TranslateButton({ text, align = 'start' }: TranslateButtonProps)
 
   return (
     <div className={align === 'end' ? 'flex flex-col items-end' : ''}>
-      <Button
-        className="gap-1 text-muted-foreground"
-        onClick={handleTranslate}
-        size="xs"
-        type="button"
-        variant="ghost"
-      >
+      <Button className="gap-1 text-muted-foreground" onClick={handleTranslate} size="xs" type="button" variant="ghost">
         <HugeiconsIcon className="size-3" icon={TranslateIcon} />
         <span className="text-xs">{buttonLabel}</span>
       </Button>
