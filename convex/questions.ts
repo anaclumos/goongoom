@@ -127,10 +127,13 @@ export const create = mutation({
 
     await ctx.scheduler.runAfter(0, internal.slackActions.notifyNewQuestion, {
       recipientUsername: recipientUser.username,
+      recipientFirstName: recipientUser.firstName,
       recipientClerkId: args.recipientClerkId,
       senderUsername: senderUser?.username,
+      senderFirstName: senderUser?.firstName,
       isAnonymous: args.isAnonymous,
       questionPreview: args.content,
+      questionId: id,
     })
 
     return await ctx.db.get(id)
@@ -170,6 +173,7 @@ export const softDelete = mutation({
 
     await ctx.scheduler.runAfter(0, internal.slackActions.notifyQuestionDeleted, {
       recipientUsername: recipientUser?.username,
+      recipientFirstName: recipientUser?.firstName,
       recipientClerkId: args.recipientClerkId,
     })
 

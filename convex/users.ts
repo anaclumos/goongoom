@@ -184,11 +184,12 @@ export const deleteByClerkId = mutation({
       .first()
 
     if (user) {
-      const username = user.username
+      const { username, firstName } = user
       await ctx.db.delete(user._id)
 
       await ctx.scheduler.runAfter(0, internal.slackActions.notifyUserDeleted, {
         username,
+        firstName,
         clerkId: args.clerkId,
         source: 'self' as const,
       })

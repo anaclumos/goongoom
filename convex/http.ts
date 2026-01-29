@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server'
 import { Webhook } from 'svix'
-import { internal } from './_generated/api'
+import { api, internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import type { Id } from './_generated/dataModel'
 
@@ -112,7 +112,11 @@ http.route({
       })
 
       // Record referral if referrer is present
+      let referrerFirstName: string | undefined
       if (referrerUsername) {
+        const referrer = await ctx.runQuery(api.users.getByUsername, { username: referrerUsername })
+        referrerFirstName = referrer?.firstName
+
         await ctx.runMutation(internal.referrals.recordReferral, {
           referrerUsername,
           referredUserId: userId as Id<'users'>,
@@ -127,8 +131,10 @@ http.route({
 
       await ctx.scheduler.runAfter(0, internal.slackActions.notifyUserSignup, {
         username: data.username ?? undefined,
+        firstName,
         clerkId: data.id,
         referrerUsername,
+        referrerFirstName,
         utmSource,
         utmMedium,
         utmCampaign,
@@ -152,6 +158,7 @@ http.route({
 
       await ctx.scheduler.runAfter(0, internal.slackActions.notifyUserDeleted, {
         username: data.username ?? undefined,
+        firstName: data.first_name ?? undefined,
         clerkId: data.id,
         source: 'webhook' as const,
       })
