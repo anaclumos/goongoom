@@ -216,7 +216,7 @@
   },
   "friends": {
     "title": "友だち",
-    "description": "友だちの質問や回答を見られるよ。",
+    "description": "実名で質問と回答をやり取りすると、友だちになれるよ。",
     "emptyTitle": "まだ友だちの活動はないよ。",
     "emptyDescription": "友だちが回答するとここに表示されるよ。"
   },

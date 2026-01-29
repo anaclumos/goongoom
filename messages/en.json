@@ -216,7 +216,7 @@
   },
   "friends": {
     "title": "Friends",
-    "description": "See your friends' questions and answers.",
+    "description": "Exchange Q&A publicly and become friends.",
     "emptyTitle": "No friends activity yet.",
     "emptyDescription": "When your friends answer, you'll see it here."
   },
