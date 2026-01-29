@@ -5,7 +5,6 @@
   "packageManager": "bun@1.2.19",
   "scripts": {
     "dev": "concurrently \"next dev\" \"convex dev --local\"",
-    "dev:proddata": "bun --env-file=.env --env-file=.env.proddata next dev",
     "build": "next build",
     "deploy": "convex deploy --cmd 'next build'",
     "start": "next start",
