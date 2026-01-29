@@ -25,7 +25,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/convex/_generated/api'
 import { useLogCollector } from '@/hooks/use-log-collector'
+import { CHAR_LIMITS } from '@/lib/charLimits'
 import type { QuestionId } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 function getDicebearUrl(seed: string) {
   return `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}&flip=true`
@@ -383,14 +385,21 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
                 value={answer}
               />
               <div className="flex justify-end">
-                <span className="font-medium text-muted-foreground text-xs">{answer.length}</span>
+                <span
+                  className={cn(
+                    'font-medium text-xs',
+                    answer.length > CHAR_LIMITS.ANSWER ? 'text-destructive' : 'text-muted-foreground'
+                  )}
+                >
+                  {answer.length}/{CHAR_LIMITS.ANSWER}
+                </span>
               </div>
             </div>
 
             <DrawerFooter className="gap-2 pt-4">
               <Button
                 className="h-14 w-full rounded-xl bg-primary text-primary-foreground font-semibold transition-all disabled:opacity-70"
-                disabled={!answer.trim() || isSubmitting}
+                disabled={!answer.trim() || isSubmitting || answer.length > CHAR_LIMITS.ANSWER}
                 onClick={handleSubmit}
                 type="button"
               >
