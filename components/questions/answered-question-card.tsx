@@ -112,8 +112,8 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
   const senderColors = showSenderColor ? getSignatureColor(senderSignatureColor) : null
   const questionCardStyle = senderColors
     ? ({
-        '--question-bg-light': senderColors.light.bg,
-        '--question-bg-dark': senderColors.dark.bg,
+        '--question-bg-light': senderColors.light.primary,
+        '--question-bg-dark': senderColors.dark.primary,
         '--question-border-light': senderColors.light.border,
         '--question-border-dark': senderColors.dark.border,
       } as React.CSSProperties)
@@ -134,12 +134,12 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
               <Card
                 className={
                   senderColors
-                    ? 'max-w-prose border bg-[var(--question-bg-light)] px-4 py-3 dark:bg-[var(--question-bg-dark)] border-[var(--question-border-light)] dark:border-[var(--question-border-dark)]'
-                    : 'max-w-prose bg-muted/40 px-4 py-3'
+                    ? 'max-w-prose border ring-0 bg-[var(--question-bg-light)] px-4 py-3 text-white dark:bg-[var(--question-bg-dark)] border-[var(--question-border-light)] dark:border-[var(--question-border-dark)]'
+                    : 'max-w-prose ring-0 bg-muted/40 px-4 py-3'
                 }
                 style={questionCardStyle}
               >
-                <p className="whitespace-pre-line text-foreground leading-relaxed">{questionContent}</p>
+                <p className={senderColors ? 'whitespace-pre-line leading-relaxed' : 'whitespace-pre-line text-foreground leading-relaxed'}>{questionContent}</p>
               </Card>
               <p className="mt-1 ml-1 text-muted-foreground text-xs">
                 {anonymityLabel} ·{' '}
@@ -155,8 +155,8 @@ export function AnsweredQuestionCard(props: AnsweredQuestionCardProps) {
               <Card
                 className={
                   signatureColor
-                    ? 'max-w-prose border bg-[var(--answer-bg-light)] px-4 py-3 text-white dark:bg-[var(--answer-bg-dark)] border-[var(--answer-border-light)] dark:border-[var(--answer-border-dark)]'
-                    : 'max-w-prose border-none bg-gradient-to-br from-emerald to-emerald px-4 py-3 text-white'
+                    ? 'max-w-prose border ring-0 bg-[var(--answer-bg-light)] px-4 py-3 text-white dark:bg-[var(--answer-bg-dark)] border-[var(--answer-border-light)] dark:border-[var(--answer-border-dark)]'
+                    : 'max-w-prose border-none ring-0 bg-gradient-to-br from-emerald to-emerald px-4 py-3 text-white'
                 }
                 style={answerCardStyle}
               >
