@@ -179,7 +179,7 @@ export default function UserProfilePage({ preloadedUser, preloadedQuestions }: U
       <MainContent>
         <Empty className="pb-24">
           <EmptyHeader>
-            <EmptyTitle className="text-muted-foreground">{tProfile('userNotFound')}</EmptyTitle>
+            <EmptyTitle className="text-muted-foreground">{tErrors('userNotFound')}</EmptyTitle>
           </EmptyHeader>
         </Empty>
       </MainContent>

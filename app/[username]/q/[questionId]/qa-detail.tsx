@@ -109,6 +109,7 @@ export default function QADetailPage({ preloadedUser, preloadedQA, preloadedQues
   const tCommon = useTranslations('common')
   const tProfile = useTranslations('profile')
   const tQuestions = useTranslations('questions')
+  const tErrors = useTranslations('errors')
 
   const dbUser = usePreloadedQuery(preloadedUser)
   const qa = usePreloadedQuery(preloadedQA)
@@ -217,7 +218,7 @@ export default function QADetailPage({ preloadedUser, preloadedQA, preloadedQues
       <MainContent>
         <Empty className="pb-24">
           <EmptyHeader>
-            <EmptyTitle className="text-muted-foreground">{tQuestions('questionNotFound')}</EmptyTitle>
+            <EmptyTitle className="text-muted-foreground">{tErrors('questionNotFound')}</EmptyTitle>
           </EmptyHeader>
         </Empty>
       </MainContent>
