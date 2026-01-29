@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
 import { ReferralSignUpButton } from '@/components/auth/referral-signup-button'
 import { Button } from '@/components/ui/button'
@@ -27,16 +29,9 @@ export function HomeCTAButtons({
           href={profileUrl}
           className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-pink-500 to-orange-500 px-10 text-lg font-medium text-white shadow-lg shadow-pink-500/25 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
         >
-          <span className="mr-2">{profileLabel}</span>
-          <svg
-            className="h-5 w-5 transition-transform duration-300"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
+          <HugeiconsIcon className="mr-1" icon={ArrowLeft01Icon} size={16} />
+          <span>{profileLabel}</span>
+          <HugeiconsIcon className="transition-transform duration-300" icon={ArrowRight01Icon} size={20} />
         </Link>
       </div>
     )
@@ -50,15 +45,7 @@ export function HomeCTAButtons({
           className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-pink-500 to-orange-500 px-10 text-lg font-medium text-white shadow-lg shadow-pink-500/25 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
         >
           <span className="mr-2">{startLabel}</span>
-          <svg
-            className="h-5 w-5 transition-transform duration-300"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
+          <HugeiconsIcon className="transition-transform duration-300" icon={ArrowRight01Icon} size={20} />
         </button>
       </ReferralSignUpButton>
       <PasskeySignInButton>

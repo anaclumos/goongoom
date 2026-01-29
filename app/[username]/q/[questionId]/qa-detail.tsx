@@ -8,6 +8,8 @@ import { useParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useMemo } from 'react'
 import { useTheme } from 'next-themes'
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { MainContent } from '@/components/layout/main-content'
 import { Ultralink } from '@/components/navigation/ultralink'
 import { CopyLinkButton } from '@/components/questions/copy-link-button'
@@ -231,6 +233,7 @@ export default function QADetailPage({ preloadedUser, preloadedQA, preloadedQues
     <MainContent>
       <div className="mb-4">
         <Button nativeButton={false} render={<Ultralink href={`/${username}`} />} size="lg" variant="ghost">
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} />
           {tProfile('backToProfile', { firstName })}
         </Button>
       </div>
