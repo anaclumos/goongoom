@@ -381,34 +381,19 @@ export const getUnansweredPreview = query({
 export const getAnsweredByRecipient = query({
   args: { recipientClerkId: v.string() },
   handler: async (ctx, args) => {
-    const answeredQuestions = await ctx.db
+    const questions = await ctx.db
       .query('questions')
       .withIndex('by_recipient_answered', (q) => q.eq('recipientClerkId', args.recipientClerkId))
-      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .filter((q) => q.and(q.neq(q.field('answeredAt'), undefined), q.eq(q.field('deletedAt'), undefined)))
       .order('desc')
       .collect()
-
-    const legacyQuestions = await ctx.db
-      .query('questions')
-      .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.recipientClerkId))
-      .filter((q) =>
-        q.and(
-          q.neq(q.field('answerId'), undefined),
-          q.neq(q.field('answerId'), null),
-          q.eq(q.field('answeredAt'), undefined),
-          q.eq(q.field('deletedAt'), undefined)
-        )
-      )
-      .collect()
-
-    const questions = legacyQuestions.length > 0 ? [...answeredQuestions, ...legacyQuestions] : answeredQuestions
 
     const answerMap = await fetchAnswersMap(ctx, questions)
 
     const senderClerkIds = questions.map((q) => q.senderClerkId).filter((id): id is string => id !== undefined)
     const userMap = await fetchUsersMap(ctx, senderClerkIds)
 
-    const questionsWithAnswers = questions.map((question) => {
+    return questions.map((question) => {
       const sender = question.senderClerkId ? userMap.get(question.senderClerkId) : undefined
       return {
         ...question,
@@ -418,16 +403,6 @@ export const getAnsweredByRecipient = query({
         senderAvatarUrl: sender?.avatarUrl,
         senderSignatureColor: sender?.signatureColor,
       }
-    })
-
-    if (legacyQuestions.length === 0) {
-      return questionsWithAnswers
-    }
-
-    return questionsWithAnswers.sort((a, b) => {
-      const aTime = a.answeredAt ?? a.answer?._creationTime ?? 0
-      const bTime = b.answeredAt ?? b.answer?._creationTime ?? 0
-      return bTime - aTime
     })
   },
 })
@@ -461,47 +436,10 @@ export const getAnsweredNumber = query({
   },
   handler: async (ctx, args) => {
     const question = await ctx.db.get(args.questionId)
-    if (!question || question.deletedAt) {
+    if (!question || question.deletedAt || question.answerId == null) {
       return 0
     }
-
-    // If the question itself isn't answered, return 0
-    if (question.answerId == null) {
-      return 0
-    }
-
-    if (question.answerNumber != null) {
-      return question.answerNumber
-    }
-
-    // Collect answered questions in ascending order (oldest first)
-    // and count only those up to and including our target question
-    let count = 0
-    const queryIter = question.answeredAt
-      ? ctx.db
-          .query('questions')
-          .withIndex('by_recipient_answered', (q) => q.eq('recipientClerkId', args.recipientClerkId))
-          .order('asc')
-      : ctx.db
-          .query('questions')
-          .withIndex('by_recipient', (q) => q.eq('recipientClerkId', args.recipientClerkId))
-          .order('asc')
-
-    for await (const q of queryIter) {
-      if (q.deletedAt) {
-        continue
-      }
-      // Only count questions that have been answered
-      if (q.answerId != null) {
-        count++
-      }
-      // Stop once we've counted our target question
-      if (q._id === args.questionId) {
-        break
-      }
-    }
-
-    return count
+    return question.answerNumber ?? 0
   },
 })
 
