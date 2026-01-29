@@ -81,12 +81,12 @@ export function AddToHomeScreenNudge() {
     <Drawer onOpenChange={(val) => !val && handleDismiss()} open={open}>
       <DrawerContent
         className={cn(
-          'overflow-hidden border-pink-500/20 bg-gradient-to-br from-pink-500 to-orange-500 text-white',
+          'overflow-hidden border-primary/20 bg-primary text-primary-foreground',
           'w-full max-w-md gap-0 p-0'
         )}
       >
         <div className="pointer-events-none absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 rounded-full bg-white/10 p-20 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 rounded-full bg-orange-500/30 p-16 blur-2xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 rounded-full bg-primary-foreground/10 p-16 blur-2xl" />
 
         <button
           aria-label={t('dismiss')}
@@ -99,7 +99,7 @@ export function AddToHomeScreenNudge() {
 
         <div className="relative z-10 flex flex-col items-center p-8 pt-12 text-center">
           <div className="relative mb-6">
-            <div className="flex size-20 rotate-3 items-center justify-center rounded-2xl bg-white/20 text-white backdrop-blur-md">
+            <div className="flex size-20 rotate-3 items-center justify-center rounded-xl bg-white/20 text-white backdrop-blur-md">
               <HugeiconsIcon className="size-10" icon={SmartPhone01Icon} />
             </div>
           </div>
@@ -156,7 +156,7 @@ export function AddToHomeScreenNudge() {
 
           <div className="w-full">
             <Button
-              className="h-14 w-full rounded-2xl font-medium text-white/70"
+              className="h-14 w-full rounded-xl font-medium text-white/70"
               onClick={handleDismiss}
               size="lg"
               variant="ghost"

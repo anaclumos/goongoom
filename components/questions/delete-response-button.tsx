@@ -76,7 +76,7 @@ export function DeleteResponseButton({ answerId, profileUrl }: DeleteResponseBut
 
   return (
     <Button
-      className="h-14 w-full rounded-2xl text-destructive"
+      className="h-14 w-full rounded-xl text-destructive"
       disabled={isDeleting}
       onClick={handleDelete}
       type="button"

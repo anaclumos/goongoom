@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { getLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { AnalyticsLoader } from '@/components/analytics/analytics-loader'
 import { ClientProviders } from '@/app/client-providers'
 import { env } from '@/env.vercel'
@@ -18,10 +18,15 @@ const pretendard = localFont({
   adjustFontFallback: 'Arial',
 })
 
-export const metadata: Metadata = {
-  title: 'Goongoom',
-  description: 'Ask anything and get honest answers.',
-  metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  const t = await getTranslations({ locale, namespace: 'og' })
+
+  return {
+    title: t('appName'),
+    description: t('siteDescription'),
+    metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  }
 }
 
 export const viewport: Viewport = {

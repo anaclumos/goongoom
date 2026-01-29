@@ -205,8 +205,8 @@ export default function QADetailPage({ preloadedUser, preloadedQA, preloadedQues
           </CardContent>
         </Card>
         <div className="mt-6 flex flex-col gap-3">
-          <Skeleton className="h-14 w-full rounded-2xl" />
-          <Skeleton className="h-14 w-full rounded-2xl" />
+          <Skeleton className="h-14 w-full rounded-xl" />
+          <Skeleton className="h-14 w-full rounded-xl" />
         </div>
       </MainContent>
     )
@@ -295,16 +295,16 @@ export default function QADetailPage({ preloadedUser, preloadedQA, preloadedQues
         {isOwner && instagramShareUrl ? (
           <>
             <ShareInstagramButton
-              className="h-14 w-full rounded-2xl font-semibold"
+              className="h-14 w-full rounded-xl font-semibold"
               mode="button"
               shareUrl={instagramShareUrl}
             />
-            <CopyLinkButton className="h-14 w-full rounded-2xl" fullWidth url={canonicalUrl}/>
+            <CopyLinkButton className="h-14 w-full rounded-xl" fullWidth url={canonicalUrl}/>
             <DeleteResponseButton answerId={answer._id} profileUrl={`/${username}`} />
           </>
         ) : (
           <Button
-            className="h-14 w-full rounded-2xl font-semibold"
+            className="h-14 w-full rounded-xl font-semibold"
             nativeButton={false}
             render={<Ultralink href={`/${username}`} />}
             size="lg"

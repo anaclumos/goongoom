@@ -31,7 +31,7 @@ export function ProfileActions({ username, editButton }: ProfileActionsProps) {
   return (
     <div className="flex gap-3">
       {editButton}
-      <Button className="h-14 flex-1 rounded-2xl font-semibold" onClick={handleShare} variant="outline">
+      <Button className="h-14 flex-1 rounded-xl font-semibold" onClick={handleShare} variant="outline">
         {t('shareLink')}
       </Button>
     </div>

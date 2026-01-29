@@ -135,14 +135,14 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
 
         <div className="mt-4 rounded-xl border border-border/50 bg-muted/30 p-4 text-left text-foreground">
           <div className="mb-2 flex items-center gap-2">
-            <div className="flex size-6 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-orange-500">
+            <div className="flex size-6 items-center justify-center rounded-full bg-primary">
               <HugeiconsIcon
                 className="size-3.5 text-white"
                 icon={question.isAnonymous ? AnonymousIcon : UserIcon}
                 strokeWidth={2.5}
               />
             </div>
-            <span className="font-semibold text-sm bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+            <span className="font-semibold text-sm text-primary">
               {question.isAnonymous ? tCommon('anonymous') : question.senderName || tCommon('user')}
             </span>
           </div>
@@ -153,7 +153,7 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
 
         <div className="mt-4 space-y-2">
           <Textarea
-            className="min-h-28 resize-none rounded-2xl border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-pink-500 focus:bg-background focus:ring-2 focus:ring-pink-500/20"
+            className="min-h-28 resize-none rounded-lg border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-ring focus:bg-background focus:ring-2 focus:ring-ring/20"
             onChange={(e) => setAnswer(e.target.value)}
             placeholder={t('answerPlaceholder')}
             value={answer}
@@ -171,11 +171,11 @@ export function SidebarQuestionItem({ question }: SidebarQuestionItemProps) {
         </div>
 
         <div className="mt-6 flex gap-3">
-          <DialogClose render={<Button className="h-14 flex-1 rounded-2xl font-semibold" variant="outline" />}>
+          <DialogClose render={<Button className="h-14 flex-1 rounded-xl font-semibold" variant="outline" />}>
             {tCommon('cancel')}
           </DialogClose>
           <Button
-            className="h-14 flex-1 rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500 font-semibold transition-all disabled:opacity-70"
+            className="h-14 flex-1 rounded-xl bg-primary text-primary-foreground font-semibold transition-all disabled:opacity-70"
             disabled={!answer.trim() || isSubmitting || answer.length > CHAR_LIMITS.ANSWER}
             onClick={handleSubmit}
           >

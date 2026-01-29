@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ConvexHttpClient } from 'convex/browser'
 import { preloadQuery, preloadedQueryResult } from 'convex/nextjs'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { api } from '@/convex/_generated/api'
 import { env } from '@/env.vercel'
 import type { QuestionId } from '@/lib/types'
@@ -23,15 +24,18 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { username, questionId: questionIdParam } = await params
+  const locale = await getLocale()
+  const t = await getTranslations({ locale, namespace: 'og' })
+
   const convex = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL)
   const dbUser = await convex.query(api.users.getByUsername, { username })
-  if (!dbUser) return { title: 'Goongoom' }
+  if (!dbUser) return { title: t('appName') }
 
   const qa = await convex.query(api.questions.getByIdAndRecipient, {
     id: questionIdParam as QuestionId,
     recipientClerkId: dbUser.clerkId,
   })
-  if (!qa?.answer) return { title: 'Goongoom' }
+  if (!qa?.answer) return { title: t('appName') }
 
   return {
     title: qa.content,

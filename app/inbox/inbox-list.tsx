@@ -72,11 +72,11 @@ const InboxListItem = memo(function InboxListItem({
 
   return (
     <button
-      className="group w-full rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group w-full rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       onClick={() => onSelect(question)}
       type="button"
     >
-      <div className="content-auto flex items-start gap-4 rounded-2xl border border-border/50 bg-background p-4 transition-all group-active:scale-[0.98]">
+      <div className="content-auto flex items-start gap-4 rounded-xl border border-border/50 bg-background p-4 transition-all group-active:scale-[0.98]">
         <div className="relative flex-shrink-0">
           <Avatar className="size-12 ring-2 ring-background">
             <AvatarImage alt={question.senderName} src={getQuestionAvatarUrl(question)} />
@@ -84,7 +84,7 @@ const InboxListItem = memo(function InboxListItem({
               {question.senderName[0] || '?'}
             </AvatarFallback>
           </Avatar>
-          <div className="absolute -right-0.5 -bottom-0.5 flex size-5 items-center justify-center rounded-full ring-2 ring-background bg-gradient-to-br from-pink-500 to-orange-500">
+          <div className="absolute -right-0.5 -bottom-0.5 flex size-5 items-center justify-center rounded-full ring-2 ring-background bg-primary">
             <HugeiconsIcon
               className="size-3 text-white"
               icon={question.isAnonymous ? AnonymousIcon : UserIcon}
@@ -98,7 +98,7 @@ const InboxListItem = memo(function InboxListItem({
             {question.content}
           </p>
           <div className="flex items-center gap-2 text-muted-foreground text-xs">
-            <span className="font-medium bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">{senderLabel}</span>
+            <span className="font-medium text-primary">{senderLabel}</span>
             <span className="text-muted-foreground/60">·</span>
             <span>
               {formatDistanceToNow(question.createdAt, {
@@ -109,7 +109,7 @@ const InboxListItem = memo(function InboxListItem({
           </div>
         </div>
 
-        <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground transition-all group-hover:bg-gradient-to-br group-hover:from-pink-500 group-hover:to-orange-500 group-hover:text-white">
+        <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground transition-all group-hover:bg-primary group-hover:text-primary-foreground">
           <HugeiconsIcon className="size-5" icon={ArrowRight01Icon} strokeWidth={2} />
         </div>
       </div>
@@ -311,7 +311,7 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
         {[1, 2, 3, 4, 5].map((n) => (
           <div
             key={`inbox-skeleton-${n}`}
-            className="flex items-start gap-4 rounded-2xl border border-border/50 bg-background p-4"
+            className="flex items-start gap-4 rounded-xl border border-border/50 bg-background p-4"
           >
             <div className="relative flex-shrink-0">
               <Skeleton className="size-12 rounded-full ring-2 ring-background" />
@@ -358,24 +358,14 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
               {selectedQuestion && (
                 <DrawerDescription className="mt-3 rounded-xl border border-border/50 bg-muted/30 p-4 text-left text-foreground">
                   <div className="mb-2 flex items-center gap-2">
-                    <div
-                      className={`flex size-6 items-center justify-center rounded-full ${
-                        selectedQuestion.isAnonymous
-                          ? 'bg-gradient-to-br from-pink-500 to-orange-500'
-                          : 'bg-gradient-to-br from-pink-500 to-orange-500'
-                      }`}
-                    >
+                    <div className="flex size-6 items-center justify-center rounded-full bg-primary">
                       <HugeiconsIcon
                         className="size-3.5 text-white"
                         icon={selectedQuestion.isAnonymous ? AnonymousIcon : UserIcon}
                         strokeWidth={2.5}
                       />
                     </div>
-                    <span
-                      className={`font-semibold text-sm ${
-                        selectedQuestion.isAnonymous ? 'bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent' : 'bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent'
-                      }`}
-                    >
+                    <span className="font-semibold text-sm text-primary">
                       {selectedQuestion.isAnonymous ? tCommon('anonymous') : selectedQuestion.senderName}
                     </span>
                   </div>
@@ -386,7 +376,7 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
 
             <div className="space-y-2 px-4">
               <Textarea
-                className="min-h-28 resize-none rounded-2xl border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-pink-500 focus:bg-background focus:ring-2 focus:ring-pink-500/20"
+                className="min-h-28 resize-none rounded-lg border border-border/50 bg-muted/30 p-4 text-base transition-all focus:border-ring focus:bg-background focus:ring-2 focus:ring-ring/20"
                 onChange={(e) => setAnswer(e.target.value)}
                 placeholder={t('answerPlaceholder')}
                 rows={4}
@@ -399,7 +389,7 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
 
             <DrawerFooter className="gap-2 pt-4">
               <Button
-                className="h-14 w-full rounded-2xl bg-gradient-to-r from-pink-500 to-orange-500 font-semibold transition-all disabled:opacity-70"
+                className="h-14 w-full rounded-xl bg-primary text-primary-foreground font-semibold transition-all disabled:opacity-70"
                 disabled={!answer.trim() || isSubmitting}
                 onClick={handleSubmit}
                 type="button"
@@ -407,7 +397,7 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
                 {isSubmitting ? tCommon('submitting') : t('answerButton')}
               </Button>
               <Button
-                className="h-14 w-full rounded-2xl text-destructive"
+                className="h-14 w-full rounded-xl text-destructive"
                 disabled={isDeclining}
                 onClick={handleDecline}
                 type="button"

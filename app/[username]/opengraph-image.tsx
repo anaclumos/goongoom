@@ -2,10 +2,9 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cookies } from 'next/headers'
 import { ImageResponse } from 'next/og'
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { fetchQuery } from 'convex/nextjs'
 import { api } from '@/convex/_generated/api'
-import { getUserLocale } from '@/i18n/get-user-locale'
 import { getSignatureColor } from '@/lib/colors/signature-colors'
 
 export const runtime = 'nodejs'
@@ -82,7 +81,7 @@ export default async function Image({ params }: PageProps) {
     )
   }
 
-  const locale = getUserLocale(dbUser?.locale)
+  const locale = await getLocale()
   const t = await getTranslations({ locale, namespace: 'og' })
 
   const cookieStore = await cookies()

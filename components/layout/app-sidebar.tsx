@@ -124,7 +124,7 @@ export function AppSidebar({ recentQuestions = [], ...props }: AppSidebarProps) 
                 <>
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage alt={user.firstName || user.username || ''} src={user.imageUrl} />
-                    <AvatarFallback className="rounded-lg bg-gradient-to-br from-pink-500 to-orange-500 text-white">
+                    <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
                       {user.firstName?.[0] || user.username?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>

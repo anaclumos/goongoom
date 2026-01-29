@@ -1,29 +1,46 @@
 'use client'
 
-import { Preloaded, usePreloadedQuery, useConvexAuth } from 'convex/react'
+import { usePaginatedQuery } from 'convex/react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { MainContent } from '@/components/layout/main-content'
 import { AnsweredQuestionCard } from '@/components/questions/answered-question-card'
 import { usePrefetchQuestionRoutes } from '@/components/navigation/use-prefetch-question-routes'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
+import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
+import { Spinner } from '@/components/ui/spinner'
 import { api } from '@/convex/_generated/api'
 import type { FunctionReturnType } from 'convex/server'
 
-type FriendsAnswer = NonNullable<FunctionReturnType<typeof api.answers.getFriendsAnswers>>[number]
+type FriendsAnswer = NonNullable<FunctionReturnType<typeof api.answers.getFriendsAnswersPaginated>['page']>[number]
 
 interface FriendsContentProps {
-  preloadedFriendsAnswers: Preloaded<typeof api.answers.getFriendsAnswers>
+  clerkId: string
 }
 
-export function FriendsContent({ preloadedFriendsAnswers }: FriendsContentProps) {
-  const { isLoading: isAuthLoading } = useConvexAuth()
-  const locale = useLocale()
+const INITIAL_NUM_ITEMS = 15
+const LOAD_MORE_NUM_ITEMS = 10
 
+export function FriendsContent({ clerkId }: FriendsContentProps) {
+  const locale = useLocale()
   const t = useTranslations('friends')
   const tCommon = useTranslations('common')
 
-  const friendsAnswers = usePreloadedQuery(preloadedFriendsAnswers)
+  const { results, status, loadMore } = usePaginatedQuery(
+    api.answers.getFriendsAnswersPaginated,
+    { clerkId },
+    { initialNumItems: INITIAL_NUM_ITEMS }
+  )
+
+  const isLoadingFirstPage = status === 'LoadingFirstPage'
+  const canLoadMore = status === 'CanLoadMore'
+  const isLoadingMore = status === 'LoadingMore'
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: () => loadMore(LOAD_MORE_NUM_ITEMS),
+    hasMore: canLoadMore,
+    isLoading: isLoadingMore,
+  })
 
   const cardLabels = useMemo(
     () => ({
@@ -34,16 +51,26 @@ export function FriendsContent({ preloadedFriendsAnswers }: FriendsContentProps)
   )
 
   const prefetchQuestionRoutes = useMemo(() => {
-    if (!friendsAnswers || friendsAnswers.length === 0) return []
-    return friendsAnswers
+    if (!results || results.length === 0) return []
+    return results
       .slice(0, 6)
       .map((qa: FriendsAnswer) => `/${qa.recipientUsername || qa.recipientClerkId}/q/${qa.question._id}`)
-  }, [friendsAnswers])
+  }, [results])
 
-  usePrefetchQuestionRoutes(prefetchQuestionRoutes, !isAuthLoading)
+  usePrefetchQuestionRoutes(prefetchQuestionRoutes, !isLoadingFirstPage)
 
-  if (isAuthLoading) {
-    return null
+  if (isLoadingFirstPage) {
+    return (
+      <MainContent>
+        <div className="mb-8 space-y-2">
+          <h1 className="font-bold text-3xl text-foreground">{t('title')}</h1>
+          <p className="text-muted-foreground text-sm">{t('description')}</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      </MainContent>
+    )
   }
 
   return (
@@ -53,7 +80,7 @@ export function FriendsContent({ preloadedFriendsAnswers }: FriendsContentProps)
         <p className="text-muted-foreground text-sm">{t('description')}</p>
       </div>
 
-      {friendsAnswers.length === 0 ? (
+      {results.length === 0 ? (
         <Empty>
           <EmptyHeader>
             <EmptyTitle>{t('emptyTitle')}</EmptyTitle>
@@ -62,7 +89,7 @@ export function FriendsContent({ preloadedFriendsAnswers }: FriendsContentProps)
         </Empty>
       ) : (
         <div className="space-y-6 pb-24">
-          {friendsAnswers.map((qa: FriendsAnswer) => (
+          {results.map((qa: FriendsAnswer) => (
             <AnsweredQuestionCard
               anonymousAvatarSeed={qa.question.anonymousAvatarSeed}
               answerContent={qa.answer.content}
@@ -83,6 +110,10 @@ export function FriendsContent({ preloadedFriendsAnswers }: FriendsContentProps)
               username={qa.recipientUsername || qa.recipientClerkId}
             />
           ))}
+
+          <div ref={sentinelRef} className="flex items-center justify-center py-4">
+            {isLoadingMore && <Spinner className="size-5 text-muted-foreground" />}
+          </div>
         </div>
       )}
     </MainContent>

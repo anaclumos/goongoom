@@ -223,18 +223,10 @@
 }
 
 @layer utilities {
-  /* ============================================
-     Squircle Borders (CSS Borders Level 4 - 2026)
-     Uses corner-shape: squircle with SVG fallback
-     ============================================ */
-
-  /* Base squircle class - enables corner-shape for supported browsers */
   .squircle {
-    /* Native CSS squircle for supported browsers (Chrome 139+, Edge 139+) */
     corner-shape: squircle;
   }
 
-  /* Squircle variants matching existing radius tokens */
   .squircle-sm {
     border-radius: var(--radius-sm);
     corner-shape: squircle;
@@ -275,23 +267,6 @@
     corner-shape: squircle;
   }
 
-  /* Feature detection for JS fallback */
-  @supports not (corner-shape: squircle) {
-    .squircle,
-    .squircle-sm,
-    .squircle-md,
-    .squircle-lg,
-    .squircle-xl,
-    .squircle-2xl,
-    .squircle-3xl,
-    .squircle-4xl,
-    .squircle-full {
-      /* Marker for JS to detect and apply SVG clip-path fallback */
-      --squircle-fallback: 1;
-    }
-  }
-
-  /* When native corner-shape is supported, remove any clip-path fallback */
   @supports (corner-shape: squircle) {
     .squircle,
     .squircle-sm,

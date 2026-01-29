@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import { ConvexHttpClient } from 'convex/browser'
 import { preloadQuery, preloadedQueryResult } from 'convex/nextjs'
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { api } from '@/convex/_generated/api'
 import { env } from '@/env.vercel'
-import { getUserLocale } from '@/i18n/get-user-locale'
 import UserProfilePage from './user-profile'
 
 export async function generateStaticParams() {
@@ -28,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const dbUser = await convex.query(api.users.getByUsername, { username })
   if (!dbUser) return { title: 'Goongoom' }
 
-  const locale = getUserLocale(dbUser.locale)
+  const locale = await getLocale()
   const [tNav, tOg] = await Promise.all([
     getTranslations({ locale, namespace: 'nav' }),
     getTranslations({ locale, namespace: 'og' }),

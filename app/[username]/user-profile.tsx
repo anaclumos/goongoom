@@ -203,7 +203,7 @@ export default function UserProfilePage({ preloadedUser, preloadedQuestions }: U
           <ProfileActions
             editButton={
               <Button
-                className="h-14 flex-1 rounded-2xl font-semibold"
+                className="h-14 flex-1 rounded-xl font-semibold"
                 nativeButton={false}
                 render={<Ultralink href="/settings/profile" />}
                 variant="outline"

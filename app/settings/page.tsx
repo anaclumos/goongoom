@@ -104,16 +104,16 @@ export default function SettingsPage() {
 
       <div className="space-y-4">
         <button
-          className="group flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-left ring-1 ring-foreground/10 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"
+          className="group flex w-full items-center gap-4 rounded-xl bg-card p-5 text-left ring-1 ring-foreground/10 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"
           onClick={() => {
             posthog.capture('user_profile_opened')
             openUserProfile()
           }}
           type="button"
         >
-          <Avatar className="size-12 shrink-0 ring-2 ring-pink-500/20">
+          <Avatar className="size-12 shrink-0 ring-2 ring-primary/20">
             {user?.imageUrl && <AvatarImage alt={user?.firstName || user?.username || '?'} src={user.imageUrl} />}
-            <AvatarFallback className="bg-gradient-to-br from-pink-500/10 to-orange-500/10 font-semibold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+            <AvatarFallback className="bg-primary/10 font-semibold text-primary">
               {(user?.firstName || user?.username || '?')[0] || '?'}
             </AvatarFallback>
           </Avatar>
