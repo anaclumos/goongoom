@@ -84,6 +84,18 @@ http.route({
       // Extract referral data from unsafe_metadata (first-touch only)
       const { referrerUsername, utmSource, utmMedium, utmCampaign, utmTerm, utmContent } = data.unsafe_metadata || {}
 
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Clerk signup unsafe_metadata', {
+          clerkId: data.id,
+          referrerUsername,
+          utmSource,
+          utmMedium,
+          utmCampaign,
+          utmTerm,
+          utmContent,
+        })
+      }
+
       // Create or update user
       const userId = await ctx.runMutation(internal.users.upsertFromWebhook, {
         clerkId: data.id,
@@ -117,6 +129,11 @@ http.route({
         username: data.username ?? undefined,
         clerkId: data.id,
         referrerUsername,
+        utmSource,
+        utmMedium,
+        utmCampaign,
+        utmTerm,
+        utmContent,
       })
     } else if (type === 'user.updated') {
       const firstName = data.first_name ?? undefined

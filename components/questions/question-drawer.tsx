@@ -1,6 +1,6 @@
 'use client'
 
-import { SignUpButton, useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { LockIcon, SentIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import Link from 'next/link'
@@ -10,6 +10,7 @@ import posthog from 'posthog-js'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
+import { ReferralSignUpButton } from '@/components/auth/referral-signup-button'
 import { SignupPromptModal } from '@/components/auth/signup-prompt-modal'
 import { CHAR_LIMITS } from '@/lib/charLimits'
 import { cn } from '@/lib/utils'
@@ -76,14 +77,14 @@ function SignInPrompt() {
             {tCommon('login')}
           </Button>
         </PasskeySignInButton>
-        <SignUpButton mode="modal">
+        <ReferralSignUpButton mode="modal">
           <Button
             className="h-14 flex-1 rounded-xl bg-primary text-primary-foreground font-semibold"
             size="lg"
           >
             {tCommon('start')}
           </Button>
-        </SignUpButton>
+        </ReferralSignUpButton>
       </div>
     </div>
   )

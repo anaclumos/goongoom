@@ -1,11 +1,11 @@
 'use client'
 
-import { SignUpButton } from '@clerk/nextjs'
 import { CheckmarkCircle02Icon, UserAdd01Icon, MessageQuestionIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useTranslations } from 'next-intl'
 import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
+import { ReferralSignUpButton } from '@/components/auth/referral-signup-button'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { cn } from '@/lib/utils'
@@ -70,7 +70,7 @@ export function SignupPromptModal({ open, onOpenChange }: SignupPromptModalProps
               </DrawerHeader>
 
               <div className="w-full space-y-2">
-                <SignUpButton mode="modal">
+                <ReferralSignUpButton mode="modal">
                   <Button
                     className="h-14 w-full rounded-xl border-none bg-white font-bold text-base text-primary transition-all"
                     onClick={() => setSignedUp(true)}
@@ -78,7 +78,7 @@ export function SignupPromptModal({ open, onOpenChange }: SignupPromptModalProps
                   >
                     {tCommon('start')}
                   </Button>
-                </SignUpButton>
+                </ReferralSignUpButton>
 
                 <Button
                   className="h-14 w-full rounded-xl font-medium text-primary-foreground/70"

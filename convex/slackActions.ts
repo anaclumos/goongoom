@@ -53,6 +53,11 @@ export const notifyUserSignup = internalAction({
     username: v.optional(v.string()),
     clerkId: v.string(),
     referrerUsername: v.optional(v.string()),
+    utmSource: v.optional(v.string()),
+    utmMedium: v.optional(v.string()),
+    utmCampaign: v.optional(v.string()),
+    utmTerm: v.optional(v.string()),
+    utmContent: v.optional(v.string()),
   },
   handler: async (_ctx, args): Promise<void> => {
     const webhookUrl = process.env.SLACK_ADMIN_WEBHOOK_URL
@@ -61,18 +66,43 @@ export const notifyUserSignup = internalAction({
     }
 
     const userDisplay = args.username ? `@${args.username}` : `(${args.clerkId.slice(0, 8)}...)`
-    const referralInfo = args.referrerUsername ? ` (referred by @${args.referrerUsername})` : ''
+    const referralParts: string[] = []
+    if (args.referrerUsername) {
+      referralParts.push(`Referred by @${args.referrerUsername}`)
+    }
+
+    const utmPairs: string[] = []
+    if (args.utmSource) utmPairs.push(`source=${args.utmSource}`)
+    if (args.utmMedium) utmPairs.push(`medium=${args.utmMedium}`)
+    if (args.utmCampaign) utmPairs.push(`campaign=${args.utmCampaign}`)
+    if (args.utmTerm) utmPairs.push(`term=${args.utmTerm}`)
+    if (args.utmContent) utmPairs.push(`content=${args.utmContent}`)
+    if (utmPairs.length) {
+      referralParts.push(`UTM ${utmPairs.join(', ')}`)
+    }
+
+    const referralSummary = referralParts.length ? ` (${referralParts.join(' | ')})` : ''
+    const referralDetails = referralParts.length
+      ? {
+          type: 'section' as const,
+          text: {
+            type: 'mrkdwn' as const,
+            text: referralParts.map((part) => `*${part}*`).join('\n'),
+          },
+        }
+      : null
 
     await sendSlackMessage(webhookUrl, {
-      text: `New user signup: ${userDisplay}${referralInfo}`,
+      text: `New user signup: ${userDisplay}${referralSummary}`,
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `:wave: *New User Signup*\n\nUser: *${userDisplay}*${referralInfo}`,
+            text: `:wave: *New User Signup*\n\nUser: *${userDisplay}*${referralSummary}`,
           },
         },
+        ...(referralDetails ? [referralDetails] : []),
         {
           type: 'context',
           elements: [{ type: 'mrkdwn', text: `Clerk ID: \`${args.clerkId}\`` }],

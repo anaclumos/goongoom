@@ -1,6 +1,6 @@
 'use client'
 
-import { SignUpButton, useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import {
   Agreement01Icon,
   CustomerService01Icon,
@@ -17,6 +17,7 @@ import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import type * as React from 'react'
 import { PasskeySignInButton } from '@/components/auth/passkey-sign-in-button'
+import { ReferralSignUpButton } from '@/components/auth/referral-signup-button'
 import { LocaleSwitcher } from '@/components/layout/locale-switcher'
 import { SidebarQuestionItem } from '@/components/layout/sidebar-question-item'
 import { Ultralink } from '@/components/navigation/ultralink'
@@ -161,12 +162,12 @@ export function AppSidebar({ recentQuestions = [], ...props }: AppSidebarProps) 
                 </PasskeySignInButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SignUpButton mode="modal">
+                <ReferralSignUpButton mode="modal">
                   <SidebarMenuButton>
                     <HugeiconsIcon icon={UserAdd01Icon} />
                     <span>{tCommon('start')}</span>
                   </SidebarMenuButton>
-                </SignUpButton>
+                </ReferralSignUpButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <LocaleSwitcher />
