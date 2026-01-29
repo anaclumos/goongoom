@@ -29,7 +29,7 @@ export function ClientProviders({ children, initialLocale }: ClientProvidersProp
   return (
     <ClerkProvider localization={clerkLocalizations[locale]}>
       <ConvexClientProvider>
-        <Providers initialLocale={initialLocale}>{children}</Providers>
+        <Providers>{children}</Providers>
       </ConvexClientProvider>
     </ClerkProvider>
   )

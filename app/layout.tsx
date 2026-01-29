@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { getLocale, getTranslations } from 'next-intl/server'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import { AnalyticsLoader } from '@/components/analytics/analytics-loader'
 import { ClientProviders } from '@/app/client-providers'
 import { env } from '@/env.vercel'
@@ -43,11 +44,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const locale = (await getLocale()) as Locale
+  const messages = await getMessages()
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   return (
     <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
       <body className="bg-background font-sans antialiased">
-        <ClientProviders initialLocale={locale}>{children}</ClientProviders>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
+          <ClientProviders initialLocale={locale}>{children}</ClientProviders>
+        </NextIntlClientProvider>
         <AnalyticsLoader />
       </body>
     </html>

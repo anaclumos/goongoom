@@ -7,11 +7,9 @@ import { ThemeProvider, useTheme } from 'next-themes'
 import { useEffect, type ReactNode } from 'react'
 import { AppShellWrapper } from '@/components/layout/app-shell-wrapper'
 import { PrefetchManager } from '@/components/navigation/prefetch-manager'
-import { IntlProvider } from '@/components/providers/intl-provider'
 import { LocaleSync } from '@/components/providers/locale-sync'
 import { UserProvider } from '@/components/providers/user-provider'
 import { Toaster } from '@/components/ui/sonner'
-import type { Locale } from '@/i18n/config'
 import { useSwipeBack } from '@/hooks/use-swipe-back'
 
 const PasskeySetupModal = dynamic(
@@ -33,7 +31,6 @@ const PushNotificationProvider = dynamic(
 
 interface ProvidersProps {
   children: ReactNode
-  initialLocale: Locale
 }
 
 function AuthedOnly({ children }: { children: ReactNode }) {
@@ -46,7 +43,7 @@ function AuthedOnly({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-export function Providers({ children, initialLocale }: ProvidersProps) {
+export function Providers({ children }: ProvidersProps) {
   // Inline ThemeCookieSync effect
   const { resolvedTheme } = useTheme()
   useEffect(() => {
@@ -69,22 +66,20 @@ export function Providers({ children, initialLocale }: ProvidersProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
       <PrefetchManager />
-      <IntlProvider initialLocale={initialLocale}>
-        <UserProvider>
-          <ReferralCookieCleaner />
-          <LocaleSync />
-          <EscapeInAppBrowser />
-          <AppShellWrapper>
-            <main className="flex-1">{children}</main>
-          </AppShellWrapper>
-          <AuthedOnly>
-            <PasskeySetupModal />
-            <PushNotificationProvider />
-          </AuthedOnly>
-          <AddToHomeScreenNudge />
-          <Toaster />
-        </UserProvider>
-      </IntlProvider>
+      <UserProvider>
+        <ReferralCookieCleaner />
+        <LocaleSync />
+        <EscapeInAppBrowser />
+        <AppShellWrapper>
+          <main className="flex-1">{children}</main>
+        </AppShellWrapper>
+        <AuthedOnly>
+          <PasskeySetupModal />
+          <PushNotificationProvider />
+        </AuthedOnly>
+        <AddToHomeScreenNudge />
+        <Toaster />
+      </UserProvider>
     </ThemeProvider>
   )
 }

@@ -56,7 +56,7 @@ export function PrefetchManager() {
     prefetchedDataFor.current = user.id
 
     void convex.query(api.users.getByClerkId, { clerkId: user.id }).catch(() => null)
-    void convex.query(api.questions.getUnanswered, { recipientClerkId: user.id }).catch(() => null)
+    void convex.query(api.questions.getUnansweredPreview, { recipientClerkId: user.id, limit: 8 }).catch(() => null)
     void convex.query(api.answers.getFriendsAnswers, { clerkId: user.id, limit: 30 }).catch(() => null)
 
     if (user.username) {

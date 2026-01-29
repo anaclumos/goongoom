@@ -1,7 +1,7 @@
 import { ConvexError, v } from 'convex/values'
 import { paginationOptsValidator } from 'convex/server'
 import { internal } from './_generated/api'
-import { mutation, query } from './_generated/server'
+import { mutation, query, type MutationCtx, type QueryCtx } from './_generated/server'
 import { CHAR_LIMITS } from './charLimits'
 
 const ANSWER_PUSH_MESSAGES = {
@@ -20,6 +20,45 @@ const ANSWER_PUSH_MESSAGES = {
 } as const
 
 type SupportedLocale = keyof typeof ANSWER_PUSH_MESSAGES
+
+const ANSWER_COUNT_KEY = 'answers'
+
+async function getAnswerCountStat(ctx: QueryCtx | MutationCtx) {
+  return await ctx.db.query('stats').withIndex('by_key', (q) => q.eq('key', ANSWER_COUNT_KEY)).first()
+}
+
+async function bumpAnswerCount(ctx: MutationCtx, delta: number) {
+  const stat = await getAnswerCountStat(ctx)
+  if (!stat) {
+    const nextCount = Math.max(0, delta)
+    await ctx.db.insert('stats', { key: ANSWER_COUNT_KEY, count: nextCount, updatedAt: Date.now() })
+    return nextCount
+  }
+
+  const nextCount = Math.max(0, stat.count + delta)
+  await ctx.db.patch(stat._id, { count: nextCount, updatedAt: Date.now() })
+  return nextCount
+}
+
+async function resolveAnsweredSequence(ctx: MutationCtx, recipientClerkId: string, currentSequence: number | null | undefined) {
+  if (currentSequence != null) {
+    return currentSequence
+  }
+
+  const answeredQuestions = await ctx.db
+    .query('questions')
+    .withIndex('by_recipient', (q) => q.eq('recipientClerkId', recipientClerkId))
+    .filter((q) =>
+      q.and(
+        q.neq(q.field('answerId'), undefined),
+        q.neq(q.field('answerId'), null),
+        q.eq(q.field('deletedAt'), undefined)
+      )
+    )
+    .collect()
+
+  return answeredQuestions.length
+}
 
 export const create = mutation({
   args: {
@@ -51,6 +90,7 @@ export const create = mutation({
       questionId: args.questionId,
       content: args.content,
     })
+    const answeredAt = Date.now()
 
     // Schedule async AI-based language detection
     await ctx.scheduler.runAfter(0, internal.languageActions.detectAnswerLanguage, {
@@ -58,23 +98,40 @@ export const create = mutation({
       content: args.content,
     })
 
-    const patchPromise = ctx.db.patch(args.questionId, { answerId })
+    const answerAuthorPromise = ctx.db
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', question.recipientClerkId))
+      .first()
+    const senderUserPromise = question.senderClerkId
+      ? ctx.db
+          .query('users')
+          .withIndex('by_clerk_id', (q) => q.eq('clerkId', question.senderClerkId as string))
+          .first()
+      : Promise.resolve(null)
+    const bumpCountPromise = bumpAnswerCount(ctx, 1)
+
+    const answerAuthor = await answerAuthorPromise
+    const currentSequence = answerAuthor
+      ? await resolveAnsweredSequence(ctx, question.recipientClerkId, answerAuthor.answeredSequence)
+      : 0
+    const answerNumber = question.answerNumber ?? (answerAuthor ? currentSequence + 1 : undefined)
+    const shouldUpdateSequence = Boolean(answerAuthor && answerNumber != null && answerNumber > currentSequence)
+
+    const patchQuestionPromise = ctx.db.patch(args.questionId, {
+      answerId,
+      answeredAt,
+      ...(answerNumber != null ? { answerNumber } : {}),
+    })
+    const patchUserPromise =
+      shouldUpdateSequence && answerAuthor
+        ? ctx.db.patch(answerAuthor._id, { answeredSequence: answerNumber!, updatedAt: Date.now() })
+        : Promise.resolve(null)
+
+    const senderUser = await senderUserPromise
+
+    await Promise.all([patchQuestionPromise, patchUserPromise, bumpCountPromise])
 
     if (question.senderClerkId) {
-      const senderClerkId = question.senderClerkId
-
-      const answerAuthorPromise = ctx.db
-        .query('users')
-        .withIndex('by_clerk_id', (q) => q.eq('clerkId', question.recipientClerkId))
-        .first()
-
-      const senderUserPromise = ctx.db
-        .query('users')
-        .withIndex('by_clerk_id', (q) => q.eq('clerkId', senderClerkId))
-        .first()
-
-      const [answerAuthor, senderUser] = await Promise.all([answerAuthorPromise, senderUserPromise, patchPromise])
-
       const senderLocale = (senderUser?.locale ?? 'ko') as SupportedLocale
       const messages = ANSWER_PUSH_MESSAGES[senderLocale] ?? ANSWER_PUSH_MESSAGES.ko
       const authorName = answerAuthor?.username ?? messages.fallbackName
@@ -83,7 +140,7 @@ export const create = mutation({
       const notificationUrl = authorUsername ? `/${authorUsername}/q/${question._id}` : '/friends'
 
       await ctx.scheduler.runAfter(0, internal.pushActions.sendNotification, {
-        recipientClerkId: senderClerkId,
+        recipientClerkId: question.senderClerkId,
         title: messages.titleWithName(authorName),
         body: truncatedContent,
         url: notificationUrl,
@@ -96,15 +153,8 @@ export const create = mutation({
         answerPreview: args.content,
       })
     } else {
-      await patchPromise
-
-      const answerer = await ctx.db
-        .query('users')
-        .withIndex('by_clerk_id', (q) => q.eq('clerkId', question.recipientClerkId))
-        .first()
-
       await ctx.scheduler.runAfter(0, internal.slackActions.notifyNewAnswer, {
-        answererUsername: answerer?.username,
+        answererUsername: answerAuthor?.username,
         answererClerkId: question.recipientClerkId,
         answerPreview: args.content,
       })
@@ -141,8 +191,11 @@ export const softDelete = mutation({
       throw new ConvexError('Not authorized to delete this answer')
     }
 
-    await ctx.db.patch(args.id, { deletedAt: Date.now() })
-    await ctx.db.patch(answer.questionId, { answerId: null })
+    await Promise.all([
+      ctx.db.patch(args.id, { deletedAt: Date.now() }),
+      ctx.db.patch(answer.questionId, { answerId: null, answeredAt: undefined }),
+      bumpAnswerCount(ctx, -1),
+    ])
 
     const answerer = await ctx.db
       .query('users')
@@ -185,8 +238,28 @@ export const restore = mutation({
       throw new ConvexError('Not authorized to restore this answer')
     }
 
-    await ctx.db.patch(args.id, { deletedAt: undefined })
-    await ctx.db.patch(answer.questionId, { answerId: args.id })
+    const answerer = await ctx.db
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', question.recipientClerkId))
+      .first()
+    const currentSequence = answerer
+      ? await resolveAnsweredSequence(ctx, question.recipientClerkId, answerer.answeredSequence)
+      : 0
+    const answerNumber = question.answerNumber ?? (answerer ? currentSequence + 1 : undefined)
+    const shouldUpdateSequence = Boolean(answerer && answerNumber != null && answerNumber > currentSequence)
+
+    await Promise.all([
+      ctx.db.patch(args.id, { deletedAt: undefined }),
+      ctx.db.patch(answer.questionId, {
+        answerId: args.id,
+        answeredAt: answer._creationTime,
+        ...(answerNumber != null ? { answerNumber } : {}),
+      }),
+      shouldUpdateSequence && answerer
+        ? ctx.db.patch(answerer._id, { answeredSequence: answerNumber!, updatedAt: Date.now() })
+        : Promise.resolve(null),
+      bumpAnswerCount(ctx, 1),
+    ])
     return { success: true }
   },
 })
@@ -294,11 +367,8 @@ export const getRecentLimitPerUser = query({
 export const count = query({
   args: {},
   handler: async (ctx) => {
-    const answers = await ctx.db
-      .query('answers')
-      .filter((q) => q.eq(q.field('deletedAt'), undefined))
-      .collect()
-    return answers.length
+    const stat = await getAnswerCountStat(ctx)
+    return stat?.count ?? 0
   },
 })
 

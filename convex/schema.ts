@@ -35,6 +35,7 @@ export default defineSchema({
     questionSecurityLevel: v.string(),
     locale: v.optional(v.string()),
     signatureColor: v.optional(v.string()),
+    answeredSequence: v.optional(v.number()),
     referredByUserId: v.optional(v.id('users')),
     updatedAt: v.number(),
   })
@@ -49,12 +50,15 @@ export default defineSchema({
     isAnonymous: v.boolean(),
     anonymousAvatarSeed: v.optional(v.string()),
     answerId: v.optional(v.union(v.id('answers'), v.null())),
+    answeredAt: v.optional(v.number()),
+    answerNumber: v.optional(v.number()),
     language: v.optional(v.string()),
     deletedAt: v.optional(v.number()),
   })
     .index('by_recipient', ['recipientClerkId'])
     .index('by_sender', ['senderClerkId'])
-    .index('by_recipient_unanswered', ['recipientClerkId', 'answerId']),
+    .index('by_recipient_unanswered', ['recipientClerkId', 'answerId'])
+    .index('by_recipient_answered', ['recipientClerkId', 'answeredAt']),
 
   answers: defineTable({
     questionId: v.id('questions'),
@@ -113,4 +117,10 @@ export default defineSchema({
     .index('by_referrer', ['referrerUserId'])
     .index('by_referred', ['referredUserId'])
     .index('by_referred_clerk_id', ['referredClerkId']),
+
+  stats: defineTable({
+    key: v.string(),
+    count: v.number(),
+    updatedAt: v.number(),
+  }).index('by_key', ['key']),
 })

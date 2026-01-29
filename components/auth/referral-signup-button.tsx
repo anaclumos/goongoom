@@ -1,14 +1,27 @@
 'use client'
 
 import { useClerk } from '@clerk/nextjs'
-import type { SignUpButtonProps } from '@clerk/shared/types'
 import type { MouseEvent, PropsWithChildren, ReactElement } from 'react'
 import { Children, cloneElement } from 'react'
 import { readReferralCookie } from '@/lib/referrals'
 
-type ReferralSignUpButtonProps = PropsWithChildren<SignUpButtonProps> & {
+type OpenSignUpArgs = NonNullable<Parameters<ReturnType<typeof useClerk>['openSignUp']>[0]>
+type RedirectToSignUpArgs = NonNullable<Parameters<ReturnType<typeof useClerk>['redirectToSignUp']>[0]>
+
+type ReferralSignUpButtonProps = PropsWithChildren<{
   children: ReactElement
-}
+  unsafeMetadata?: OpenSignUpArgs extends { unsafeMetadata?: infer U } ? U : Record<string, unknown>
+  appearance?: OpenSignUpArgs['appearance']
+  fallbackRedirectUrl?: string
+  forceRedirectUrl?: string
+  signInFallbackRedirectUrl?: string
+  signInForceRedirectUrl?: string
+  mode?: 'modal' | 'redirect'
+  initialValues?: OpenSignUpArgs['initialValues']
+  oauthFlow?: OpenSignUpArgs['oauthFlow']
+}> &
+  Omit<RedirectToSignUpArgs, 'signUpFallbackRedirectUrl' | 'signUpForceRedirectUrl'> &
+  Record<string, unknown>
 
 export function ReferralSignUpButton({
   children,

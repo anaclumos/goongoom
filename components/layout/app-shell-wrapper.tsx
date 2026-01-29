@@ -8,7 +8,7 @@ import { AppShell } from '@/components/layout/app-shell'
 import { api } from '@/convex/_generated/api'
 import type { FunctionReturnType } from 'convex/server'
 
-type UnansweredQuestion = NonNullable<FunctionReturnType<typeof api.questions.getUnanswered>>[number]
+type UnansweredQuestion = NonNullable<FunctionReturnType<typeof api.questions.getUnansweredPreview>>[number]
 
 interface AppShellWrapperProps {
   children: React.ReactNode
@@ -19,8 +19,8 @@ export function AppShellWrapper({ children }: AppShellWrapperProps) {
   const { isAuthenticated } = useConvexAuth()
 
   const questions = useQuery(
-    api.questions.getUnanswered,
-    isAuthenticated && clerkId ? { recipientClerkId: clerkId } : 'skip'
+    api.questions.getUnansweredPreview,
+    isAuthenticated && clerkId ? { recipientClerkId: clerkId, limit: 5 } : 'skip'
   )
 
   const recentQuestions = useMemo(() => {
