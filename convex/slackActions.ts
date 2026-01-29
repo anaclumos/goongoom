@@ -189,9 +189,9 @@ export const notifyNewQuestion = internalAction({
 
     let headline: string
     if (args.isAnonymous) {
-      headline = `${senderDisplay}가 ${recipientDisplay}에게 익명으로 질문했어요`
+      headline = `${senderDisplay}님이 ${recipientDisplay}님에게 익명으로 질문했어요`
     } else {
-      headline = `${senderDisplay}가 ${recipientDisplay}에게 질문했어요`
+      headline = `${senderDisplay}님이 ${recipientDisplay}님에게 질문했어요`
     }
 
     const questionUrl =
@@ -253,9 +253,9 @@ export const notifyNewAnswer = internalAction({
 
     let headline: string
     if (args.isAnonymous) {
-      headline = `${answererDisplay}가 ${senderDisplay}의 익명 질문에 답변했어요`
+      headline = `${answererDisplay}님이 ${senderDisplay}님의 익명 질문에 답변했어요`
     } else {
-      headline = `${answererDisplay}가 ${senderDisplay}의 질문에 답변했어요`
+      headline = `${answererDisplay}님이 ${senderDisplay}님의 질문에 답변했어요`
     }
 
     const answerUrl = args.answererUsername
