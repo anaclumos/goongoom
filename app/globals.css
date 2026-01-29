@@ -223,64 +223,6 @@
 }
 
 @layer utilities {
-  .squircle {
-    corner-shape: squircle;
-  }
-
-  .squircle-sm {
-    border-radius: var(--radius-sm);
-    corner-shape: squircle;
-  }
-
-  .squircle-md {
-    border-radius: var(--radius-md);
-    corner-shape: squircle;
-  }
-
-  .squircle-lg {
-    border-radius: var(--radius-lg);
-    corner-shape: squircle;
-  }
-
-  .squircle-xl {
-    border-radius: var(--radius-xl);
-    corner-shape: squircle;
-  }
-
-  .squircle-2xl {
-    border-radius: var(--radius-2xl);
-    corner-shape: squircle;
-  }
-
-  .squircle-3xl {
-    border-radius: var(--radius-3xl);
-    corner-shape: squircle;
-  }
-
-  .squircle-4xl {
-    border-radius: var(--radius-4xl);
-    corner-shape: squircle;
-  }
-
-  .squircle-full {
-    border-radius: 9999px;
-    corner-shape: squircle;
-  }
-
-  @supports (corner-shape: squircle) {
-    .squircle,
-    .squircle-sm,
-    .squircle-md,
-    .squircle-lg,
-    .squircle-xl,
-    .squircle-2xl,
-    .squircle-3xl,
-    .squircle-4xl,
-    .squircle-full {
-      clip-path: none !important;
-    }
-  }
-
   .pt-safe {
     padding-top: env(safe-area-inset-top, 0px);
   }

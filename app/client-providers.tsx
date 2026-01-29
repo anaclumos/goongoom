@@ -5,7 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { useState, type ReactNode } from 'react'
 import { ConvexClientProvider } from '@/app/ConvexClientProvider'
 import { Providers } from '@/components/providers'
-import { SquirclePolyfill } from '@/components/squircle-polyfill'
+
 import { type Locale } from '@/i18n/config'
 import { localeStore } from '@/i18n/locale-store'
 
@@ -54,7 +54,6 @@ export function ClientProviders({ children, initialLocale }: ClientProvidersProp
     >
       <ConvexClientProvider>
         <Providers initialLocale={initialLocale}>{children}</Providers>
-        <SquirclePolyfill />
       </ConvexClientProvider>
     </ClerkProvider>
   )

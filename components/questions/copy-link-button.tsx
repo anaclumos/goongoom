@@ -12,7 +12,7 @@ interface CopyLinkButtonProps {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
 }
 
-export function CopyLinkButton({ url, fullWidth = false, className, variant = 'ghost' }: CopyLinkButtonProps) {
+export function CopyLinkButton({ url, fullWidth = false, className, variant = 'outline' }: CopyLinkButtonProps) {
   const t = useTranslations('share')
   const [copied, setCopied] = useState(false)
 
