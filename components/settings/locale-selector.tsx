@@ -49,6 +49,7 @@ export function LocaleSelector() {
           return (
             <Label
               className="group relative flex cursor-pointer items-start gap-3 rounded-xl border-2 border-transparent bg-muted/30 p-3 transition-all has-data-checked:border-primary/50 has-data-checked:bg-primary/5"
+              htmlFor={`locale-${locale}`}
               key={locale}
             >
               <RadioGroupItem
