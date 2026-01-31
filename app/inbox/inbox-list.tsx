@@ -21,6 +21,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer'
+import { TranslateButton } from '@/components/questions/translate-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/convex/_generated/api'
@@ -48,6 +49,7 @@ interface QuestionItem {
   senderName: string
   senderAvatarUrl?: string | null
   anonymousAvatarSeed?: string | null
+  language?: string | null
 }
 
 interface InboxListProps {
@@ -62,6 +64,7 @@ interface InboxListItemProps {
   onSelect: (question: QuestionItem) => void
   anonymousLabel: string
   dateLocale: (typeof localeMap)[keyof typeof localeMap]
+  locale: string
 }
 
 const InboxListItem = memo(function InboxListItem({
@@ -69,16 +72,20 @@ const InboxListItem = memo(function InboxListItem({
   onSelect,
   anonymousLabel,
   dateLocale,
+  locale,
 }: InboxListItemProps) {
   const senderLabel = question.isAnonymous ? anonymousLabel : question.senderName
+  const showTranslate = question.language && question.language !== locale
 
   return (
-    <button
-      className="group w-full rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      onClick={() => onSelect(question)}
-      type="button"
-    >
-      <div className="content-auto flex items-start gap-4 rounded-xl border border-border/50 bg-background p-4 transition-all group-active:scale-[0.98]">
+    <div className="group w-full rounded-xl text-left">
+      <div
+        className="content-auto flex cursor-pointer items-start gap-4 rounded-xl border border-border/50 bg-background p-4 transition-all group-active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        onClick={() => onSelect(question)}
+        onKeyDown={(e) => e.key === 'Enter' && onSelect(question)}
+        role="button"
+        tabIndex={0}
+      >
         <div className="relative flex-shrink-0">
           <Avatar className="size-12 ring-2 ring-background">
             <AvatarImage alt={question.senderName} src={getQuestionAvatarUrl(question)} />
@@ -115,7 +122,12 @@ const InboxListItem = memo(function InboxListItem({
           <HugeiconsIcon className="size-5" icon={ArrowRight01Icon} strokeWidth={2} />
         </div>
       </div>
-    </button>
+      {showTranslate && (
+        <div className="mt-1 ml-16">
+          <TranslateButton text={question.content} />
+        </div>
+      )}
+    </div>
   )
 })
 
@@ -341,6 +353,7 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
             anonymousLabel={anonymousLabel}
             dateLocale={dateLocale}
             key={question.id}
+            locale={locale}
             onSelect={handleQuestionClick}
             question={question}
           />
@@ -372,6 +385,11 @@ export function InboxList({ questions, isLoading }: InboxListProps) {
                     </span>
                   </div>
                   <p className="whitespace-pre-line leading-relaxed">{selectedQuestion.content}</p>
+                  {selectedQuestion.language && selectedQuestion.language !== locale && (
+                    <div className="mt-2">
+                      <TranslateButton text={selectedQuestion.content} />
+                    </div>
+                  )}
                 </DrawerDescription>
               )}
             </DrawerHeader>

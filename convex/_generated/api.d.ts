@@ -9,7 +9,6 @@
  */
 
 import type * as answers from "../answers.js";
-import type * as backfill from "../backfill.js";
 import type * as charLimits from "../charLimits.js";
 import type * as http from "../http.js";
 import type * as languageActions from "../languageActions.js";
@@ -31,7 +30,6 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   answers: typeof answers;
-  backfill: typeof backfill;
   charLimits: typeof charLimits;
   http: typeof http;
   languageActions: typeof languageActions;

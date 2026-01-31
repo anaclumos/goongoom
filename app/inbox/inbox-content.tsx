@@ -44,6 +44,7 @@ function InboxContentInner({ preloadedQuestions }: InboxContentProps) {
         : question.senderFirstName || question.senderUsername || tCommon('public'),
       senderAvatarUrl: question.isAnonymous ? undefined : question.senderAvatarUrl,
       anonymousAvatarSeed: question.isAnonymous ? question.anonymousAvatarSeed : undefined,
+      language: question.language,
     }))
   }, [unansweredQuestions, tCommon])
 

@@ -5,7 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { useCompletion } from '@ai-sdk/react'
 import { useLocale, useTranslations } from 'next-intl'
 import posthog from 'posthog-js'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 
@@ -27,31 +27,34 @@ export function TranslateButton({ text, align = 'start' }: TranslateButtonProps)
     },
   })
 
-  const handleTranslate = useCallback(
-    async (e: React.MouseEvent) => {
-      e.stopPropagation()
-      e.preventDefault()
+  async function handleTranslate(e: React.MouseEvent) {
+    e.stopPropagation()
+    e.preventDefault()
 
-      if (completion && showTranslation) {
-        posthog.capture('translate_hidden')
-        setShowTranslation(false)
-        return
-      }
+    if (completion && showTranslation) {
+      posthog.capture('translate_hidden')
+      setShowTranslation(false)
+      return
+    }
 
-      if (completion) {
-        posthog.capture('translate_shown')
-        setShowTranslation(true)
-        return
-      }
-
-      posthog.capture('translate_clicked', { target_locale: locale })
+    if (completion) {
+      posthog.capture('translate_shown')
       setShowTranslation(true)
-      await complete('', {
-        body: { text, targetLocale: locale },
+      return
+    }
+
+    posthog.capture('translate_clicked', { target_locale: locale })
+    setShowTranslation(true)
+
+    try {
+      await complete(text, {
+        body: { targetLocale: locale },
       })
-    },
-    [completion, showTranslation, complete, text, locale]
-  )
+    } catch {
+      toast.error(t('translationError'))
+      setShowTranslation(false)
+    }
+  }
 
   const buttonLabel = isLoading
     ? t('translating')

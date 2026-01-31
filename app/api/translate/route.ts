@@ -9,14 +9,13 @@ const localeNames: Record<string, string> = {
 }
 
 export async function POST(request: Request) {
-  const { text, targetLocale } = (await request.json()) as {
-    text: string
+  const { prompt: text, targetLocale } = (await request.json()) as {
+    prompt: string
     targetLocale: string
   }
 
   const targetLanguage = localeNames[targetLocale] || 'English'
 
-  // Track translation request in PostHog (server-side, anonymous)
   const posthog = getPostHogClient()
   posthog.capture({
     distinctId: 'server-anonymous',
