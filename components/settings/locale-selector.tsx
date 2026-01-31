@@ -4,6 +4,7 @@ import { useAuth } from '@clerk/nextjs'
 import { LanguageCircleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useMutation } from 'convex/react'
+import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import posthog from 'posthog-js'
 import { api } from '@/convex/_generated/api'
@@ -22,10 +23,12 @@ export function LocaleSelector() {
   const t = useTranslations('settings')
   const currentLocale = useLocale() as Locale
   const { userId } = useAuth()
+  const router = useRouter()
   const updateLocale = useMutation(api.users.updateLocale)
 
   function handleLocaleChange(value: string) {
     const locale = value as Locale
+    if (locale === currentLocale) return
     posthog.capture('locale_changed', {
       previous_locale: currentLocale,
       new_locale: locale,
@@ -34,6 +37,7 @@ export function LocaleSelector() {
     if (userId) {
       updateLocale({ clerkId: userId, locale })
     }
+    router.refresh()
   }
 
   return (
